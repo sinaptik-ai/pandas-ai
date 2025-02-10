@@ -47,6 +47,18 @@ class HuggingFaceTextGen(LLM):
     client: Any
 
     def __init__(self, inference_server_url: str, **kwargs):
+        """Initializes an instance with a connection to a text generation inference server.
+
+    This constructor sets up a client to communicate with a specified text generation 
+    inference server. Additional configuration can be passed via keyword arguments 
+    which will be set as attributes if they match the class annotations.
+
+    Args:
+        inference_server_url (str): The URL of the inference server for text generation.
+        **kwargs: Additional optional configuration settings as keyword arguments.
+
+    Raises:
+        ImportError: If the `text_generation` package is not installed."""
         try:
             import text_generation
 
@@ -82,6 +94,23 @@ class HuggingFaceTextGen(LLM):
         }
 
     def call(self, instruction: BasePrompt, context: AgentState = None) -> str:
+        """Generates a text response based on a given instruction and context.
+
+    This method converts the instruction into a string and optionally
+    incorporates memory from the provided context to form a complete prompt.
+    It then generates a text response using a client, with an option for
+    streaming the response. If stop sequences are defined, they are removed
+    from the end of the generated text.
+
+    Args:
+        instruction (BasePrompt): The instruction containing the prompt
+            to be converted into a string for text generation.
+        context (AgentState, optional): The context providing additional
+            memory data to be included in the prompt, if available.
+
+    Returns:
+        str: The generated text response, potentially modified to exclude
+        specified stop sequences."""
         prompt = instruction.to_string()
 
         memory = context.memory if context else None
@@ -107,4 +136,11 @@ class HuggingFaceTextGen(LLM):
 
     @property
     def type(self) -> str:
+        """Gets the type identifier for the text generation model.
+
+    This property returns a string that specifies the type of model being used 
+    for text generation, which is 'huggingface-text-generation'.
+
+    Returns:
+        str: The type identifier 'huggingface-text-generation'."""
         return "huggingface-text-generation"
