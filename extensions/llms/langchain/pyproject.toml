@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pandasai-langchain"
-version = "0.1.4"
+version = "0.1.5"
 description = "Langchain integration for PandaAI"
 authors = ["Gabriele Venturi"]
 license = "MIT"
