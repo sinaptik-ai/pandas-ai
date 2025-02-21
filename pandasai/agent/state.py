@@ -45,10 +45,6 @@ class AgentState:
         if isinstance(self.config, dict):
             self.config = Config(**self.config)
 
-        # Initialize cache only if enabled in config
-        if getattr(self.config, "enable_cache", False) and self.cache is None:
-            self.cache = Cache()
-
     def initialize(
         self,
         dfs: Union[
