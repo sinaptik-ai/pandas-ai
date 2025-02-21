@@ -12,6 +12,7 @@ from pandas._typing import Axes, Dtype
 import pandasai as pai
 from pandasai import get_validated_dataset_path
 from pandasai.config import Config, ConfigManager
+from pandasai.constants import LOCAL_SOURCE_TYPES
 from pandasai.core.response import BaseResponse
 from pandasai.data_loader.semantic_layer_schema import (
     Column,
@@ -138,7 +139,14 @@ class DataFrame(pd.DataFrame):
         Returns:
             str: Serialized string representation of the DataFrame
         """
-        return DataframeSerializer.serialize(self)
+        source = self.schema.source or None
+
+        if source:
+            dialect = "duckdb" if source.type in LOCAL_SOURCE_TYPES else source.type
+        else:
+            dialect = "postgres"
+
+        return DataframeSerializer.serialize(self, dialect)
 
     def get_head(self):
         return self.head()
