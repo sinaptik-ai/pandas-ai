@@ -59,14 +59,13 @@ class TestConfigManager:
         ConfigManager._config = Config.from_dict(initial_config)
 
         # Update with new values
-        update_dict = {"verbose": True, "enable_cache": False}
+        update_dict = {"verbose": True}
         ConfigManager.update(update_dict)
 
         # Verify the configuration was updated correctly
         updated_config = ConfigManager._config.model_dump()
         assert updated_config["save_logs"] is True  # Original value preserved
         assert updated_config["verbose"] is True  # Value updated
-        assert updated_config["enable_cache"] is False  # New value added
 
     def test_set_api_key(self):
         """Test setting the API key"""

@@ -237,11 +237,6 @@ class TestPandaAIInit:
         ):
             pandasai.load("test_test/data_set")
 
-    def test_clear_cache(self):
-        with patch("pandasai.core.cache.Cache.clear") as mock_clear:
-            pandasai.clear_cache()
-            mock_clear.assert_called_once()
-
     @patch.dict(os.environ, {"PANDABI_API_KEY": "test-key"})
     @patch("pandasai.get_pandaai_session")
     @patch("pandasai.os.path.exists")
@@ -641,12 +636,7 @@ class TestPandaAIInit:
 
             assert isinstance(pandasai.config.get().llm, BambooLLM)
 
-            pandasai.config.set(
-                {
-                    "llm": llm,
-                    "enable_cache": False,
-                }
-            )
+            pandasai.config.set({"llm": llm})
 
             df.chat("test")
 

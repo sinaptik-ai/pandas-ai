@@ -7,8 +7,7 @@ from importlib.util import find_spec
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from pandasai.config import Config, ConfigManager
-from pandasai.constants import DEFAULT_CACHE_DIRECTORY, DEFAULT_CHART_DIRECTORY
-from pandasai.core.cache import Cache
+from pandasai.constants import DEFAULT_CHART_DIRECTORY
 from pandasai.data_loader.semantic_layer_schema import is_schema_source_same
 from pandasai.exceptions import InvalidConfigError
 from pandasai.helpers.folder import Folder
@@ -31,7 +30,6 @@ class AgentState:
     dfs: List[Union[DataFrame, VirtualDataFrame]] = field(default_factory=list)
     _config: Union[Config, dict] = field(default_factory=dict)
     memory: Memory = field(default_factory=Memory)
-    cache: Optional[Cache] = None
     vectorstore: Optional[VectorStore] = None
     intermediate_values: Dict[str, Any] = field(default_factory=dict)
     logger: Optional[Logger] = None
@@ -44,10 +42,6 @@ class AgentState:
     def __post_init__(self):
         if isinstance(self.config, dict):
             self.config = Config(**self.config)
-
-        # Initialize cache only if enabled in config
-        if getattr(self.config, "enable_cache", False) and self.cache is None:
-            self.cache = Cache()
 
     def initialize(
         self,
@@ -69,7 +63,6 @@ class AgentState:
             save_logs=self.config.save_logs, verbose=self.config.verbose
         )
         self.vectorstore = vectorstore
-        self.cache = Cache() if self.config.enable_cache else None
 
         self._validate_input()
         self._configure()
@@ -84,13 +77,9 @@ class AgentState:
                 )
 
     def _configure(self):
-        """Configure paths for charts and cache."""
+        """Configure paths for charts."""
         # Add project root path if save_charts_path is default
         Folder.create(DEFAULT_CHART_DIRECTORY)
-
-        # Add project root path if cache_path is default
-        if self.config.enable_cache:
-            Folder.create(DEFAULT_CACHE_DIRECTORY)
 
     def _get_config(self, config: Union[Config, dict, None]) -> Config:
         """Load a config to be used for queries."""

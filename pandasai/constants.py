@@ -8,14 +8,8 @@ DEFAULT_API_URL = "https://api.pandabi.ai"
 # Default directory to store chart if user doesn't provide any
 DEFAULT_CHART_DIRECTORY = "exports/charts"
 
-# Default directory for cache
-DEFAULT_CACHE_DIRECTORY = "cache"
-
 # Default permissions for files and directories
 DEFAULT_FILE_PERMISSIONS = 0o755
-
-# Token needed to invalidate the cache after breaking changes
-CACHE_TOKEN = "pandasai1"
 
 PANDABI_SETUP_MESSAGE = (
     "The api_key client option must be set either by passing api_key to the client "

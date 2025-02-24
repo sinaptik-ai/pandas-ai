@@ -21,7 +21,7 @@ class Folder:
             path (str): Path to the folder to be created.
         """
         try:
-            cache_dir = os.path.join((find_project_root()), path)
+            dir_path = os.path.join((find_project_root()), path)
         except ValueError:
-            cache_dir = os.path.join(os.getcwd(), path)
-        os.makedirs(cache_dir, mode=config.permissions, exist_ok=config.exist_ok)
+            dir_path = os.path.join(os.getcwd(), path)
+        os.makedirs(dir_path, mode=config.permissions, exist_ok=config.exist_ok)

@@ -8,7 +8,6 @@ from pandasai.agent import Agent
 from pandasai.dataframe.base import DataFrame
 
 from ..config import Config
-from ..core.cache import Cache
 
 
 class SmartDatalake:
@@ -99,10 +98,6 @@ class SmartDatalake:
         return self._agent.context.config
 
     @property
-    def cache(self):
-        return self._agent.context.cache
-
-    @property
     def verbose(self):
         return self._agent.context.config.verbose
 
@@ -119,19 +114,6 @@ class SmartDatalake:
     def save_logs(self, save_logs: bool):
         self._agent.context.config.save_logs = save_logs
         self._agent.logger.save_logs = save_logs
-
-    @property
-    def enable_cache(self):
-        return self._agent.context.config.enable_cache
-
-    @enable_cache.setter
-    def enable_cache(self, enable_cache: bool):
-        self._agent.context.config.enable_cache = enable_cache
-        if enable_cache:
-            if self.cache is None:
-                self._cache = Cache()
-        else:
-            self._cache = None
 
     @property
     def custom_prompts(self):

@@ -11,7 +11,6 @@ from pandasai.llm.base import LLM
 class Config(BaseModel):
     save_logs: bool = True
     verbose: bool = False
-    enable_cache: bool = True
     max_retries: int = 3
     llm: Optional[LLM] = None
     file_manager: FileManager = DefaultFileManager()

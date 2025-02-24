@@ -25,7 +25,6 @@ class Evaluation(BaseModel):
 )
 class TestAgentLLMJudge:
     root_dir = find_project_root()
-    cache_path = os.path.join(root_dir, "cache")
     heart_stroke_path = os.path.join(root_dir, "examples", "data", "heart.csv")
     loans_path = os.path.join(root_dir, "examples", "data", "loans_payments.csv")
 
@@ -75,8 +74,6 @@ class TestAgentLLMJudge:
     @pytest.fixture(autouse=True)
     def setup(self):
         """Setup shared resources for the test class."""
-
-        shutil.rmtree(self.cache_path, ignore_errors=True)
 
         self.client = OpenAI(api_key=JUDGE_OPENAI_API_KEY)
 
