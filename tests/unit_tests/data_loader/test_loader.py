@@ -5,9 +5,7 @@ import pytest
 
 from pandasai.data_loader.loader import DatasetLoader
 from pandasai.data_loader.local_loader import LocalDatasetLoader
-from pandasai.data_loader.semantic_layer_schema import SemanticLayerSchema
 from pandasai.dataframe.base import DataFrame
-from pandasai.exceptions import InvalidDataSourceType
 from pandasai.query_builders import LocalQueryBuilder
 
 
@@ -16,6 +14,7 @@ class TestDatasetLoader:
         with patch(
             "pandasai.data_loader.local_loader.LocalDatasetLoader.execute_query"
         ) as mock_execute_query_builder:
+            sample_schema.transformations = None
             loader = LocalDatasetLoader(sample_schema, "test/test")
 
             mock_execute_query_builder.return_value = DataFrame(
@@ -71,6 +70,7 @@ class TestDatasetLoader:
                 DatasetLoader._read_schema_file("test/users")
 
     def test_read_file(self, sample_schema):
+        sample_schema.transformations = None
         loader = LocalDatasetLoader(sample_schema, "test/test")
 
         mock_df = pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
@@ -88,6 +88,7 @@ class TestDatasetLoader:
         with patch("os.path.exists", return_value=True), patch(
             "pandasai.data_loader.local_loader.LocalDatasetLoader.execute_query"
         ) as mock_execute_query:
+            sample_schema.transformations = None
             mock_data = {
                 "email": ["test@example.com"],
                 "first_name": ["John"],

@@ -56,13 +56,6 @@ def raw_sample_schema():
         ],
         "order_by": ["created_at DESC"],
         "limit": 100,
-        "transformations": [
-            {"type": "anonymize", "params": {"column": "email"}},
-            {
-                "type": "convert_timezone",
-                "params": {"column": "timestamp", "to": "UTC"},
-            },
-        ],
         "source": {"type": "csv", "path": "users.csv", "table": "users"},
     }
 
@@ -91,13 +84,6 @@ def raw_mysql_schema():
         ],
         "order_by": ["created_at DESC"],
         "limit": 100,
-        "transformations": [
-            {"type": "anonymize", "params": {"column": "email"}},
-            {
-                "type": "convert_timezone",
-                "params": {"column": "timestamp", "to": "UTC"},
-            },
-        ],
         "source": {
             "type": "mysql",
             "connection": {

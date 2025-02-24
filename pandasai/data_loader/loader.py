@@ -1,7 +1,6 @@
 import os
 from abc import ABC, abstractmethod
 
-import pandas as pd
 import yaml
 
 from pandasai.dataframe.base import DataFrame
@@ -17,7 +16,6 @@ from ..constants import (
 )
 from ..query_builders.base_query_builder import BaseQueryBuilder
 from .semantic_layer_schema import SemanticLayerSchema
-from .transformation_manager import TransformationManager
 
 
 class DatasetLoader(ABC):

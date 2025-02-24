@@ -18,7 +18,6 @@ class TestSemanticLayerSchema:
         assert len(schema.columns) == 3
         assert schema.order_by == ["created_at DESC"]
         assert schema.limit == 100
-        assert len(schema.transformations) == 2
         assert schema.source.type == "csv"
 
     def test_valid_raw_mysql_schema(self, raw_mysql_schema):
@@ -29,7 +28,6 @@ class TestSemanticLayerSchema:
         assert len(schema.columns) == 3
         assert schema.order_by == ["created_at DESC"]
         assert schema.limit == 100
-        assert len(schema.transformations) == 2
         assert schema.source.type == "mysql"
 
     def test_valid_raw_mysql_view_schema(self, raw_mysql_view_schema):

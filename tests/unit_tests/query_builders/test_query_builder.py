@@ -34,13 +34,6 @@ class TestQueryBuilder:
             ],
             "order_by": ["created_at DESC"],
             "limit": 100,
-            "transformations": [
-                {"type": "anonymize", "params": {"column": "email"}},
-                {
-                    "type": "convert_timezone",
-                    "params": {"column": "timestamp", "to": "UTC"},
-                },
-            ],
             "source": {
                 "type": "mysql",
                 "connection": {
@@ -75,6 +68,36 @@ ORDER BY
 LIMIT 100"""
             assert query == expected_query
 
+    def test_build_query_csv_with_transformation(self, raw_sample_schema):
+        with patch(
+            "pandasai.query_builders.local_query_builder.ConfigManager.get"
+        ) as mock_config_get:
+            # Mock the return of `ConfigManager.get()`
+            raw_sample_schema["transformations"] = [
+                {"type": "anonymize", "params": {"column": "email"}},
+                {
+                    "type": "convert_timezone",
+                    "params": {"column": "timestamp", "to": "UTC"},
+                },
+            ]
+            sample_schema = SemanticLayerSchema(**raw_sample_schema)
+            mock_config = MagicMock()
+            mock_config.file_manager.abs_path.return_value = "/mocked/absolute/path"
+            mock_config_get.return_value = mock_config
+            query_builder = LocalQueryBuilder(sample_schema, "test/test")
+            query = query_builder.build_query()
+            expected_query = (
+                "SELECT\n"
+                "  MD5(email) AS email,\n"
+                "  first_name AS first_name,\n"
+                "  CONVERT_TZ(timestamp, 'UTC', 'UTC') AS timestamp\n"
+                "FROM READ_CSV('/mocked/absolute/path')\n"
+                "ORDER BY\n"
+                "  created_at DESC\n"
+                "LIMIT 100"
+            )
+            assert query == expected_query
+
     def test_build_query_parquet(self, sample_schema):
         sample_schema.source.type = "parquet"
         with patch(
@@ -107,6 +130,29 @@ FROM users
 ORDER BY
   created_at DESC
 LIMIT 100"""
+        assert query == expected_query
+
+    def test_build_query_with_transformation(self, raw_mysql_schema):
+        raw_mysql_schema["transformations"] = [
+            {"type": "anonymize", "params": {"column": "email"}},
+            {
+                "type": "convert_timezone",
+                "params": {"column": "timestamp", "to": "UTC"},
+            },
+        ]
+        mysql_schema = SemanticLayerSchema(**raw_mysql_schema)
+        query_builder = SqlQueryBuilder(mysql_schema)
+        query = query_builder.build_query()
+        expected_query = (
+            "SELECT\n"
+            "  MD5(email) AS email,\n"
+            "  first_name AS first_name,\n"
+            "  CONVERT_TZ(timestamp, 'UTC', 'UTC') AS timestamp\n"
+            "FROM users\n"
+            "ORDER BY\n"
+            "  created_at DESC\n"
+            "LIMIT 100"
+        )
         assert query == expected_query
 
     def test_build_query_without_order_by(self, mysql_schema):

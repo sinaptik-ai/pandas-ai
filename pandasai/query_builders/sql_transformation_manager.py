@@ -86,8 +86,9 @@ class SQLTransformationManager:
 
     @staticmethod
     def _convert_timezone(expr: str, params: TransformationParams) -> str:
-        to_tz = params.to or "UTC"
-        return f"CONVERT_TZ({expr}, 'UTC', '{to_tz}')"
+        to_tz = params.to_tz or "UTC"
+        from_tz = params.from_tz or "UTC"
+        return f"CONVERT_TZ({expr}, '{from_tz}', '{to_tz}')"
 
     @staticmethod
     def _strip(expr: str, params: TransformationParams) -> str:
@@ -211,11 +212,15 @@ class SQLTransformationManager:
         Returns:
             List[Transformation]: List of transformations that apply to the column
         """
-        return [
-            t
-            for t in schema_transformations
-            if t.params.column.lower() == column_name.lower()
-        ]
+        return (
+            [
+                t
+                for t in schema_transformations
+                if t.params.column.lower() == column_name.lower()
+            ]
+            if schema_transformations
+            else []
+        )
 
     @staticmethod
     def apply_column_transformations(

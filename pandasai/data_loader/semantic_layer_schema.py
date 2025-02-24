@@ -98,7 +98,8 @@ class TransformationParams(BaseModel):
         None, description="Number of decimal places for rounding"
     )
     factor: Optional[Union[int, float]] = Field(None, description="Scaling factor")
-    to: Optional[str] = Field(None, description="Target timezone or format")
+    to_tz: Optional[str] = Field(None, description="Target timezone or format")
+    from_tz: Optional[str] = Field(None, description="From timezone or format")
     errors: Optional[str] = Field(
         None, description="Error handling mode for numeric/datetime conversion"
     )
