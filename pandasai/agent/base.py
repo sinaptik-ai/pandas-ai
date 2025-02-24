@@ -5,7 +5,6 @@ from typing import Any, List, Optional, Union
 import duckdb
 import pandas as pd
 
-from pandasai.core.cache import Cache
 from pandasai.core.code_execution.code_executor import CodeExecutor
 from pandasai.core.code_generation.base import CodeGenerator
 from pandasai.core.prompts import (
@@ -101,13 +100,6 @@ class Agent:
         """Generate code using the LLM."""
 
         self._state.memory.add(str(query), is_user=True)
-        if self._state.config.enable_cache:
-            cached_code = self._state.cache.get(
-                self._state.cache.get_cache_key(self._state)
-            )
-            if cached_code:
-                self._state.logger.log("Using cached code.")
-                return self._code_generator.validate_and_clean_code(cached_code)
 
         self._state.logger.log("Generating new code...")
         prompt = get_chat_prompt_for_sql(self._state)
@@ -251,21 +243,11 @@ class Agent:
         try:
             self._state.assign_prompt_id()
 
-            # To ensure the cache is set properly if config is changed in between
-            if self._state.config.enable_cache and self._state.cache is None:
-                self._state.cache = Cache()
-
             # Generate code
             code = self.generate_code(query)
 
             # Execute code with retries
             result = self.execute_with_retries(code)
-
-            # Cache the result if caching is enabled
-            if self._state.config.enable_cache:
-                self._state.cache.set(
-                    self._state.cache.get_cache_key(self._state), code
-                )
 
             self._state.logger.log("Response generated successfully.")
             # Generate and return the final response

@@ -75,47 +75,6 @@ class TestAgent:
         assert response == "print(United States has the highest gdp)"
 
     @patch("pandasai.agent.base.CodeGenerator")
-    def test_generate_code_with_cache_hit(
-        self, mock_generate_code, agent: Agent, sample_df
-    ):
-        # Set up the cache to return a pre-cached response
-        cached_code = f"""execute_sql_query('SELECT A FROM {sample_df.schema.name}')
-print('Cached result: US has the highest GDP.')"""
-        agent._state.config.enable_cache = True
-        agent._state.cache.get = MagicMock(return_value=cached_code)
-
-        # Mock code generator is not used because of the cache hit
-        mock_generate_code.validate_and_clean_code.return_value = (
-            "print('Cached result: US has the highest GDP.')"
-        )
-
-        # Generate code
-        response = agent.generate_code("Which country has the highest GDP?")
-
-        # Check that the cached code was used
-        assert response == cached_code
-        assert mock_generate_code.validate_and_clean_code.called_with(cached_code)
-
-    @patch("pandasai.agent.base.CodeGenerator")
-    def test_generate_code_with_cache_miss(self, mock_generate_code, agent: Agent):
-        # Set up the cache to return no cached response
-        agent._state.config.enable_cache = True
-        agent._state.cache.get = MagicMock(return_value=None)
-
-        # Mock the code generator to return a new response
-        mock_generate_code.generate_code.return_value = (
-            "print('New result: US has the highest GDP.')"
-        )
-        agent._code_generator = mock_generate_code
-
-        # Generate code
-        response = agent.generate_code("Which country has the highest GDP?")
-
-        # Check that the cache miss triggered new code generation
-        assert mock_generate_code.generate_code.called
-        assert response == "print('New result: US has the highest GDP.')"
-
-    @patch("pandasai.agent.base.CodeGenerator")
     def test_generate_code_with(self, mock_generate_code, agent: Agent):
         # Mock the code generator to return a SQL-based response
         mock_generate_code.generate_code.return_value = (
@@ -476,8 +435,6 @@ print('Cached result: US has the highest GDP.')"""
         # Mock the necessary methods
         agent.generate_code = Mock(return_value="result = df['age'].mean()")
         agent.execute_with_retries = Mock(return_value=30.5)
-        agent._state.config.enable_cache = True
-        agent._state.cache = Mock()
 
         # Execute the query
         result = agent._process_query(query, output_type)
@@ -488,7 +445,6 @@ print('Cached result: US has the highest GDP.')"""
         # Verify method calls
         agent.generate_code.assert_called_once()
         agent.execute_with_retries.assert_called_once_with("result = df['age'].mean()")
-        agent._state.cache.set.assert_called_once()
 
     def test_process_query_execution_error(self, agent, config):
         """Test the _process_query method with execution error"""

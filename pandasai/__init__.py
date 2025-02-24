@@ -30,7 +30,6 @@ from pandasai.sandbox.sandbox import Sandbox
 
 from .agent import Agent
 from .constants import LOCAL_SOURCE_TYPES, SQL_SOURCE_TYPES
-from .core.cache import Cache
 from .data_loader.loader import DatasetLoader
 from .data_loader.semantic_layer_schema import (
     Column,
@@ -193,12 +192,6 @@ config = ConfigManager()
 api_key = APIKeyManager()
 
 
-def clear_cache(filename: str = None):
-    """Clear the cache"""
-    cache = Cache(filename) if filename else Cache()
-    cache.clear()
-
-
 def chat(query: str, *dataframes: DataFrame, sandbox: Optional[Sandbox] = None):
     """
     Start a new chat interaction with the assistant on Dataframe(s).
@@ -303,7 +296,6 @@ __all__ = [
     "Agent",
     "DataFrame",
     "VirtualDataFrame",
-    "clear_cache",
     "pandas",
     "chat",
     "follow_up",

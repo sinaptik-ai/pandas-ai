@@ -25,7 +25,6 @@ API_KEY = os.getenv("PANDABI_API_KEY_TEST_CHAT", None)
 )
 class TestAgentChat:
     root_dir = find_project_root()
-    cache_path = os.path.join(root_dir, "cache")
     heart_stroke_path = os.path.join(root_dir, "examples", "data", "heart.csv")
     loans_path = os.path.join(root_dir, "examples", "data", "loans_payments.csv")
     numeric_questions_with_answer = [
@@ -120,10 +119,6 @@ class TestAgentChat:
             (ChartResponse, DataFrameResponse),
         ),
     ]
-
-    @pytest.fixture(autouse=True)
-    def setup(self):
-        shutil.rmtree(self.cache_path, ignore_errors=True)
 
     @pytest.fixture
     def pandas_ai(self):

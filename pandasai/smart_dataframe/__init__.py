@@ -146,14 +146,6 @@ class SmartDataframe:
         self._agent.context.config.save_logs = save_logs
 
     @property
-    def enable_cache(self):
-        return self._agent.context.config.enable_cache
-
-    @enable_cache.setter
-    def enable_cache(self, enable_cache: bool):
-        self._agent.context.config.enable_cache = enable_cache
-
-    @property
     def save_charts(self):
         return self._agent.context.config.save_charts
 
