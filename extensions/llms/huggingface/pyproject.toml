@@ -1,10 +1,14 @@
 [tool.poetry]
 name = "pandasai-huggingface"
-version = "0.1.4"
+version = "0.1.5"
 description = "Hugging Face integration for PandaAI"
 authors = ["Gabriele Venturi"]
 license = "MIT"
 readme = "README.md"
+
+[tool.poetry.urls]
+"Documentation" = "https://docs.getpanda.ai/"
+"Repository" = "https://github.com/sinaptik-ai/pandas-ai"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"

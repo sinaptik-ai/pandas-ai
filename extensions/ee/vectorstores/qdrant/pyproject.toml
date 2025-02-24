@@ -1,9 +1,14 @@
 [tool.poetry]
 name = "pandasai-qdrant"
-version = "0.1.3"
+version = "0.1.4"
 description = "Qdrant integration for PandaAI"
 authors = ["Gabriele Venturi"]
 readme = "README.md"
+license = "Proprietary"
+
+[tool.poetry.urls]
+"Documentation" = "https://docs.getpanda.ai/"
+"Repository" = "https://github.com/sinaptik-ai/pandas-ai"
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.12"
@@ -23,3 +28,6 @@ pytest-mock = "^3.11.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.setuptools]
+license-files = ["LICENSE"]

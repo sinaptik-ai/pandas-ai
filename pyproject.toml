@@ -1,11 +1,15 @@
 [tool.poetry]
 name = "pandasai"
-version = "3.0.0-beta.12"
+version = "3.0.0-beta.13"
 description = "Chat with your database (SQL, CSV, pandas, mongodb, noSQL, etc). PandaAI makes data analysis conversational using LLMs (GPT 3.5 / 4, Anthropic, VertexAI) and RAG."
 authors = ["Gabriele Venturi"]
 license = "MIT"
 readme = "README.md"
 packages = [{include = "pandasai"}]
+
+[tool.poetry.urls]
+"Documentation" = "https://docs.getpanda.ai/"
+"Repository" = "https://github.com/sinaptik-ai/pandas-ai"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
@@ -49,3 +53,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 exclude = ["tests_*"]
+
+[tool.setuptools]
+license-files = ["LICENSE"]

@@ -5,3 +5,8 @@ This extension integrates Milvus with PandaAI, providing vector storage capabili
 ## Installation
 
 You can install this extension using poetry:
+
+## License
+
+This package is licensed under the Sinaptik GmbH Enterprise License.  
+For commercial use, please contact [pm@sinaptik.ai](mailto:pm@sinaptik.ai).
