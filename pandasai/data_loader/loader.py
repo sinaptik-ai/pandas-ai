@@ -10,7 +10,6 @@ from pandasai.helpers.path import (
     get_validated_dataset_path,
     transform_underscore_to_dash,
 )
-from pandasai.helpers.sql_sanitizer import sanitize_sql_table_name
 
 from .. import ConfigManager
 from ..constants import (
@@ -89,10 +88,3 @@ class DatasetLoader(ABC):
 
         """
         raise MethodNotImplementedError("Loader not instantiated")
-
-    def _apply_transformations(self, df: pd.DataFrame) -> pd.DataFrame:
-        if not self.schema.transformations:
-            return df
-
-        transformation_manager = TransformationManager(df)
-        return transformation_manager.apply_transformations(self.schema.transformations)

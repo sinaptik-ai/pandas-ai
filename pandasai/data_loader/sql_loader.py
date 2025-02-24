@@ -48,8 +48,7 @@ class SQLDatasetLoader(DatasetLoader):
                 "The SQL query is deemed unsafe and will not be executed."
             )
         try:
-            dataframe: pd.DataFrame = load_function(connection_info, query, params)
-            return self._apply_transformations(dataframe)
+            return load_function(connection_info, query, params)
 
         except ModuleNotFoundError as e:
             raise ImportError(

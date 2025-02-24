@@ -17,6 +17,8 @@ from pandasai.data_loader.semantic_layer_schema import (
     Relation,
     SemanticLayerSchema,
     Source,
+    Transformation,
+    TransformationParams,
 )
 from pandasai.exceptions import DatasetNotFound, InvalidConfigError, PandaAIApiKeyError
 from pandasai.helpers.path import (
@@ -49,6 +51,7 @@ def create(
     relations: Optional[List[dict]] = None,
     view: bool = False,
     group_by: Optional[List[str]] = None,
+    transformations: Optional[List[dict]] = None,
 ) -> Union[DataFrame, VirtualDataFrame]:
     """
     Creates a new dataset at the specified path with optional metadata, schema,
@@ -103,16 +106,29 @@ def create(
         ... )
         Dataset saved successfully to path: datasets/my-org/my-dataset
 
-        >>> # Create a dataset with group by functionality
+        >>> # Create a dataset with transformations and group by
         >>> create(
         ...     path="my-org/sales",
         ...     df=sales_df,
-        ...     description="Sales data with aggregations",
+        ...     description="Sales data with transformations",
         ...     columns=[
         ...         {"name": "category", "type": "string", "description": "Product category"},
         ...         {"name": "region", "type": "string", "description": "Sales region"},
-        ...         {"name": "amount", "type": "float", "expression": "sum", "alias": "total_sales"},
-        ...         {"name": "quantity", "type": "integer", "expression": "avg", "alias": "avg_quantity"},
+        ...         {"name": "amount", "type": "float", "expression": "sum(amount)", "alias": "total_sales"},
+        ...         {"name": "quantity", "type": "integer", "expression": "avg(quantity)", "alias": "avg_quantity"},
+        ...     ],
+        ...     transformations=[
+        ...         {
+        ...             "type": "fill_na",
+        ...             "params": {"column": "amount", "value": 0}
+        ...         },
+        ...         {
+        ...             "type": "map_values",
+        ...             "params": {
+        ...                 "column": "category",
+        ...                 "mapping": {"A": "Premium", "B": "Standard", "C": "Basic"}
+        ...             }
+        ...         }
         ...     ],
         ...     group_by=["category", "region"],
         ... )
@@ -140,11 +156,16 @@ def create(
             "Please provide either a DataFrame, a Source or a View"
         )
 
+    # Parse transformations if provided
+    parsed_transformations = (
+        [Transformation(**t) for t in transformations] if transformations else None
+    )
     parsed_columns = [Column(**column) for column in columns] if columns else None
 
     if df is not None:
         schema = df.schema
         schema.name = underscore_dataset_name
+        schema.transformations = parsed_transformations
         if (
             parsed_columns
         ):  # if no columns are passed it automatically parse the columns from the df
@@ -162,6 +183,7 @@ def create(
             view=True,
             columns=parsed_columns,
             group_by=group_by,
+            transformations=parsed_transformations,
         )
     elif source.get("table"):
         schema: SemanticLayerSchema = SemanticLayerSchema(
@@ -169,6 +191,7 @@ def create(
             source=Source(**source),
             columns=parsed_columns,
             group_by=group_by,
+            transformations=parsed_transformations,
         )
     else:
         raise InvalidConfigError("Unable to create schema with the provided params")

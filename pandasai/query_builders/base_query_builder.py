@@ -4,11 +4,13 @@ from sqlglot import select
 from sqlglot.optimizer.normalize_identifiers import normalize_identifiers
 
 from pandasai.data_loader.semantic_layer_schema import SemanticLayerSchema, Source
+from pandasai.query_builders.sql_transformation_manager import SQLTransformationManager
 
 
 class BaseQueryBuilder:
     def __init__(self, schema: SemanticLayerSchema):
         self.schema = schema
+        self.transformation_manager = SQLTransformationManager()
 
     def build_query(self) -> str:
         query = select(*self._get_columns()).from_(self._get_table_expression())
@@ -55,6 +57,14 @@ class BaseQueryBuilder:
             else:
                 column_expr = normalize_identifiers(col.name).sql()
 
+            # Apply any transformations that target this column
+            if self.schema.transformations:
+                column_expr = self.transformation_manager.apply_column_transformations(
+                    column_expr, col.name, self.schema.transformations
+                )
+                col.alias = col.alias or normalize_identifiers(col.name).sql()
+
+            # Add alias if specified
             if col.alias:
                 column_expr = f"{column_expr} AS {col.alias}"
 
