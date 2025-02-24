@@ -7,6 +7,10 @@ license = "MIT"
 readme = "README.md"
 packages = [{include = "pandasai"}]
 
+[tool.poetry.urls]
+"Documentation" = "https://docs.getpanda.ai/"
+"Repository" = "https://github.com/sinaptik-ai/pandas-ai"
+
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
 python-dotenv = "^1.0.0"
@@ -49,3 +53,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 exclude = ["tests_*"]
+
+[tool.setuptools]
+license-files = ["LICENSE"]
