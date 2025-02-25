@@ -1,16 +1,10 @@
-import os
-
 import duckdb
 import pandas as pd
 
 from pandasai.dataframe.base import DataFrame
-from pandasai.exceptions import InvalidDataSourceType, MaliciousQueryError
+from pandasai.exceptions import MaliciousQueryError
 from pandasai.query_builders import LocalQueryBuilder
 
-from ..config import ConfigManager
-from ..constants import (
-    LOCAL_SOURCE_TYPES,
-)
 from ..helpers.sql_sanitizer import is_sql_query_safe
 from .duck_db_connection_manager import DuckDBConnectionManager
 from .loader import DatasetLoader
@@ -37,7 +31,6 @@ class LocalDatasetLoader(DatasetLoader):
 
     def load(self) -> DataFrame:
         df: pd.DataFrame = self.execute_query(self.query_builder.build_query())
-
         return DataFrame(
             df,
             schema=self.schema,

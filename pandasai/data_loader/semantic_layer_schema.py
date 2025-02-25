@@ -98,7 +98,8 @@ class TransformationParams(BaseModel):
         None, description="Number of decimal places for rounding"
     )
     factor: Optional[Union[int, float]] = Field(None, description="Scaling factor")
-    to: Optional[str] = Field(None, description="Target timezone or format")
+    to_tz: Optional[str] = Field(None, description="Target timezone or format")
+    from_tz: Optional[str] = Field(None, description="From timezone or format")
     errors: Optional[str] = Field(
         None, description="Error handling mode for numeric/datetime conversion"
     )
@@ -148,7 +149,7 @@ class TransformationParams(BaseModel):
         None, description="List of columns for multi-column operations"
     )
     keep: Optional[str] = Field("first", description="Which duplicates to keep")
-    ref_df: Optional[Any] = Field(
+    ref_table: Optional[Any] = Field(
         None, description="Reference DataFrame for foreign key validation"
     )
     ref_column: Optional[str] = Field(

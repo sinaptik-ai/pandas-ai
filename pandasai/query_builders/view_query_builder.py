@@ -1,14 +1,15 @@
 import re
-from typing import Dict
+from typing import Dict, List
 
 from sqlglot import exp, expressions, parse_one, select
 from sqlglot.expressions import Subquery
 from sqlglot.optimizer.normalize_identifiers import normalize_identifiers
 
 from ..data_loader.loader import DatasetLoader
-from ..data_loader.semantic_layer_schema import SemanticLayerSchema
+from ..data_loader.semantic_layer_schema import SemanticLayerSchema, Transformation
 from ..helpers.sql_sanitizer import sanitize_view_column_name
 from .base_query_builder import BaseQueryBuilder
+from .sql_transformation_manager import SQLTransformationManager
 
 
 class ViewQueryBuilder(BaseQueryBuilder):
@@ -58,6 +59,11 @@ class ViewQueryBuilder(BaseQueryBuilder):
             else:
                 column_expr = self.normalize_view_column_alias(col.name)
 
+            # Apply any transformations defined for this column
+            column_expr = SQLTransformationManager.apply_column_transformations(
+                column_expr, col.name, self.schema.transformations
+            )
+
             alias = aliases[i]
             column_expr = f"{column_expr} AS {alias}"
 
@@ -68,6 +74,10 @@ class ViewQueryBuilder(BaseQueryBuilder):
     def build_query(self) -> str:
         """Build the SQL query with proper group by column aliasing."""
         query = select(*self._get_aliases()).from_(self._get_table_expression())
+
+        if self._check_distinct():
+            query = query.distinct()
+
         if self.schema.order_by:
             query = query.order_by(*self.schema.order_by)
         if self.schema.limit:
@@ -77,6 +87,10 @@ class ViewQueryBuilder(BaseQueryBuilder):
     def get_head_query(self, n=5):
         """Get the head query with proper group by column aliasing."""
         query = select(*self._get_aliases()).from_(self._get_table_expression())
+
+        if self._check_distinct():
+            query = query.distinct()
+
         query = query.limit(n)
         return query.sql(pretty=True)
 

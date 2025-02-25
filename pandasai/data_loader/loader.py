@@ -1,7 +1,6 @@
 import os
 from abc import ABC, abstractmethod
 
-import pandas as pd
 import yaml
 
 from pandasai.dataframe.base import DataFrame
@@ -10,7 +9,6 @@ from pandasai.helpers.path import (
     get_validated_dataset_path,
     transform_underscore_to_dash,
 )
-from pandasai.helpers.sql_sanitizer import sanitize_sql_table_name
 
 from .. import ConfigManager
 from ..constants import (
@@ -18,7 +16,6 @@ from ..constants import (
 )
 from ..query_builders.base_query_builder import BaseQueryBuilder
 from .semantic_layer_schema import SemanticLayerSchema
-from .transformation_manager import TransformationManager
 
 
 class DatasetLoader(ABC):
@@ -48,15 +45,18 @@ class DatasetLoader(ABC):
         if schema.source and schema.source.type in LOCAL_SOURCE_TYPES:
             from pandasai.data_loader.local_loader import LocalDatasetLoader
 
-            return LocalDatasetLoader(schema, dataset_path)
+            loader = LocalDatasetLoader(schema, dataset_path)
         elif schema.view:
             from pandasai.data_loader.view_loader import ViewDatasetLoader
 
-            return ViewDatasetLoader(schema, dataset_path)
+            loader = ViewDatasetLoader(schema, dataset_path)
         else:
             from pandasai.data_loader.sql_loader import SQLDatasetLoader
 
-            return SQLDatasetLoader(schema, dataset_path)
+            loader = SQLDatasetLoader(schema, dataset_path)
+
+        loader.query_builder.validate_query_builder()
+        return loader
 
     @classmethod
     def create_loader_from_path(cls, dataset_path: str) -> "DatasetLoader":
@@ -89,10 +89,3 @@ class DatasetLoader(ABC):
 
         """
         raise MethodNotImplementedError("Loader not instantiated")
-
-    def _apply_transformations(self, df: pd.DataFrame) -> pd.DataFrame:
-        if not self.schema.transformations:
-            return df
-
-        transformation_manager = TransformationManager(df)
-        return transformation_manager.apply_transformations(self.schema.transformations)
