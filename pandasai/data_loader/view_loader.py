@@ -103,6 +103,8 @@ class ViewDatasetLoader(SQLDatasetLoader):
                 "The SQL query is deemed unsafe and will not be executed."
             )
         try:
+            if params:
+                query = query.replace(" % ", " %% ")
             return load_function(connection_info, query, params)
 
         except ModuleNotFoundError as e:
