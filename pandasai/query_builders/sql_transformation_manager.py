@@ -56,7 +56,7 @@ class SQLTransformationManager:
     @staticmethod
     def _fill_na(expr: str, params: TransformationParams) -> str:
         if isinstance(params.value, str):
-            params.value = SQLTransformationManager._quote_str(params.valu)
+            params.value = SQLTransformationManager._quote_str(params.value)
         else:
             params.value = SQLTransformationManager._validate_numeric(
                 params.value, "value"
