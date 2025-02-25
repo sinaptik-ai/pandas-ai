@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from pandasai.data_loader.semantic_layer_schema import (
     Transformation,
@@ -8,6 +8,29 @@ from pandasai.data_loader.semantic_layer_schema import (
 
 class SQLTransformationManager:
     """Manages SQL-based transformations for query expressions."""
+
+    @staticmethod
+    def _quote_str(value: str) -> str:
+        """Quote and escape a string value for SQL."""
+        if value is None:
+            return "NULL"
+        # Replace single quotes with double single quotes for SQL escaping
+        escaped = str(value).replace("'", "''")
+        return f"'{escaped}'"
+
+    @staticmethod
+    def _validate_numeric(
+        value: Union[int, float], param_name: str
+    ) -> Union[int, float]:
+        """Validate that a value is numeric."""
+        if not isinstance(value, (int, float)):
+            try:
+                value = float(value)
+            except (ValueError, TypeError):
+                raise ValueError(
+                    f"Parameter {param_name} must be numeric, got {type(value)}"
+                )
+        return value
 
     @staticmethod
     def apply_transformations(expr: str, transformations: List[Transformation]) -> str:
@@ -20,6 +43,8 @@ class SQLTransformationManager:
             if hasattr(SQLTransformationManager, method_name):
                 method = getattr(SQLTransformationManager, method_name)
                 transformed_expr = method(transformed_expr, transformation.params)
+            else:
+                raise ValueError(f"Unsupported transformation type: {method_name}")
 
         return transformed_expr
 
@@ -40,7 +65,7 @@ class SQLTransformationManager:
         case_stmt = (
             "CASE "
             + " ".join(
-                f"WHEN {expr} = '{key}' THEN '{value}'"
+                f"WHEN {expr} = {SQLTransformationManager._quote_str(key)} THEN {SQLTransformationManager._quote_str(value)}"
                 for key, value in params.mapping.items()
             )
             + f" ELSE {expr} END"
@@ -58,22 +83,30 @@ class SQLTransformationManager:
 
     @staticmethod
     def _round_numbers(expr: str, params: TransformationParams) -> str:
-        decimals = params.decimals or 0
-        return f"ROUND({expr}, {decimals})"
+        decimals = SQLTransformationManager._validate_numeric(
+            params.decimals or 0, "decimals"
+        )
+        return f"ROUND({expr}, {int(decimals)})"
 
     @staticmethod
     def _format_date(expr: str, params: TransformationParams) -> str:
         date_format = params.format or "%Y-%m-%d"
-        return f"DATE_FORMAT({expr}, '{date_format}')"
+        return (
+            f"DATE_FORMAT({expr}, {SQLTransformationManager._quote_str(date_format)})"
+        )
 
     @staticmethod
     def _truncate(expr: str, params: TransformationParams) -> str:
-        length = params.length or 10
-        return f"LEFT({expr}, {length})"
+        length = SQLTransformationManager._validate_numeric(
+            params.length or 10, "length"
+        )
+        return f"LEFT({expr}, {int(length)})"
 
     @staticmethod
     def _scale(expr: str, params: TransformationParams) -> str:
-        factor = params.factor or 1
+        factor = SQLTransformationManager._validate_numeric(
+            params.factor or 1, "factor"
+        )
         return f"({expr} * {factor})"
 
     @staticmethod
@@ -88,7 +121,7 @@ class SQLTransformationManager:
     def _convert_timezone(expr: str, params: TransformationParams) -> str:
         to_tz = params.to_tz or "UTC"
         from_tz = params.from_tz or "UTC"
-        return f"CONVERT_TZ({expr}, '{from_tz}', '{to_tz}')"
+        return f"CONVERT_TZ({expr}, {SQLTransformationManager._quote_str(from_tz)}, {SQLTransformationManager._quote_str(to_tz)})"
 
     @staticmethod
     def _strip(expr: str, params: TransformationParams) -> str:
@@ -107,27 +140,27 @@ class SQLTransformationManager:
     def _replace(expr: str, params: TransformationParams) -> str:
         old_value = params.old_value
         new_value = params.new_value
-        return f"REPLACE({expr}, '{old_value}', '{new_value}')"
+        return f"REPLACE({expr}, {SQLTransformationManager._quote_str(old_value)}, {SQLTransformationManager._quote_str(new_value)})"
 
     @staticmethod
     def _extract(expr: str, params: TransformationParams) -> str:
         pattern = params.pattern
-        return f"REGEXP_SUBSTR({expr}, '{pattern}')"
+        return f"REGEXP_SUBSTR({expr}, {SQLTransformationManager._quote_str(pattern)})"
 
     @staticmethod
     def _pad(expr: str, params: TransformationParams) -> str:
-        width = params.width or 10
+        width = SQLTransformationManager._validate_numeric(params.width or 10, "width")
         side = params.side or "left"
         pad_char = params.pad_char or " "
 
         if side.lower() == "left":
-            return f"LPAD({expr}, {width}, '{pad_char}')"
-        return f"RPAD({expr}, {width}, '{pad_char}')"
+            return f"LPAD({expr}, {int(width)}, {SQLTransformationManager._quote_str(pad_char)})"
+        return f"RPAD({expr}, {int(width)}, {SQLTransformationManager._quote_str(pad_char)})"
 
     @staticmethod
     def _clip(expr: str, params: TransformationParams) -> str:
-        lower = params.lower
-        upper = params.upper
+        lower = SQLTransformationManager._validate_numeric(params.lower, "lower")
+        upper = SQLTransformationManager._validate_numeric(params.upper, "upper")
         return f"LEAST(GREATEST({expr}, {lower}), {upper})"
 
     @staticmethod
@@ -137,11 +170,15 @@ class SQLTransformationManager:
         if not bins or not labels or len(bins) != len(labels) + 1:
             return expr
 
+        # Validate all bin values are numeric
+        bins = [
+            SQLTransformationManager._validate_numeric(b, f"bins[{i}]")
+            for i, b in enumerate(bins)
+        ]
+
         case_stmt = "CASE "
         for i in range(len(labels)):
-            case_stmt += (
-                f"WHEN {expr} >= {bins[i]} AND {expr} < {bins[i+1]} THEN '{labels[i]}' "
-            )
+            case_stmt += f"WHEN {expr} >= {bins[i]} AND {expr} < {bins[i+1]} THEN {SQLTransformationManager._quote_str(labels[i])} "
         case_stmt += f"ELSE {expr} END"
 
         return case_stmt
@@ -156,12 +193,12 @@ class SQLTransformationManager:
     def _validate_date_range(expr: str, params: TransformationParams) -> str:
         start_date = params.start_date
         end_date = params.end_date
-        return f"CASE WHEN {expr} BETWEEN '{start_date}' AND '{end_date}' THEN {expr} ELSE NULL END"
+        return f"CASE WHEN {expr} BETWEEN {SQLTransformationManager._quote_str(start_date)} AND {SQLTransformationManager._quote_str(end_date)} THEN {expr} ELSE NULL END"
 
     @staticmethod
     def _normalize_phone(expr: str, params: TransformationParams) -> str:
         country_code = params.country_code or "+1"
-        return f"CONCAT('{country_code}', REGEXP_REPLACE({expr}, '[^0-9]', ''))"
+        return f"CONCAT({SQLTransformationManager._quote_str(country_code)}, REGEXP_REPLACE({expr}, '[^0-9]', ''))"
 
     @staticmethod
     def _remove_duplicates(expr: str, params: TransformationParams) -> str:
@@ -185,7 +222,7 @@ class SQLTransformationManager:
         case_stmt = (
             "CASE "
             + " ".join(
-                f"WHEN LOWER({expr}) = LOWER('{key}') THEN '{value}'"
+                f"WHEN LOWER({expr}) = LOWER({SQLTransformationManager._quote_str(key)}) THEN {SQLTransformationManager._quote_str(value)}"
                 for key, value in params.mapping.items()
             )
             + f" ELSE {expr} END"
