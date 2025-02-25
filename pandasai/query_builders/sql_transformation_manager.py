@@ -55,6 +55,12 @@ class SQLTransformationManager:
 
     @staticmethod
     def _fill_na(expr: str, params: TransformationParams) -> str:
+        if isinstance(params.value, str):
+            params.value = SQLTransformationManager._quote_str(params.valu)
+        else:
+            params.value = SQLTransformationManager._validate_numeric(
+                params.value, "value"
+            )
         return f"COALESCE({expr}, {params.value})"
 
     @staticmethod
@@ -133,8 +139,9 @@ class SQLTransformationManager:
 
     @staticmethod
     def _to_datetime(expr: str, params: TransformationParams) -> str:
-        format = params.format or "%Y-%m-%d"
-        return f"STR_TO_DATE({expr}, '{format}')"
+        _format = params.format or "%Y-%m-%d"
+        _format = SQLTransformationManager._quote_str(_format)
+        return f"STR_TO_DATE({expr}, {_format})"
 
     @staticmethod
     def _replace(expr: str, params: TransformationParams) -> str:
@@ -235,7 +242,7 @@ class SQLTransformationManager:
     @staticmethod
     def _rename(expr: str, params: TransformationParams) -> str:
         # Renaming is typically handled at the query level with AS
-        new_name = params.new_name
+        new_name = SQLTransformationManager._quote_str(params.new_name)
         return f"{expr} AS {new_name}"
 
     @staticmethod

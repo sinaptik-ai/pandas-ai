@@ -343,5 +343,5 @@ def test_rename_transformation():
         type="rename", params=TransformationParams(new_name="new_name")
     )
     result = SQLTransformationManager.apply_transformations(expr, [transform])
-    assert result == "old_name AS new_name"
+    assert result == "old_name AS 'new_name'"
     assert validate_sql(result)
