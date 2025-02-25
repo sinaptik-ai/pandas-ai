@@ -149,7 +149,7 @@ class TransformationParams(BaseModel):
         None, description="List of columns for multi-column operations"
     )
     keep: Optional[str] = Field("first", description="Which duplicates to keep")
-    ref_df: Optional[Any] = Field(
+    ref_table: Optional[Any] = Field(
         None, description="Reference DataFrame for foreign key validation"
     )
     ref_column: Optional[str] = Field(

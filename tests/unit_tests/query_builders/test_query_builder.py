@@ -155,6 +155,15 @@ LIMIT 100"""
         )
         assert query == expected_query
 
+    def test_build_query_invalid(self, mysql_schema):
+        mysql_schema.columns = ["invalid"]
+        query_builder = SqlQueryBuilder(mysql_schema)
+        with pytest.raises(
+            ValueError,
+            match="Failed to generate a valid SQL query from the provided schema:",
+        ):
+            query_builder.validate_query_builder()
+
     def test_build_query_without_order_by(self, mysql_schema):
         mysql_schema.order_by = None
         query_builder = SqlQueryBuilder(mysql_schema)

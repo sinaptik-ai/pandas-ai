@@ -216,7 +216,7 @@ class SQLTransformationManager:
             [
                 t
                 for t in schema_transformations
-                if t.params.column.lower() == column_name.lower()
+                if t.params and t.params.column.lower() == column_name.lower()
             ]
             if schema_transformations
             else []

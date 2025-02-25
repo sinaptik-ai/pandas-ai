@@ -74,6 +74,10 @@ class ViewQueryBuilder(BaseQueryBuilder):
     def build_query(self) -> str:
         """Build the SQL query with proper group by column aliasing."""
         query = select(*self._get_aliases()).from_(self._get_table_expression())
+
+        if self._check_distinct():
+            query = query.distinct()
+
         if self.schema.order_by:
             query = query.order_by(*self.schema.order_by)
         if self.schema.limit:
@@ -83,6 +87,10 @@ class ViewQueryBuilder(BaseQueryBuilder):
     def get_head_query(self, n=5):
         """Get the head query with proper group by column aliasing."""
         query = select(*self._get_aliases()).from_(self._get_table_expression())
+
+        if self._check_distinct():
+            query = query.distinct()
+
         query = query.limit(n)
         return query.sql(pretty=True)
 

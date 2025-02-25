@@ -45,15 +45,18 @@ class DatasetLoader(ABC):
         if schema.source and schema.source.type in LOCAL_SOURCE_TYPES:
             from pandasai.data_loader.local_loader import LocalDatasetLoader
 
-            return LocalDatasetLoader(schema, dataset_path)
+            loader = LocalDatasetLoader(schema, dataset_path)
         elif schema.view:
             from pandasai.data_loader.view_loader import ViewDatasetLoader
 
-            return ViewDatasetLoader(schema, dataset_path)
+            loader = ViewDatasetLoader(schema, dataset_path)
         else:
             from pandasai.data_loader.sql_loader import SQLDatasetLoader
 
-            return SQLDatasetLoader(schema, dataset_path)
+            loader = SQLDatasetLoader(schema, dataset_path)
+
+        loader.query_builder.validate_query_builder()
+        return loader
 
     @classmethod
     def create_loader_from_path(cls, dataset_path: str) -> "DatasetLoader":
