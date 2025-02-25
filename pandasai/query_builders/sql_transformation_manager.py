@@ -168,7 +168,7 @@ class SQLTransformationManager:
         bins = params.bins
         labels = params.labels
         if not bins or not labels or len(bins) != len(labels) + 1:
-            return expr
+            raise ValueError("Bins and labels lengths do not match the expected configuration.")
 
         # Validate all bin values are numeric
         bins = [
