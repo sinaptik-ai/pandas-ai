@@ -19,7 +19,7 @@ from tests.integration_tests.conftest import (
 @pytest.fixture(scope="session")
 def sql_view_dataset_slug():
     connection = {
-        "host": "exemple.amazonaws.com",
+        "host": "example.amazonaws.com",
         "port": 5432,
         "user": "user",
         "password": "password",
