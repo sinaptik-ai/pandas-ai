@@ -259,6 +259,6 @@ def test_source_or_view_error():
         SemanticLayerSchema(name="ciao")
 
 
-def test_column_must_be_definend_for_view():
+def test_column_must_be_defined_for_view():
     with pytest.raises(ValidationError):
         SemanticLayerSchema(name="ciao", view=True)
