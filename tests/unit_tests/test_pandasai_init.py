@@ -339,15 +339,13 @@ class TestPandaAIInit:
                 "test-org/test-dataset",
                 sample_df,
                 columns=[
-                    {"name":"A"},
-                    {"name":"B", "expression":"avg(B)","alias":"average_b"}
+                    {"name": "A"},
+                    {"name": "B", "expression": "avg(B)", "alias": "average_b"},
                 ],
                 group_by=["A"],
             )
 
-    def test_create_invalid(
-        self, sample_df, mock_loader_instance, mock_file_manager
-    ):
+    def test_create_invalid(self, sample_df, mock_loader_instance, mock_file_manager):
         """Test creating a dataset with valid inputs."""
         with pytest.raises(InvalidConfigError):
             pandasai.create("test-org/test-dataset")
