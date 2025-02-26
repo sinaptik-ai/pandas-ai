@@ -391,7 +391,7 @@ LIMIT 100"""
         result = base_query_builder.build_query()
         assert "ORDER BY\n  column" in result
 
-    def test_get__group_by_columns(self, sample_schema):
+    def test_get_group_by_columns(self, sample_schema):
         base_query_builder = BaseQueryBuilder(sample_schema)
         base_query_builder.schema.group_by = ["parents"]
         result = base_query_builder.get_head_query()
