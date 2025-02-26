@@ -197,7 +197,7 @@ You can find more examples in the [examples](examples) directory.
 
 ## 📜 License
 
-PandaAI is available under the MIT expat license, except for the `pandasai/ee` directory of this repository, which has its [license here](https://github.com/Sinaptik-AI/pandas-ai/blob/master/pandasai/ee/LICENSE).
+PandaAI is available under the MIT expat license, except for the `pandasai/ee` directory of this repository, which has its [license here](https://github.com/sinaptik-ai/pandas-ai/blob/main/ee/LICENSE).
 
 If you are interested in managed PandaAI Cloud or self-hosted Enterprise Offering, [contact us](https://getpanda.ai/pricing).
 
