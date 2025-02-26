@@ -236,7 +236,7 @@ def test_column_expression_parse_error():
         Column.is_expression_valid("invalid SELECT FROM sql")
 
 
-def test_incopatible_source():
+def test_incompatible_source():
     source1 = Source(type="csv", path="path")
     source2 = Source(
         type="postgres",
