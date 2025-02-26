@@ -17,15 +17,16 @@ class FakeLLM(LLM):
     def __init__(self, output: Optional[str] = None, type: str = "fake"):
         if output is not None:
             self._output = output
+        else:
+            self._output = "Mocked response"
         self._type = type
         self.called = False
         self.last_prompt = None
-        self.response = "Mocked response"
 
     def call(self, instruction: BasePrompt, context: AgentState = None) -> str:
         self.called = True
         self.last_prompt = instruction.to_string()
-        return self.response
+        return self._output
 
     @property
     def type(self) -> str:

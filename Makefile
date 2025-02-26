@@ -7,7 +7,7 @@ all: help  ## default target executed when no arguments are given to make
 #############################
 
 UNIT_TESTS_DIR ?= tests/unit_tests/
-
+INTEGRATION_TESTS_DIR ?= tests/integration_tests/
 # setup_python:  ## ensure we're using Python 3.10
 # 	@echo "Setting up Python 3.10..."
 # 	poetry env use python3.10
@@ -18,7 +18,7 @@ install_deps: setup_python  ## install core dependencies
 
 test_core: install_deps  ## run core tests only
 	@echo "Running core tests..."
-	poetry run pytest $(UNIT_TESTS_DIR)
+	poetry run pytest $(UNIT_TESTS_DIR) $(INTEGRATION_TESTS_DIR)
 
 install_extension_deps: setup_python  ## install all extension dependencies
 	@echo "Installing LLM extension dependencies..."
@@ -73,7 +73,7 @@ test_extensions: install_extension_deps  ## run all extension tests
 test_all: test_core test_extensions  ## run all tests (core and extensions)
 
 tests-coverage: install_deps  ## run unit tests and generate coverage report
-	poetry run coverage run --source=pandasai -m pytest $(UNIT_TESTS_DIR)
+	poetry run coverage run --source=pandasai -m pytest $(UNIT_TESTS_DIR) $(INTEGRATION_TESTS_DIR)
 	poetry run coverage xml
 
 ###########################
