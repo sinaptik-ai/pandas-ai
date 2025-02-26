@@ -2,7 +2,10 @@ import pytest
 from pydantic import ValidationError
 
 from pandasai.data_loader.semantic_layer_schema import (
+    Column,
     SemanticLayerSchema,
+    Source,
+    SQLConnectionConfig,
     Transformation,
     TransformationParams,
 )
@@ -226,3 +229,36 @@ def test_rename_transformation_missing_params():
                 },
             ],
         )
+
+
+def test_column_expression_parse_error():
+    with pytest.raises(ValueError):
+        Column.is_expression_valid("invalid SELECT FROM sql")
+
+
+def test_incopatible_source():
+    source1 = Source(type="csv", path="path")
+    source2 = Source(
+        type="postgres",
+        connection=SQLConnectionConfig(
+            **{
+                "host": "example.amazonaws.com",
+                "port": 5432,
+                "user": "user",
+                "password": "password",
+                "database": "db",
+            }
+        ),
+        table="table",
+    )
+    assert not source1.is_compatible_source(source2)
+
+
+def test_source_or_view_error():
+    with pytest.raises(ValidationError):
+        SemanticLayerSchema(name="ciao")
+
+
+def test_column_must_be_definend_for_view():
+    with pytest.raises(ValidationError):
+        SemanticLayerSchema(name="ciao", view=True)

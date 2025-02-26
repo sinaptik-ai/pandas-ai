@@ -6,6 +6,7 @@ import pytest
 from pandasai.data_loader.loader import DatasetLoader
 from pandasai.data_loader.local_loader import LocalDatasetLoader
 from pandasai.dataframe.base import DataFrame
+from pandasai.exceptions import MaliciousQueryError
 from pandasai.query_builders import LocalQueryBuilder
 
 
@@ -101,3 +102,13 @@ class TestDatasetLoader:
 
             assert isinstance(result, DataFrame)
             assert "email" in result.columns
+
+    def test_malicious_query(self, sample_schema):
+        loader = LocalDatasetLoader(sample_schema, "test/test")
+        with pytest.raises(MaliciousQueryError):
+            loader.execute_query("DROP TABLE")
+
+    def test_runtime_error(self, sample_schema):
+        loader = LocalDatasetLoader(sample_schema, "test/test")
+        with pytest.raises(RuntimeError):
+            loader.execute_query("SELECT * FROM unexistent_table")

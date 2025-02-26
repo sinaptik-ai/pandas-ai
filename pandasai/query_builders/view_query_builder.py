@@ -33,9 +33,6 @@ class ViewQueryBuilder(BaseQueryBuilder):
 
     def _get_group_by_columns(self) -> list[str]:
         """Get the group by columns with proper view column aliasing."""
-        if not self.schema.group_by:
-            return []
-
         group_by_cols = []
         for col in self.schema.group_by:
             group_by_cols.append(self.normalize_view_column_alias(col))
