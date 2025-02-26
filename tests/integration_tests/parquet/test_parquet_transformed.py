@@ -35,7 +35,7 @@ def parquet_dataset_transformed_slug():
 
     transformations = [
         Transformation(
-            type="to_lowercase", params=TransformationParams(column="Loan_status")
+            type="to_lowercase", params=TransformationParams(column="loan_status")
         ).model_dump()
     ]
 
