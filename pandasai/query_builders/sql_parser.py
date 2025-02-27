@@ -57,7 +57,7 @@ class SQLParser:
         return transformed.sql(pretty=True)
 
     @staticmethod
-    def transpile_sql_dialect(query: str, to_dialect, from_dialect=None):
+    def transpile_sql_dialect(query: str, to_dialect: str, from_dialect: Optional[str] = None):
         placeholder = "___PLACEHOLDER___"
         query = query.replace("%s", placeholder)
         query = (
