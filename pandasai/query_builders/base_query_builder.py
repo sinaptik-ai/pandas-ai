@@ -2,7 +2,6 @@ from typing import List
 
 import sqlglot
 from sqlglot import select
-from sqlglot.expressions import false
 from sqlglot.optimizer.normalize_identifiers import normalize_identifiers
 
 from pandasai.data_loader.semantic_layer_schema import SemanticLayerSchema, Source

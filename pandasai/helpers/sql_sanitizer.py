@@ -97,3 +97,26 @@ def is_sql_query_safe(query: str, dialect: str = "postgres") -> bool:
 
     except sqlglot.errors.ParseError:
         return False
+
+
+def is_sql_query(query):
+    # Define SQL patterns with context to avoid standalone keyword matches
+    sql_patterns = [
+        r"\bSELECT\b.*\bFROM\b",
+        r"\bINSERT\b.*\bINTO\b",
+        r"\bUPDATE\b.*\bSET\b",
+        r"\bDELETE\b.*\bFROM\b",
+        r"\bDROP\b.*\b(TABLE|DATABASE)\b",
+        r"\bCREATE\b.*\b(DATABASE|TABLE)\b",
+        r"\bALTER\b.*\bTABLE\b",
+        r"\bJOIN\b.*\bON\b",
+        r"\bWHERE\b",
+    ]
+
+    # Combine all patterns into a single regex
+    sql_regex = re.compile("|".join(sql_patterns), re.IGNORECASE)
+
+    # If the query matches any SQL pattern, it's considered a SQL query
+    if sql_regex.search(query):
+        return True
+    return False

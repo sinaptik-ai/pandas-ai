@@ -1,4 +1,5 @@
 from pandasai.helpers.sql_sanitizer import (
+    is_sql_query,
     is_sql_query_safe,
     sanitize_file_name,
     sanitize_view_column_name,
@@ -94,3 +95,37 @@ class TestSqlSanitizer:
     def test_safe_query_with_query_params(self):
         query = "SELECT * FROM (SELECT * FROM heart_data) AS filtered_data LIMIT %s OFFSET %s"
         assert is_sql_query_safe(query)
+
+    def test_plain_text(self):
+        """Test with plain text input that is not a SQL query."""
+        assert not is_sql_query("Hello, how are you?")
+        assert not is_sql_query("This is just some text.")
+
+    def test_sql_queries(self):
+        """Test with typical SQL queries."""
+        assert is_sql_query("SELECT * FROM users")
+        assert is_sql_query("insert into users values ('john', 25)")
+        assert is_sql_query("delete from orders where id=10")
+        assert is_sql_query("DROP TABLE users")
+        assert is_sql_query("update products set price=100 where id=1")
+
+    def test_case_insensitivity(self):
+        """Test with queries in different cases."""
+        assert is_sql_query("select id from users")
+        assert is_sql_query("SeLeCt id FROM users")
+        assert is_sql_query("DROP table orders")
+        assert is_sql_query("cReAtE DATABASE testdb")
+
+    def test_edge_cases(self):
+        """Test with edge cases like empty strings and special characters."""
+        assert not is_sql_query("")
+        assert not is_sql_query(" ")
+        assert not is_sql_query("1234567890")
+        assert not is_sql_query("#$%^&*()")
+        assert not is_sql_query("JOIN the party")  # Not SQL context
+
+    def test_mixed_input(self):
+        """Test with mixed input containing SQL keywords in non-SQL contexts."""
+        assert not is_sql_query("Let's SELECT a movie to watch")
+        assert not is_sql_query("CREATE a new painting")
+        assert not is_sql_query("DROP by my house later")
