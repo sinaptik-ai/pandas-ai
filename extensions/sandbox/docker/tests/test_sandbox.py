@@ -258,6 +258,38 @@ result = {'type': 'dataframe', 'value': top_artists_df}
             None,
         )
 
+    def test_extract_sql_queries_from_code_with_bool_constant(self):
+        sandbox = DockerSandbox(image_name=self.image_name)
+        code = """
+test = True
+sql_query = 'SELECT COUNT(*) FROM table'
+result = execute_sql_query(sql_query)
+        """
+        queries = sandbox._extract_sql_queries_from_code(code)
+        self.assertEqual(queries, ["SELECT COUNT(*) FROM table"])
+
+    def test_extract_sql_queries_from_code_with_cte(self):
+        sandbox = DockerSandbox(image_name=self.image_name)
+        code = """
+test = True
+sql_query = 'WITH temp AS (SELECT * FROM table) SELECT * FROM temp'
+result = execute_sql_query(sql_query)
+        """
+        queries = sandbox._extract_sql_queries_from_code(code)
+        self.assertEqual(
+            queries, ["WITH temp AS (SELECT * FROM table) SELECT * FROM temp"]
+        )
+
+    def test_extract_sql_queries_from_code_with_malicious_query(self):
+        sandbox = DockerSandbox(image_name=self.image_name)
+        code = """
+test = True
+sql_query = 'DROP * FROM table'
+result = execute_sql_query(sql_query)
+        """
+        queries = sandbox._extract_sql_queries_from_code(code)
+        self.assertEqual(queries, [])
+
 
 if __name__ == "__main__":
     unittest.main()
