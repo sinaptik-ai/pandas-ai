@@ -193,8 +193,6 @@ def create(
             group_by=group_by,
             transformations=parsed_transformations,
         )
-    else:
-        raise InvalidConfigError("Unable to create schema with the provided params")
 
     schema.description = description or schema.description
 

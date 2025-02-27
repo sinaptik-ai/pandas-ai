@@ -330,6 +330,27 @@ class TestPandaAIInit:
             assert result.schema.description is None
             assert mock_loader_instance.load.call_count == 1
 
+    def test_create_valid_dataset_group_by(
+        self, sample_df, mock_loader_instance, mock_file_manager
+    ):
+        """Test creating a dataset with valid inputs."""
+        with patch.object(sample_df, "to_parquet") as mock_to_parquet:
+            result = pandasai.create(
+                "test-org/test-dataset",
+                sample_df,
+                columns=[
+                    {"name": "A"},
+                    {"name": "B", "expression": "avg(B)", "alias": "average_b"},
+                ],
+                group_by=["A"],
+            )
+            assert result.schema.group_by == ["A"]
+
+    def test_create_invalid(self, sample_df, mock_loader_instance, mock_file_manager):
+        """Test creating a dataset with valid inputs."""
+        with pytest.raises(InvalidConfigError):
+            pandasai.create("test-org/test-dataset")
+
     def test_create_invalid_path_format(self, sample_df):
         """Test creating a dataset with invalid path format."""
         with pytest.raises(

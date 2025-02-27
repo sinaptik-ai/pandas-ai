@@ -2,7 +2,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from pandasai.data_loader.semantic_layer_schema import SemanticLayerSchema
+from pandasai.data_loader.semantic_layer_schema import (
+    SemanticLayerSchema,
+    Transformation,
+)
 from pandasai.data_loader.sql_loader import SQLDatasetLoader
 from pandasai.query_builders.sql_query_builder import SqlQueryBuilder
 from pandasai.query_builders.view_query_builder import ViewQueryBuilder
@@ -76,12 +79,41 @@ FROM (
 ) AS parent_children"""
         )
 
+    def test_build_query_distinct(self, view_query_builder):
+        view_query_builder.schema.transformations = [
+            Transformation(type="remove_duplicates")
+        ]
+        result = view_query_builder.build_query()
+        assert result.startswith("SELECT DISTINCT")
+
+    def test_build_query_distinct_head(self, view_query_builder):
+        view_query_builder.schema.transformations = [
+            Transformation(type="remove_duplicates")
+        ]
+        result = view_query_builder.get_head_query()
+        assert result.startswith("SELECT DISTINCT")
+
+    def test_build_query_order_by(self, view_query_builder):
+        view_query_builder.schema.order_by = ["column"]
+        result = view_query_builder.build_query()
+        assert "ORDER BY\n  column" in result
+
+    def test_build_query_limit(self, view_query_builder):
+        view_query_builder.schema.limit = 10
+        result = view_query_builder.build_query()
+        assert "LIMIT 10" in result
+
     def test_get_columns(self, view_query_builder):
         assert view_query_builder._get_columns() == [
             "parents_id AS parents_id",
             "parents_name AS parents_name",
             "children_name AS children_name",
         ]
+
+    def test_get__group_by_columns(self, view_query_builder):
+        view_query_builder.schema.group_by = ["parents.id"]
+        group_by_column = view_query_builder._get_group_by_columns()
+        assert group_by_column == ["parents_id"]
 
     def test_get_table_expression(self, view_query_builder):
         assert (

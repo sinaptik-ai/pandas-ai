@@ -3,7 +3,10 @@ from unittest.mock import MagicMock, mock_open, patch
 import pytest
 import sqlglot
 
-from pandasai.data_loader.semantic_layer_schema import SemanticLayerSchema
+from pandasai.data_loader.semantic_layer_schema import (
+    SemanticLayerSchema,
+    Transformation,
+)
 from pandasai.query_builders import LocalQueryBuilder
 from pandasai.query_builders.base_query_builder import BaseQueryBuilder
 from pandasai.query_builders.sql_query_builder import SqlQueryBuilder
@@ -365,3 +368,31 @@ LIMIT 100"""
         query_builder = BaseQueryBuilder(mysql_schema)
         with pytest.raises((sqlglot.errors.ParseError, sqlglot.errors.TokenError)):
             query_builder.build_query()
+
+    def test_build_query_distinct(self, sample_schema):
+        base_query_builder = BaseQueryBuilder(sample_schema)
+        base_query_builder.schema.transformations = [
+            Transformation(type="remove_duplicates")
+        ]
+        result = base_query_builder.build_query()
+        assert result.startswith("SELECT DISTINCT")
+
+    def test_build_query_distinct_head(self, sample_schema):
+        base_query_builder = BaseQueryBuilder(sample_schema)
+        base_query_builder.schema.transformations = [
+            Transformation(type="remove_duplicates")
+        ]
+        result = base_query_builder.get_head_query()
+        assert result.startswith("SELECT DISTINCT")
+
+    def test_build_query_order_by(self, sample_schema):
+        base_query_builder = BaseQueryBuilder(sample_schema)
+        base_query_builder.schema.order_by = ["column"]
+        result = base_query_builder.build_query()
+        assert "ORDER BY\n  column" in result
+
+    def test_get_group_by_columns(self, sample_schema):
+        base_query_builder = BaseQueryBuilder(sample_schema)
+        base_query_builder.schema.group_by = ["parents"]
+        result = base_query_builder.get_head_query()
+        assert "GROUP BY\n  parents" in result
