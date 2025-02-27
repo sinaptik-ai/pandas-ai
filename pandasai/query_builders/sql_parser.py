@@ -57,11 +57,16 @@ class SQLParser:
         return transformed.sql(pretty=True)
 
     @staticmethod
-    def transpile_sql_dialect(query, to_dialect, from_dialect=None):
+    def transpile_sql_dialect(
+        query: str, to_dialect: str, from_dialect: Optional[str] = None
+    ):
+        placeholder = "___PLACEHOLDER___"
+        query = query.replace("%s", placeholder)
         query = (
             parse_one(query, read=from_dialect) if from_dialect else parse_one(query)
         )
-        return query.sql(dialect=to_dialect, pretty=True)
+        result = query.sql(dialect=to_dialect, pretty=True)
+        return result.replace(placeholder, "%s")
 
     @staticmethod
     def extract_table_names(sql_query: str, dialect: str = "postgres") -> List[str]:
