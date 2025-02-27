@@ -344,6 +344,7 @@ class TestPandaAIInit:
                 ],
                 group_by=["A"],
             )
+            assert result.schema.group_by == ["A"]
 
     def test_create_invalid(self, sample_df, mock_loader_instance, mock_file_manager):
         """Test creating a dataset with valid inputs."""
