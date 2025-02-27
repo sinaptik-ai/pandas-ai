@@ -1,12 +1,13 @@
 """
 Constants used in the pandasai package.
 """
+import os.path
 
 # Default API url
 DEFAULT_API_URL = "https://api.pandabi.ai"
 
 # Default directory to store chart if user doesn't provide any
-DEFAULT_CHART_DIRECTORY = "exports/charts"
+DEFAULT_CHART_DIRECTORY = os.path.join("exports", "charts")
 
 # Default permissions for files and directories
 DEFAULT_FILE_PERMISSIONS = 0o755

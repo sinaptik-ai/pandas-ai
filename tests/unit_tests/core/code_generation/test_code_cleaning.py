@@ -1,5 +1,6 @@
 import ast
 import os
+import re
 import unittest
 from unittest.mock import MagicMock
 
@@ -129,8 +130,8 @@ class TestCodeCleaner(unittest.TestCase):
 
         code = handler._replace_output_filenames_with_temp_chart(code)
 
-        expected_code = f'some text "{os.path.join("exports", "charts", "temp_chart.png")}" more text'
-        self.assertEqual(code, expected_code)
+        reg = r'some text "exports[/\\]charts[/\\]temp_chart_.*\.png" more text'
+        assert re.match(reg, code)
 
     def test_replace_output_filenames_with_temp_chart_empty_code(self):
         handler = self.cleaner
