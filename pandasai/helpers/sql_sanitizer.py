@@ -99,7 +99,7 @@ def is_sql_query_safe(query: str, dialect: str = "postgres") -> bool:
         return False
 
 
-def is_sql_query(query):
+def is_sql_query(query: str) -> bool:
     # Define SQL patterns with context to avoid standalone keyword matches
     sql_patterns = [
         r"\bSELECT\b.*\bFROM\b",
