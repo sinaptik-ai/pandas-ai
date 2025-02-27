@@ -41,21 +41,28 @@ class Sandbox:
         class SQLQueryExtractor(ast.NodeVisitor):
             def visit_Assign(self, node):
                 # Look for assignments where SQL queries might be defined
-                if isinstance(
-                    node.value, (ast.Str, ast.Constant)
-                ):  # Python 3.8+: ast.Constant
-                    if "SELECT" in node.value.s.upper():
-                        sql_queries.append(node.value.s)
+                if (
+                    isinstance(node.value, (ast.Str, ast.Constant))
+                    and isinstance(node.value.s, str)
+                    and any(
+                        keyword in node.value.s.upper()
+                        for keyword in ["SELECT", "WITH"]
+                    )
+                ):
+                    sql_queries.append(node.value.s)
                 self.generic_visit(node)
 
             def visit_Call(self, node):
                 # Look for function calls where SQL queries might be passed
                 for arg in node.args:
-                    if isinstance(
-                        arg, (ast.Str, ast.Constant)
-                    ):  # Python 3.8+: ast.Constant
-                        if "SELECT" in arg.s.upper():
-                            sql_queries.append(arg.s)
+                    if (
+                        isinstance(arg, (ast.Str, ast.Constant))
+                        and isinstance(arg.s, str)
+                        and any(
+                            keyword in arg.s.upper() for keyword in ["SELECT", "WITH"]
+                        )
+                    ):
+                        sql_queries.append(arg.s)
                 self.generic_visit(node)
 
         # Parse the code into an AST and visit all nodes
