@@ -78,6 +78,30 @@ class DatasetPaginator:
         pagination: Optional[PaginationParams],
         target_dialect: str = "postgres",
     ) -> Tuple[str, List]:
+        """
+        Apply pagination to a SQL query.
+
+        Args:
+            query (str): The SQL query to apply pagination to
+            columns (List[dict]): A list of dictionaries containing
+                information about the columns in the result set. Each
+                dictionary should have the following structure:
+                    {
+                        "name": str,
+                        "type": str
+                    }
+                The type should be one of: "string", "number", "integer", "float",
+                "boolean", "datetime"
+            pagination (Optional[PaginationParams]): The pagination parameters
+                to apply to the query. If None, the query is returned unchanged
+            target_dialect (str): The SQL dialect to generate the query for.
+                Defaults to "postgres".
+
+        Returns:
+            Tuple[str, List]: A tuple containing the modified SQL query and a
+                list of parameters to pass to the query.
+        """
+
         params = []
 
         if not pagination:
