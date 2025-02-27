@@ -111,4 +111,4 @@ class TestDatasetLoader:
     def test_runtime_error(self, sample_schema):
         loader = LocalDatasetLoader(sample_schema, "test/test")
         with pytest.raises(RuntimeError):
-            loader.execute_query("SELECT * FROM unexistent_table")
+            loader.execute_query("SELECT * FROM nonexistent_table")
