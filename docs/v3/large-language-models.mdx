@@ -79,217 +79,52 @@ llm = AzureOpenAI(api_base="https://<your-endpoint>.openai.azure.com/",
 pai.config.set({"llm": llm})
 ```
 
-## Google models
+## LiteLLM
 
-Install the extension:
+LiteLLM provides a unified interface to interact with 100+ LLM models from various providers including OpenAI, Azure, Anthropic, Google, AWS, Hugging Face, and many more. This makes it easy to switch between different LLM providers without changing your code.
+
+Install the pandasai-litellm extension:
 
 ```bash
 # Using poetry
-poetry add pandasai-google
+poetry add pandasai-litellm
 
 # Using pip
-pip install pandasai-google
+pip install pandasai-litellm
 ```
 
-### Google Gemini
-
-In order to use Google PaLM models, you need to have a Google Cloud API key. You can get one here.
-Once you have an API key, you can use it to instantiate a Google PaLM object:
+Configure LiteLLM with your chosen model. First, set up your API keys as environment variables:
 
 ```python
+import os
 import pandasai as pai
-from pandasai_google import GoogleGemini
+from pandasai_litellm import LiteLLM
 
-llm = GoogleGemini(api_key="my-google-cloud-api-key")
+# Set your API keys as environment variables
+os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
+os.environ["ANTHROPIC_API_KEY"] = "your-anthropic-api-key"
 
+# Example with OpenAI
+llm = LiteLLM(model="gpt-3.5-turbo")
+
+# Example with Anthropic
+llm = LiteLLM(model="claude-2")
+
+# Set your LLM configuration
 pai.config.set({"llm": llm})
 ```
 
-### Google VertexAI
-
-In order to use Google models through Vertexai api, you need to have
-
-    Google Cloud Project
-    Region of Project Set up
-    Install optional dependency google-cloud-aiplatform
-    Authentication of gcloud
-
-Once you have basic setup, you can use it to instantiate a Google PaLM through vertex ai:
-
-```python
-import pandasai as pai
-from pandasai_google import GoogleVertexAI
-
-llm = GoogleVertexAI(project_id="generative-ai-training",
-                     location="us-central1",
-                     model="text-bison@001")
-
-pai.config.set({"llm": llm})
-```
-
-## HuggingFace models
-
-In order to use HuggingFace models via text-generation, you need to first serve a supported large language model (LLM). Read text-generation docs for more on how to setup an inference server.
-This can be used, for example, to use models like LLaMa2, CodeLLaMa, etc. You can find more information about text-generation here.
-
-Install the extension:
-
-```bash
-# Using poetry
-poetry add pandasai-huggingface
-
-# Using pip
-pip install pandasai-huggingface
-```
-
-The inference_server_url is the only required parameter to instantiate an HuggingFaceTextGen model.
-
-```python
-import pandasai as pai
-from pandasai_huggingface import HuggingFaceTextGen
-
-llm = HuggingFaceTextGen(inference_server_url="http://127.0.0.1:8080")
-
-pai.config.set({"llm": llm})
-```
-
-## LangChain models
-
-Install the extension:
-
-```bash
-# Using poetry
-poetry add pandasai-langchain
-
-# Using pip
-pip install pandasai-langchain
-```
-
-Configure LangChain:
-
-```python
-import pandasai as pai
-from pandasai_langchain import LangchainLLM
-
-llm = LangchainLLM(openai_api_key="my-openai-api-key")
-
-pai.config.set({"llm": llm })
-```
-
-## Amazon Bedrock models
-
-In order to use Amazon Bedrock models, you need to have an AWS AKSK and gain the model access.
-
-Install the extension:
-
-```bash
-# Using poetry
-poetry add pandasai-bedrock
-
-# Using pip
-pip install pandasai-bedrock
-```
-
-Configure AWS Bedrock:
-
-```python
-import pandasai as pai
-from pandasai_bedrock import BedrockClaude
-
-
-ACCESS_KEY = "YOUR_AWS_ACCESS_KEY_ID"
-SECRET_KEY = "YOUR_AWS_SECRET_ACCESS_KEY"
-
-bedrock_runtime_client = boto3.client(
-
-    'bedrock-runtime',
-
-    aws_access_key_id=ACCESS_KEY,
-
-    aws_secret_access_key=SECRET_KEY
-
-)
-
-llm = BedrockClaude(bedrock_runtime_client)
-
-
-pai.config.set({"llm": llm })
-```
-
-## IBM models
-
-In order to use IBM watsonx.ai models, you need to have
-
-    IBM Cloud api key
-    Watson Studio project in IBM Cloud
-    The service URL associated with the project’s region
-
-The api key can be created in IBM Cloud. The project ID can determined after a Watson Studio service is provisioned in IBM Cloud. The ID can then be found in the project’s Manage tab (Project -> Manage -> General -> Details). The service url depends on the region of the provisioned service instance and can be found here.
-
-Install the extension:
-
-```bash
-# Using poetry
-poetry add pandasai-ibm
-
-# Using pip
-pip install pandasai-ibm
-```
-
-Configure IBM Watson:
-
-```python
-import pandasai as pai
-from pandasai_ibm import IBMwatsonx
-
-llm = IBMwatsonx(
-    model="ibm/granite-13b-chat-v2",
-    api_key=API_KEY,
-    watsonx_url=WATSONX_URL,
-    watsonx_project_id=PROJECT_ID,
-)
-pai.config.set({"llm": lm_studio_llm })
-```
-
-## Local models
-
-Install the pandasai-local extension
-
-```bash
-# Using poetry
-poetry add pandasai-local
-
-# Using pip
-pip install pandasai-local
-```
-
-### Ollama
-
-Ollama’s compatibility is experimental (see docs).
-With an Ollama server, you can instantiate an LLM object by specifying the model name:
-from pandasai import SmartDataframe
-
-```python
-import pandasai as pai
-from pandasai_local import LocalLLM
-
-ollama_llm = LocalLLM(api_base="http://localhost:11434/v1", model="codellama")
-
-pai.config.set({"llm": ollama_llm})
-```
-
-### LM Studio
-
-An LM Studio server only hosts one model, so you can instantiate an LLM object without specifying the model name:
-
-```python
-import pandasai as pai
-from pandasai_local import LocalLLM
-
-lm_studio_llm = LocalLLM(api_base="http://localhost:1234/v1")
-
-pai.config.set({"llm": lm_studio_llm })
-```
+LiteLLM supports a wide range of models from various providers, including but not limited to:
+- OpenAI (gpt-3.5-turbo, gpt-4, etc.)
+- Anthropic (claude-2, claude-instant-1, etc.)
+- Google (gemini-pro, palm2, etc.)
+- Azure OpenAI
+- AWS (Bedrock, SageMaker)
+- Mistral AI
+- Cohere
+- Hugging Face
+
+For a complete list of supported models and providers, visit the [LiteLLM documentation](https://docs.litellm.ai/docs/providers).
 
 ## Determinism
 
