@@ -1,3 +1,5 @@
+from typing import Optional
+
 import duckdb
 import pandas as pd
 
@@ -37,7 +39,7 @@ class LocalDatasetLoader(DatasetLoader):
             path=self.dataset_path,
         )
 
-    def execute_query(self, query: str) -> pd.DataFrame:
+    def execute_query(self, query: str, params: Optional[list] = None) -> pd.DataFrame:
         try:
             db_manager = DuckDBConnectionManager()
 
@@ -46,6 +48,6 @@ class LocalDatasetLoader(DatasetLoader):
                     "The SQL query is deemed unsafe and will not be executed."
                 )
 
-            return db_manager.sql(query).df()
+            return db_manager.sql(query, params=params).df()
         except duckdb.Error as e:
             raise RuntimeError(f"SQL execution failed: {e}") from e

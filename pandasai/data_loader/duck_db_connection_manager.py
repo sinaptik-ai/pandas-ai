@@ -1,4 +1,5 @@
 import weakref
+from typing import Optional
 
 import duckdb
 
@@ -32,10 +33,10 @@ class DuckDBConnectionManager:
         self.connection.register(name, df)
         self._registered_tables.add(name)
 
-    def sql(self, query: str):
+    def sql(self, query: str, params: Optional[list] = None):
         """Executes an SQL query and returns the result as a Pandas DataFrame."""
         query = SQLParser.transpile_sql_dialect(query, to_dialect="duckdb")
-        return self.connection.sql(query)
+        return self.connection.sql(query, params=params)
 
     def close(self):
         """Manually close the connection if needed."""

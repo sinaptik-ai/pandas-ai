@@ -66,6 +66,10 @@ class SQLParser:
             parse_one(query, read=from_dialect) if from_dialect else parse_one(query)
         )
         result = query.sql(dialect=to_dialect, pretty=True)
+
+        if to_dialect == "duckdb":
+            return result.replace(placeholder, "?")
+
         return result.replace(placeholder, "%s")
 
     @staticmethod
