@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 import uuid
 from dataclasses import dataclass, field
-from importlib.util import find_spec
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from pandasai.config import Config, ConfigManager
@@ -95,17 +94,7 @@ class AgentState:
 
     def _get_llm(self, llm: Optional[LLM] = None) -> LLM:
         """Load and configure the LLM."""
-        if llm is None:
-            return BambooLLM()
-
-        # Check if pandasai_langchain is installed
-        if find_spec("pandasai_langchain") is not None:
-            from pandasai_langchain.langchain import LangchainLLM, is_langchain_llm
-
-            if is_langchain_llm(llm):
-                llm = LangchainLLM(llm)
-
-        return llm
+        return llm or BambooLLM()
 
     def assign_prompt_id(self):
         """Assign a new prompt ID."""

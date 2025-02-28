@@ -64,13 +64,6 @@ class ConfigManager:
             cls._config.llm = BambooLLM()
             return
 
-        # Check if pandasai_langchain is installed
-        if find_spec("pandasai_langchain") is not None:
-            from pandasai_langchain.langchain import LangchainLLM, is_langchain_llm
-
-            if is_langchain_llm(cls._config.llm):
-                cls._config.llm = LangchainLLM(cls._config.llm)
-
 
 class APIKeyManager:
     _api_key: Optional[str] = None
