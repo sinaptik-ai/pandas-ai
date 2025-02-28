@@ -39,7 +39,6 @@ class BedrockClaude(LLM):
         "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
         "apac.anthropic.claude-3-5-sonnet-20241022-v2:0"
     ]
-    ]
     _valid_params = [
         "max_tokens",
         "model",
