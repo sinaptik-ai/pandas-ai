@@ -1,5 +1,6 @@
 import os
 from abc import ABC, abstractmethod
+from typing import Optional
 
 import yaml
 
@@ -31,7 +32,7 @@ class DatasetLoader(ABC):
         pass
 
     @abstractmethod
-    def execute_query(self, query: str):
+    def execute_query(self, query: str, params: Optional[list] = None):
         pass
 
     @classmethod
