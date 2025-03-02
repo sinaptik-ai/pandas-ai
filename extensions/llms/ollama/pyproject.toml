@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "pandasai-openai"
+version = "0.1.5"
+description = "OpenAI integration for PandaAI"
+authors = ["Gabriele Venturi"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.urls]
+"Documentation" = "https://docs.getpanda.ai/"
+"Repository" = "https://github.com/sinaptik-ai/pandas-ai"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.12"
+pandasai = ">=3.0.0b4"
+openai = "^1.3.7"
+typing-extensions = "^4.0.0"
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
