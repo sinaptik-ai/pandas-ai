@@ -1,7 +1,3 @@
-Below is an example of a complete README for your Ollama extension. You can customize details (such as contact information) as needed:
-
----
-
 # PandaAI Ollama LLM Extension
 
 This extension integrates Ollama language models with PandaAI. It allows you to use Ollama's LLMs as the backend for generating Python code in response to natural language queries on your dataframes.
