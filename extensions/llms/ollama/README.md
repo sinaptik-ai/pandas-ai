@@ -1,4 +1,4 @@
-# PandaAI Ollama LLM Extension
+# PandasAI Ollama LLM Extension
 
 This extension integrates Ollama language models with PandaAI. It allows you to use Ollama's LLMs as the backend for generating Python code in response to natural language queries on your dataframes.
 
