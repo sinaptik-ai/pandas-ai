@@ -2,14 +2,16 @@ import os
 from typing import Any, Dict, Optional
 
 import openai
-from pandasai.llm.base import LLM
-from pandasai.core.prompts.base import BasePrompt
+
 from pandasai.agent.state import AgentState
-from pandasai.helpers import load_dotenv
+from pandasai.core.prompts.base import BasePrompt
 from pandasai.core.prompts.generate_system_message import GenerateSystemMessagePrompt
+from pandasai.helpers import load_dotenv
+from pandasai.llm.base import LLM
 
 # Load .env if present
 load_dotenv()
+
 
 class OllamaLLM(LLM):
     _type: str = "ollama"

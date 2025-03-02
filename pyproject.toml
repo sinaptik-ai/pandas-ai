@@ -28,6 +28,8 @@ seaborn = "^0.12.2"
 sqlglot = "^25.0.3" 
 pyarrow = "^14.0.1"
 pyyaml = "^6.0.2"
+pandasai-openai = "^0.1.5"
+pandasai-ollama = "^0.1.0"
 
 [tool.poetry.group.dev]
 optional = true
