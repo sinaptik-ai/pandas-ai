@@ -1,4 +1,4 @@
-# PandasAI Ollama LLM Extension
+# PandaAI Ollama LLM Extension
 
 This extension integrates Ollama language models with PandaAI. It allows you to use Ollama's LLMs as the backend for generating Python code in response to natural language queries on your dataframes.
 
@@ -53,19 +53,21 @@ You can also override configuration options directly in your code when setting u
 import pandasai as pai
 from extensions.llms.ollama.pandasai_ollama.ollama import OllamaLLM
 
-# Set a dummy API key (for Ollama, the key is required but not used)
+# For Ollama, we use a dummy API key ("ollama") since it isn’t used.
 pai.api_key.set("ollama")
 
-# Override the global configuration with your Ollama settings
-pai.config.set({
-    "llm": OllamaLLM(
-        api_key="ollama",  # Dummy key
-        ollama_base_url="http://your-ollama-server:1234",  # Custom URL if needed
-        model="llama3.2:latest",  # Specify the model (can be overridden)
-        temperature=0.7,
-        max_tokens=150,
-    )
-})
+# Set the global configuration to use the Ollama LLM
+pai.config.set(
+    {
+        "llm": OllamaLLM(
+            api_key="ollama",
+            ollama_base_url="http://localhost:11434", # Custom URL if needed
+            model="llama3.2:latest", # Specify the model (can be overridden)
+            temperature=0.7,
+            max_tokens=150,
+        )
+    }
+)
 ```
 
 ## Usage
