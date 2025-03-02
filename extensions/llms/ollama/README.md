@@ -42,8 +42,8 @@ You can configure the extension by setting the following environment variables:
   *Default:* `ollama`
 
 - **`OLLAMA_BASE_URL`**  
-  The base URL for your Ollama API server. The extension ensures that the URL ends with `/v1`.  
-  *Default:* `http://localhost:11434`
+  Supports a customizable base URL (normalized to end with `/v1`) and flexible model parameters (e.g., temperature, max_tokens)..  
+  *Default format to set:* `http://localhost:11434`
 
 ### Code-Based Configuration
 
