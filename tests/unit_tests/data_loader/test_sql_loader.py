@@ -43,12 +43,7 @@ class TestSqlDatasetLoader:
 
             # Verify the SQL query was executed correctly
             mock_execute_query.assert_called_once_with(
-                """SELECT
-  email,
-  first_name,
-  timestamp
-FROM users
-LIMIT 5"""
+                'SELECT\n  "email",\n  "first_name",\n  "timestamp"\nFROM "users"\nLIMIT 5'
             )
 
             # Test executing a custom query

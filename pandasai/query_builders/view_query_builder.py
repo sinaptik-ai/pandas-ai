@@ -4,6 +4,7 @@ from typing import Dict, List
 from sqlglot import exp, expressions, parse_one, select
 from sqlglot.expressions import Subquery
 from sqlglot.optimizer.normalize_identifiers import normalize_identifiers
+from sqlglot.optimizer.qualify_columns import quote_identifiers
 
 from ..data_loader.loader import DatasetLoader
 from ..data_loader.semantic_layer_schema import SemanticLayerSchema, Transformation
@@ -79,7 +80,7 @@ class ViewQueryBuilder(BaseQueryBuilder):
             query = query.order_by(*self.schema.order_by)
         if self.schema.limit:
             query = query.limit(self.schema.limit)
-        return query.sql(pretty=True)
+        return query.transform(quote_identifiers).sql(pretty=True)
 
     def get_head_query(self, n=5):
         """Get the head query with proper group by column aliasing."""
@@ -89,7 +90,7 @@ class ViewQueryBuilder(BaseQueryBuilder):
             query = query.distinct()
 
         query = query.limit(n)
-        return query.sql(pretty=True)
+        return query.transform(quote_identifiers).sql(pretty=True)
 
     def _get_sub_query_from_loader(self, loader: DatasetLoader) -> Subquery:
         sub_query = parse_one(loader.query_builder.build_query())
