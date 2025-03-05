@@ -1,9 +1,10 @@
+import logging
+
 from litellm import completion
 
 from pandasai.agent.state import AgentState
 from pandasai.core.prompts.base import BasePrompt
 from pandasai.llm.base import LLM
-import logging
 
 
 class LiteLLM(LLM):
