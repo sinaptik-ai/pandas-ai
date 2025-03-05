@@ -378,16 +378,6 @@ class TestAgent:
         with pytest.raises(ValueError):
             agent.train(codes)
 
-    def test_execute_local_sql_query_success(self, agent, sample_df):
-        query = f'SELECT count(*) as total from "{sample_df.schema.name}";'
-        expected_result = pd.DataFrame({"total": [3]})
-        result = agent._execute_local_sql_query(query)
-        pd.testing.assert_frame_equal(result, expected_result)
-
-    def test_execute_local_sql_query_failure(self, agent):
-        with pytest.raises(RuntimeError, match="SQL execution failed"):
-            agent._execute_local_sql_query("wrong query;")
-
     def test_execute_sql_query_success_local(self, agent, sample_df):
         query = f'SELECT count(*) as total from "{sample_df.schema.name}";'
         expected_result = pd.DataFrame({"total": [3]})
