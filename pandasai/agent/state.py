@@ -62,18 +62,7 @@ class AgentState:
             save_logs=self.config.save_logs, verbose=self.config.verbose
         )
         self.vectorstore = vectorstore
-
-        self._validate_input()
         self._configure()
-
-    def _validate_input(self):
-        """Validate that all dataframes share the same schema source."""
-        base_schema_source = self.dfs[0].schema
-        for df in self.dfs[1:]:
-            if not is_schema_source_same(base_schema_source, df.schema):
-                raise InvalidConfigError(
-                    "All connectors must share the same type, datasource, and credentials."
-                )
 
     def _configure(self):
         """Configure paths for charts."""
