@@ -295,11 +295,11 @@ def test_remove_duplicates_transformation():
     )
     head_query = query_builder.get_head_query()
     assert head_query == (
-        "SELECT DISTINCT\n" "  value AS value\n" "FROM table_name\n" "LIMIT 5"
+        'SELECT DISTINCT\n  "value" AS "value"\nFROM "table_name"\nLIMIT 5'
     )
     assert validate_sql(head_query)
     build_query = query_builder.build_query()
-    assert build_query == ("SELECT DISTINCT\n" "  value AS value\n" "FROM table_name")
+    assert build_query == 'SELECT DISTINCT\n  "value" AS "value"\nFROM "table_name"'
     assert validate_sql(build_query)
 
 
