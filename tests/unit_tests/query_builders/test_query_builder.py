@@ -61,14 +61,16 @@ class TestQueryBuilder:
             mock_config_get.return_value = mock_config
             query_builder = LocalQueryBuilder(sample_schema, "test/test")
             query = query_builder.build_query()
-            expected_query = """SELECT
-  email,
-  first_name,
-  timestamp
-FROM READ_CSV('/mocked/absolute/path')
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+            expected_query = (
+                "SELECT\n"
+                '  "email",\n'
+                '  "first_name",\n'
+                '  "timestamp"\n'
+                "FROM READ_CSV('/mocked/absolute/path')\n"
+                "ORDER BY\n"
+                '  "created_at" DESC\n'
+                "LIMIT 100"
+            )
             assert query == expected_query
 
     def test_build_query_csv_with_transformation(self, raw_sample_schema):
@@ -91,12 +93,12 @@ LIMIT 100"""
             query = query_builder.build_query()
             expected_query = (
                 "SELECT\n"
-                "  MD5(email) AS email,\n"
-                "  first_name AS first_name,\n"
-                "  CONVERT_TZ(timestamp, 'UTC', 'UTC') AS timestamp\n"
+                '  MD5("email") AS "email",\n'
+                '  "first_name" AS "first_name",\n'
+                "  CONVERT_TZ(\"timestamp\", 'UTC', 'UTC') AS \"timestamp\"\n"
                 "FROM READ_CSV('/mocked/absolute/path')\n"
                 "ORDER BY\n"
-                "  created_at DESC\n"
+                '  "created_at" DESC\n'
                 "LIMIT 100"
             )
             assert query == expected_query
@@ -112,27 +114,31 @@ LIMIT 100"""
             mock_config_get.return_value = mock_config
             query_builder = LocalQueryBuilder(sample_schema, "test/test")
             query = query_builder.build_query()
-            expected_query = """SELECT
-  email,
-  first_name,
-  timestamp
-FROM READ_PARQUET('/mocked/absolute/path')
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+            expected_query = (
+                "SELECT\n"
+                '  "email",\n'
+                '  "first_name",\n'
+                '  "timestamp"\n'
+                "FROM READ_PARQUET('/mocked/absolute/path')\n"
+                "ORDER BY\n"
+                '  "created_at" DESC\n'
+                "LIMIT 100"
+            )
             assert query == expected_query
 
     def test_build_query(self, mysql_schema):
         query_builder = SqlQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        expected_query = """SELECT
-  email,
-  first_name,
-  timestamp
-FROM users
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+        expected_query = (
+            "SELECT\n"
+            '  "email",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC\n'
+            "LIMIT 100"
+        )
         assert query == expected_query
 
     def test_build_query_with_transformation(self, raw_mysql_schema):
@@ -148,12 +154,12 @@ LIMIT 100"""
         query = query_builder.build_query()
         expected_query = (
             "SELECT\n"
-            "  MD5(email) AS email,\n"
-            "  first_name AS first_name,\n"
-            "  CONVERT_TZ(timestamp, 'UTC', 'UTC') AS timestamp\n"
-            "FROM users\n"
+            '  MD5("email") AS "email",\n'
+            '  "first_name" AS "first_name",\n'
+            "  CONVERT_TZ(\"timestamp\", 'UTC', 'UTC') AS \"timestamp\"\n"
+            'FROM "users"\n'
             "ORDER BY\n"
-            "  created_at DESC\n"
+            '  "created_at" DESC\n'
             "LIMIT 100"
         )
         assert query == expected_query
@@ -171,88 +177,84 @@ LIMIT 100"""
         mysql_schema.order_by = None
         query_builder = SqlQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        expected_query = """SELECT
-  email,
-  first_name,
-  timestamp
-FROM users
-LIMIT 100"""
+        expected_query = 'SELECT\n  "email",\n  "first_name",\n  "timestamp"\nFROM "users"\nLIMIT 100'
         assert query == expected_query
 
     def test_build_query_without_limit(self, mysql_schema):
         mysql_schema.limit = None
         query_builder = SqlQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        expected_query = """SELECT
-  email,
-  first_name,
-  timestamp
-FROM users
-ORDER BY
-  created_at DESC"""
+        expected_query = (
+            "SELECT\n"
+            '  "email",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC'
+        )
         assert query == expected_query
 
     def test_build_query_with_multiple_order_by(self, mysql_schema):
         mysql_schema.order_by = ["created_at DESC", "email ASC"]
         query_builder = SqlQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        expected_query = """SELECT
-  email,
-  first_name,
-  timestamp
-FROM users
-ORDER BY
-  created_at DESC,
-  email ASC
-LIMIT 100"""
+        expected_query = (
+            "SELECT\n"
+            '  "email",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC,\n'
+            '  "email" ASC\n'
+            "LIMIT 100"
+        )
         assert query == expected_query
 
     def test_table_name_injection(self, mysql_schema):
         mysql_schema.name = "users; DROP TABLE users;"
         query_builder = BaseQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  email,
-  first_name,
-  timestamp
-FROM "users; DROP TABLE users;"
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+        assert query == (
+            "SELECT\n"
+            '  "email",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users; DROP TABLE users;"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC\n'
+            "LIMIT 100"
         )
 
     def test_column_name_injection(self, mysql_schema):
         mysql_schema.columns[0].name = "column; DROP TABLE users;"
         query_builder = BaseQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  "column; DROP TABLE users;",
-  first_name,
-  timestamp
-FROM users
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+        assert query == (
+            "SELECT\n"
+            '  "column; DROP TABLE users;",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC\n'
+            "LIMIT 100"
         )
 
     def test_table_name_union_injection(self, mysql_schema):
         mysql_schema.name = "users UNION SELECT 1,2,3;"
         query_builder = BaseQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  email,
-  first_name,
-  timestamp
-FROM "users UNION SELECT 1,2,3;"
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+        assert query == (
+            "SELECT\n"
+            '  "email",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users UNION SELECT 1,2,3;"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC\n'
+            "LIMIT 100"
         )
 
     def test_column_name_union_injection(self, mysql_schema):
@@ -261,96 +263,90 @@ LIMIT 100"""
         ].name = "column UNION SELECT username, password FROM users;"
         query_builder = BaseQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  "column UNION SELECT username, password FROM users;",
-  first_name,
-  timestamp
-FROM users
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+        assert query == (
+            "SELECT\n"
+            '  "column UNION SELECT username, password FROM users;",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC\n'
+            "LIMIT 100"
         )
 
     def test_table_name_comment_injection(self, mysql_schema):
         mysql_schema.name = "users --"
         query_builder = BaseQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  email,
-  first_name,
-  timestamp
-FROM users
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+        assert query == (
+            "SELECT\n"
+            '  "email",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC\n'
+            "LIMIT 100"
         )
 
     def test_column_name_comment_injection(self, mysql_schema):
         mysql_schema.columns[0].name = "column --"
         query_builder = BaseQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  column,
-  first_name,
-  timestamp
-FROM users
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+        assert query == (
+            "SELECT\n"
+            '  "column",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC\n'
+            "LIMIT 100"
         )
 
     def test_table_name_stacked_query_injection(self, mysql_schema):
         mysql_schema.name = 'users"; SELECT * FROM sensitive_data; --'
         query_builder = BaseQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  email,
-  first_name,
-  timestamp
-FROM "users""; SELECT * FROM sensitive_data; --"
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+        assert query == (
+            "SELECT\n"
+            '  "email",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users""; SELECT * FROM sensitive_data; --"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC\n'
+            "LIMIT 100"
         )
 
     def test_table_name_batch_injection(self, mysql_schema):
         mysql_schema.name = "users; TRUNCATE users; SELECT * FROM users WHERE 't'='t"
         query_builder = BaseQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  email,
-  first_name,
-  timestamp
-FROM "users; TRUNCATE users; SELECT * FROM users WHERE 't'='t"
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+        assert query == (
+            "SELECT\n"
+            '  "email",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            "FROM \"users; TRUNCATE users; SELECT * FROM users WHERE 't'='t\"\n"
+            "ORDER BY\n"
+            '  "created_at" DESC\n'
+            "LIMIT 100"
         )
 
     def test_table_name_time_based_injection(self, mysql_schema):
         mysql_schema.name = "users' AND (SELECT * FROM (SELECT(SLEEP(5)))test); --"
         query_builder = BaseQueryBuilder(mysql_schema)
         query = query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  email,
-  first_name,
-  timestamp
-FROM "users' AND (SELECT * FROM (SELECT(SLEEP(5)))test); --"
-ORDER BY
-  created_at DESC
-LIMIT 100"""
+        assert query == (
+            "SELECT\n"
+            '  "email",\n'
+            '  "first_name",\n'
+            '  "timestamp"\n'
+            'FROM "users\' AND (SELECT * FROM (SELECT(SLEEP(5)))test); --"\n'
+            "ORDER BY\n"
+            '  "created_at" DESC\n'
+            "LIMIT 100"
         )
 
     @pytest.mark.parametrize(
@@ -389,10 +385,10 @@ LIMIT 100"""
         base_query_builder = BaseQueryBuilder(sample_schema)
         base_query_builder.schema.order_by = ["column"]
         result = base_query_builder.build_query()
-        assert "ORDER BY\n  column" in result
+        assert 'ORDER BY\n  "column"' in result
 
     def test_get_group_by_columns(self, sample_schema):
         base_query_builder = BaseQueryBuilder(sample_schema)
         base_query_builder.schema.group_by = ["parents"]
         result = base_query_builder.get_head_query()
-        assert "GROUP BY\n  parents" in result
+        assert 'GROUP BY\n  "parents"' in result

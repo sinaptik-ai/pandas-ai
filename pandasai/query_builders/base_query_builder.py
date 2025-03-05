@@ -3,6 +3,7 @@ from typing import List
 import sqlglot
 from sqlglot import select
 from sqlglot.optimizer.normalize_identifiers import normalize_identifiers
+from sqlglot.optimizer.qualify_columns import quote_identifiers
 
 from pandasai.data_loader.semantic_layer_schema import SemanticLayerSchema, Source
 from pandasai.query_builders.sql_transformation_manager import SQLTransformationManager
@@ -38,7 +39,7 @@ class BaseQueryBuilder:
         if self.schema.limit:
             query = query.limit(self.schema.limit)
 
-        return query.sql(pretty=True)
+        return query.transform(quote_identifiers).sql(pretty=True)
 
     def get_head_query(self, n=5):
         query = select(*self._get_columns()).from_(self._get_table_expression())
@@ -55,7 +56,7 @@ class BaseQueryBuilder:
         # Add LIMIT
         query = query.limit(n)
 
-        return query.sql(pretty=True)
+        return query.transform(quote_identifiers).sql(pretty=True)
 
     def get_row_count(self):
         return select("COUNT(*)").from_(self._get_table_expression()).sql(pretty=True)

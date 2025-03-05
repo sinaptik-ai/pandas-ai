@@ -48,35 +48,34 @@ class TestViewQueryBuilder:
 
     def test_build_query(self, view_query_builder):
         result = view_query_builder.build_query()
-        assert (
-            result
-            == """SELECT
-  parents_id,
-  parents_name,
-  children_name
-FROM (
-  SELECT
-    parents_id AS parents_id,
-    parents_name AS parents_name,
-    children_name AS children_name
-  FROM (
-    SELECT
-      parents.id AS parents_id,
-      parents.name AS parents_name,
-      children.name AS children_name
-    FROM (
-      SELECT
-        *
-      FROM parents
-    ) AS parents
-    JOIN (
-      SELECT
-        *
-      FROM children
-    ) AS children
-      ON parents.id = children.id
-  )
-) AS parent_children"""
+        assert result == (
+            "SELECT\n"
+            '  "parents_id",\n'
+            '  "parents_name",\n'
+            '  "children_name"\n'
+            "FROM (\n"
+            "  SELECT\n"
+            '    "parents_id" AS "parents_id",\n'
+            '    "parents_name" AS "parents_name",\n'
+            '    "children_name" AS "children_name"\n'
+            "  FROM (\n"
+            "    SELECT\n"
+            '      "parents"."id" AS "parents_id",\n'
+            '      "parents"."name" AS "parents_name",\n'
+            '      "children"."name" AS "children_name"\n'
+            "    FROM (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "parents"\n'
+            '    ) AS "parents"\n'
+            "    JOIN (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "children"\n'
+            '    ) AS "children"\n'
+            '      ON "parents"."id" = "children"."id"\n'
+            "  )\n"
+            ') AS "parent_children"'
         )
 
     def test_build_query_distinct(self, view_query_builder):
@@ -96,7 +95,7 @@ FROM (
     def test_build_query_order_by(self, view_query_builder):
         view_query_builder.schema.order_by = ["column"]
         result = view_query_builder.build_query()
-        assert "ORDER BY\n  column" in result
+        assert 'ORDER BY\n  "column"' in result
 
     def test_build_query_limit(self, view_query_builder):
         view_query_builder.schema.limit = 10
@@ -116,133 +115,129 @@ FROM (
         assert group_by_column == ["parents_id"]
 
     def test_get_table_expression(self, view_query_builder):
-        assert (
-            view_query_builder._get_table_expression()
-            == """(
-  SELECT
-    parents_id AS parents_id,
-    parents_name AS parents_name,
-    children_name AS children_name
-  FROM (
-    SELECT
-      parents.id AS parents_id,
-      parents.name AS parents_name,
-      children.name AS children_name
-    FROM (
-      SELECT
-        *
-      FROM parents
-    ) AS parents
-    JOIN (
-      SELECT
-        *
-      FROM children
-    ) AS children
-      ON parents.id = children.id
-  )
-) AS parent_children"""
+        assert view_query_builder._get_table_expression() == (
+            "(\n"
+            "  SELECT\n"
+            "    parents_id AS parents_id,\n"
+            "    parents_name AS parents_name,\n"
+            "    children_name AS children_name\n"
+            "  FROM (\n"
+            "    SELECT\n"
+            "      parents.id AS parents_id,\n"
+            "      parents.name AS parents_name,\n"
+            "      children.name AS children_name\n"
+            "    FROM (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "parents"\n'
+            "    ) AS parents\n"
+            "    JOIN (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "children"\n'
+            "    ) AS children\n"
+            "      ON parents.id = children.id\n"
+            "  )\n"
+            ") AS parent_children"
         )
 
     def test_table_name_injection(self, view_query_builder):
         view_query_builder.schema.name = "users; DROP TABLE users;"
         query = view_query_builder.build_query()
-        assert (
-            query
-            == '''SELECT
-  parents_id,
-  parents_name,
-  children_name
-FROM (
-  SELECT
-    parents_id AS parents_id,
-    parents_name AS parents_name,
-    children_name AS children_name
-  FROM (
-    SELECT
-      parents.id AS parents_id,
-      parents.name AS parents_name,
-      children.name AS children_name
-    FROM (
-      SELECT
-        *
-      FROM parents
-    ) AS parents
-    JOIN (
-      SELECT
-        *
-      FROM children
-    ) AS children
-      ON parents.id = children.id
-  )
-) AS "users; DROP TABLE users;"'''
+        assert query == (
+            "SELECT\n"
+            '  "parents_id",\n'
+            '  "parents_name",\n'
+            '  "children_name"\n'
+            "FROM (\n"
+            "  SELECT\n"
+            '    "parents_id" AS "parents_id",\n'
+            '    "parents_name" AS "parents_name",\n'
+            '    "children_name" AS "children_name"\n'
+            "  FROM (\n"
+            "    SELECT\n"
+            '      "parents"."id" AS "parents_id",\n'
+            '      "parents"."name" AS "parents_name",\n'
+            '      "children"."name" AS "children_name"\n'
+            "    FROM (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "parents"\n'
+            '    ) AS "parents"\n'
+            "    JOIN (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "children"\n'
+            '    ) AS "children"\n'
+            '      ON "parents"."id" = "children"."id"\n'
+            "  )\n"
+            ') AS "users; DROP TABLE users;"'
         )
 
     def test_column_name_injection(self, view_query_builder):
         view_query_builder.schema.columns[0].name = "column; DROP TABLE users;"
         query = view_query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  column__drop_table_users_,
-  parents_name,
-  children_name
-FROM (
-  SELECT
-    column__drop_table_users_ AS column__drop_table_users_,
-    parents_name AS parents_name,
-    children_name AS children_name
-  FROM (
-    SELECT
-      column__drop_table_users_ AS column__drop_table_users_,
-      parents.name AS parents_name,
-      children.name AS children_name
-    FROM (
-      SELECT
-        *
-      FROM parents
-    ) AS parents
-    JOIN (
-      SELECT
-        *
-      FROM children
-    ) AS children
-      ON parents.id = children.id
-  )
-) AS parent_children"""
+        assert query == (
+            "SELECT\n"
+            '  "column__drop_table_users_",\n'
+            '  "parents_name",\n'
+            '  "children_name"\n'
+            "FROM (\n"
+            "  SELECT\n"
+            '    "column__drop_table_users_" AS "column__drop_table_users_",\n'
+            '    "parents_name" AS "parents_name",\n'
+            '    "children_name" AS "children_name"\n'
+            "  FROM (\n"
+            "    SELECT\n"
+            '      "column__drop_table_users_" AS "column__drop_table_users_",\n'
+            '      "parents"."name" AS "parents_name",\n'
+            '      "children"."name" AS "children_name"\n'
+            "    FROM (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "parents"\n'
+            '    ) AS "parents"\n'
+            "    JOIN (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "children"\n'
+            '    ) AS "children"\n'
+            '      ON "parents"."id" = "children"."id"\n'
+            "  )\n"
+            ') AS "parent_children"'
         )
 
     def test_table_name_union_injection(self, view_query_builder):
         view_query_builder.schema.name = "users UNION SELECT 1,2,3;"
         query = view_query_builder.build_query()
-        assert (
-            query
-            == '''SELECT
-  parents_id,
-  parents_name,
-  children_name
-FROM (
-  SELECT
-    parents_id AS parents_id,
-    parents_name AS parents_name,
-    children_name AS children_name
-  FROM (
-    SELECT
-      parents.id AS parents_id,
-      parents.name AS parents_name,
-      children.name AS children_name
-    FROM (
-      SELECT
-        *
-      FROM parents
-    ) AS parents
-    JOIN (
-      SELECT
-        *
-      FROM children
-    ) AS children
-      ON parents.id = children.id
-  )
-) AS "users UNION SELECT 1,2,3;"'''
+        assert query == (
+            "SELECT\n"
+            '  "parents_id",\n'
+            '  "parents_name",\n'
+            '  "children_name"\n'
+            "FROM (\n"
+            "  SELECT\n"
+            '    "parents_id" AS "parents_id",\n'
+            '    "parents_name" AS "parents_name",\n'
+            '    "children_name" AS "children_name"\n'
+            "  FROM (\n"
+            "    SELECT\n"
+            '      "parents"."id" AS "parents_id",\n'
+            '      "parents"."name" AS "parents_name",\n'
+            '      "children"."name" AS "children_name"\n'
+            "    FROM (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "parents"\n'
+            '    ) AS "parents"\n'
+            "    JOIN (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "children"\n'
+            '    ) AS "children"\n'
+            '      ON "parents"."id" = "children"."id"\n'
+            "  )\n"
+            ') AS "users UNION SELECT 1,2,3;"'
         )
 
     def test_column_name_union_injection(self, view_query_builder):
@@ -250,69 +245,69 @@ FROM (
             0
         ].name = "column UNION SELECT username, password FROM users;"
         query = view_query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  column_union_select_username__password_from_users_,
-  parents_name,
-  children_name
-FROM (
-  SELECT
-    column_union_select_username__password_from_users_ AS column_union_select_username__password_from_users_,
-    parents_name AS parents_name,
-    children_name AS children_name
-  FROM (
-    SELECT
-      column_union_select_username__password_from_users_ AS column_union_select_username__password_from_users_,
-      parents.name AS parents_name,
-      children.name AS children_name
-    FROM (
-      SELECT
-        *
-      FROM parents
-    ) AS parents
-    JOIN (
-      SELECT
-        *
-      FROM children
-    ) AS children
-      ON parents.id = children.id
-  )
-) AS parent_children"""
+        assert query == (
+            "SELECT\n"
+            '  "column_union_select_username__password_from_users_",\n'
+            '  "parents_name",\n'
+            '  "children_name"\n'
+            "FROM (\n"
+            "  SELECT\n"
+            '    "column_union_select_username__password_from_users_" AS '
+            '"column_union_select_username__password_from_users_",\n'
+            '    "parents_name" AS "parents_name",\n'
+            '    "children_name" AS "children_name"\n'
+            "  FROM (\n"
+            "    SELECT\n"
+            '      "column_union_select_username__password_from_users_" AS '
+            '"column_union_select_username__password_from_users_",\n'
+            '      "parents"."name" AS "parents_name",\n'
+            '      "children"."name" AS "children_name"\n'
+            "    FROM (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "parents"\n'
+            '    ) AS "parents"\n'
+            "    JOIN (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "children"\n'
+            '    ) AS "children"\n'
+            '      ON "parents"."id" = "children"."id"\n'
+            "  )\n"
+            ') AS "parent_children"'
         )
 
     def test_table_name_comment_injection(self, view_query_builder):
         view_query_builder.schema.name = "users --"
         query = view_query_builder.build_query()
-        assert (
-            query
-            == """SELECT
-  parents_id,
-  parents_name,
-  children_name
-FROM (
-  SELECT
-    parents_id AS parents_id,
-    parents_name AS parents_name,
-    children_name AS children_name
-  FROM (
-    SELECT
-      parents.id AS parents_id,
-      parents.name AS parents_name,
-      children.name AS children_name
-    FROM (
-      SELECT
-        *
-      FROM parents
-    ) AS parents
-    JOIN (
-      SELECT
-        *
-      FROM children
-    ) AS children
-      ON parents.id = children.id
-  )
-) AS users"""
+        assert query == (
+            "SELECT\n"
+            '  "parents_id",\n'
+            '  "parents_name",\n'
+            '  "children_name"\n'
+            "FROM (\n"
+            "  SELECT\n"
+            '    "parents_id" AS "parents_id",\n'
+            '    "parents_name" AS "parents_name",\n'
+            '    "children_name" AS "children_name"\n'
+            "  FROM (\n"
+            "    SELECT\n"
+            '      "parents"."id" AS "parents_id",\n'
+            '      "parents"."name" AS "parents_name",\n'
+            '      "children"."name" AS "children_name"\n'
+            "    FROM (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "parents"\n'
+            '    ) AS "parents"\n'
+            "    JOIN (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "children"\n'
+            '    ) AS "children"\n'
+            '      ON "parents"."id" = "children"."id"\n'
+            "  )\n"
+            ') AS "users"'
         )
 
     def test_multiple_joins_same_table(self):
@@ -354,12 +349,12 @@ FROM (
             "    FROM (\n"
             "      SELECT\n"
             "        *\n"
-            "      FROM diabetes\n"
+            '      FROM "diabetes"\n'
             "    ) AS diabetes\n"
             "    JOIN (\n"
             "      SELECT\n"
             "        *\n"
-            "      FROM heart\n"
+            '      FROM "heart"\n'
             "    ) AS heart\n"
             "      ON diabetes.age = heart.age AND diabetes.bloodpressure = "
             "heart.restingbp\n"
@@ -408,12 +403,12 @@ FROM (
             "    FROM (\n"
             "      SELECT\n"
             "        *\n"
-            "      FROM diabetes\n"
+            '      FROM "diabetes"\n'
             "    ) AS diabetes\n"
             "    JOIN (\n"
             "      SELECT\n"
             "        *\n"
-            "      FROM heart\n"
+            '      FROM "heart"\n'
             "    ) AS heart\n"
             "      ON diabetes.age = heart.age AND diabetes.bloodpressure = "
             "heart.restingbp\n"
@@ -458,18 +453,18 @@ FROM (
             "    FROM (\n"
             "      SELECT\n"
             "        *\n"
-            "      FROM patients\n"
+            '      FROM "patients"\n'
             "    ) AS patients\n"
             "    JOIN (\n"
             "      SELECT\n"
             "        *\n"
-            "      FROM diabetes\n"
+            '      FROM "diabetes"\n'
             "    ) AS diabetes\n"
             "      ON patients.id = diabetes.patient_id\n"
             "    JOIN (\n"
             "      SELECT\n"
             "        *\n"
-            "      FROM heart\n"
+            '      FROM "heart"\n'
             "    ) AS heart\n"
             "      ON patients.id = heart.patient_id\n"
             "  )\n"
@@ -480,32 +475,31 @@ FROM (
         view_query_builder.schema.columns[0].name = "column --"
         query = view_query_builder.build_query()
         assert (
-            query
-            == """SELECT
-  column___,
-  parents_name,
-  children_name
-FROM (
-  SELECT
-    column___ AS column___,
-    parents_name AS parents_name,
-    children_name AS children_name
-  FROM (
-    SELECT
-      column___ AS column___,
-      parents.name AS parents_name,
-      children.name AS children_name
-    FROM (
-      SELECT
-        *
-      FROM parents
-    ) AS parents
-    JOIN (
-      SELECT
-        *
-      FROM children
-    ) AS children
-      ON parents.id = children.id
-  )
-) AS parent_children"""
+            "SELECT\n"
+            '  "column___",\n'
+            '  "parents_name",\n'
+            '  "children_name"\n'
+            "FROM (\n"
+            "  SELECT\n"
+            '    "column___" AS "column___",\n'
+            '    "parents_name" AS "parents_name",\n'
+            '    "children_name" AS "children_name"\n'
+            "  FROM (\n"
+            "    SELECT\n"
+            '      "column___" AS "column___",\n'
+            '      "parents"."name" AS "parents_name",\n'
+            '      "children"."name" AS "children_name"\n'
+            "    FROM (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "parents"\n'
+            '    ) AS "parents"\n'
+            "    JOIN (\n"
+            "      SELECT\n"
+            "        *\n"
+            '      FROM "children"\n'
+            '    ) AS "children"\n'
+            '      ON "parents"."id" = "children"."id"\n'
+            "  )\n"
+            ') AS "parent_children"'
         )

@@ -80,14 +80,14 @@ class TestGroupByQueries(unittest.TestCase):
 
         expected = (
             "SELECT\n"
-            "  category,\n"
-            "  region,\n"
-            "  SUM(amount) AS total_sales,\n"
-            "  AVG(quantity) AS avg_quantity\n"
-            "FROM sales\n"
+            '  "category",\n'
+            '  "region",\n'
+            '  SUM("amount") AS "total_sales",\n'
+            '  AVG("quantity") AS "avg_quantity"\n'
+            'FROM "sales"\n'
             "GROUP BY\n"
-            "  category,\n"
-            "  region"
+            '  "category",\n'
+            '  "region"'
         )
         self.assertEqual(query.strip(), expected.strip())
 
@@ -104,14 +104,14 @@ class TestGroupByQueries(unittest.TestCase):
 
             expected = (
                 "SELECT\n"
-                "  category,\n"
-                "  region,\n"
-                "  SUM(amount) AS total_sales,\n"
-                "  AVG(quantity) AS avg_quantity\n"
+                '  "category",\n'
+                '  "region",\n'
+                '  SUM("amount") AS "total_sales",\n'
+                '  AVG("quantity") AS "avg_quantity"\n'
                 "FROM READ_CSV('/mocked/absolute/path')\n"
                 "GROUP BY\n"
-                "  category,\n"
-                "  region"
+                '  "category",\n'
+                '  "region"'
             )
             self.assertEqual(query.strip(), expected.strip())
 
@@ -121,14 +121,14 @@ class TestGroupByQueries(unittest.TestCase):
 
         expected = (
             "SELECT\n"
-            "  category,\n"
-            "  region,\n"
-            "  SUM(amount) AS total_sales,\n"
-            "  AVG(quantity) AS avg_quantity\n"
-            "FROM sales\n"
+            '  "category",\n'
+            '  "region",\n'
+            '  SUM("amount") AS "total_sales",\n'
+            '  AVG("quantity") AS "avg_quantity"\n'
+            'FROM "sales"\n'
             "GROUP BY\n"
-            "  category,\n"
-            "  region"
+            '  "category",\n'
+            '  "region"'
         )
         self.assertEqual(query.strip(), expected.strip())
 
@@ -179,5 +179,5 @@ class TestGroupByQueries(unittest.TestCase):
         builder = BaseQueryBuilder(schema)
         query = builder.build_query()
 
-        expected = "SELECT\n" "  category,\n" "  amount\n" "FROM sales"
+        expected = 'SELECT\n  "category",\n  "amount"\nFROM "sales"'
         self.assertEqual(query.strip(), expected.strip())
