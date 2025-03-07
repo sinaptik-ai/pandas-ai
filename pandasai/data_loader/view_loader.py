@@ -77,7 +77,9 @@ class ViewDatasetLoader(SQLDatasetLoader):
             path=self.dataset_path,
         )
 
-    def execute_local_query(self, query) -> pd.DataFrame:
+    def execute_local_query(
+        self, query: str, params: Optional[list] = None
+    ) -> pd.DataFrame:
         try:
             db_manager = DuckDBConnectionManager()
 
@@ -85,7 +87,7 @@ class ViewDatasetLoader(SQLDatasetLoader):
                 if isinstance(loader, LocalDatasetLoader):
                     loader.register_table()
 
-            return db_manager.sql(query).df()
+            return db_manager.sql(query, params).df()
         except duckdb.Error as e:
             raise RuntimeError(f"SQL execution failed: {e}") from e
 
@@ -94,7 +96,7 @@ class ViewDatasetLoader(SQLDatasetLoader):
         connection_info = self.source.connection
 
         if source_type in LOCAL_SOURCE_TYPES:
-            return self.execute_local_query(query)
+            return self.execute_local_query(query, params)
         load_function = self._get_loader_function(source_type)
         query = SQLParser.transpile_sql_dialect(query, to_dialect=source_type)
 
