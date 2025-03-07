@@ -78,7 +78,7 @@ class ViewDatasetLoader(SQLDatasetLoader):
         )
 
     def execute_local_query(
-        self, query: str, params: Optional[list] = None
+        self, query: str, params: Optional[List[Any]] = None
     ) -> pd.DataFrame:
         try:
             db_manager = DuckDBConnectionManager()
