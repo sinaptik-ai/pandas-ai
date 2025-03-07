@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, List, Optional
 
 import duckdb
 import pandas as pd
@@ -26,9 +26,9 @@ class ViewDatasetLoader(SQLDatasetLoader):
     def __init__(self, schema: SemanticLayerSchema, dataset_path: str):
         super().__init__(schema, dataset_path)
         self.dependencies_datasets = self._get_dependencies_datasets()
-        self.schema_dependencies_dict: dict[
-            str, DatasetLoader
-        ] = self._get_dependencies_schemas()
+        self.schema_dependencies_dict: dict[str, DatasetLoader] = (
+            self._get_dependencies_schemas()
+        )
         self.source: Source = list(self.schema_dependencies_dict.values())[
             0
         ].schema.source
