@@ -50,7 +50,7 @@ class ViewQueryBuilder(BaseQueryBuilder):
         aliases = self._get_aliases()
         for i, col in enumerate(self.schema.columns):
             if col.expression:
-                # Pre-process the expression to handle hyphens between letters
+                # Pre-process the expression to handle hyphens and dots between alphanumeric characters and underscores
                 expr = re.sub(
                     r"([a-zA-Z0-9_]+)-([a-zA-Z0-9_]+)", r"\1_\2", col.expression
                 )
