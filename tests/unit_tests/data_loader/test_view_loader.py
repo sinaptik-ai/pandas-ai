@@ -1,10 +1,11 @@
-import pytest
-from unittest.mock import patch, MagicMock
-import pandas as pd
-import duckdb
+from unittest.mock import MagicMock, patch
 
-from pandasai.data_loader.view_loader import ViewDatasetLoader
+import duckdb
+import pandas as pd
+import pytest
+
 from pandasai.data_loader.semantic_layer_schema import SemanticLayerSchema
+from pandasai.data_loader.view_loader import ViewDatasetLoader
 from pandasai.dataframe.virtual_dataframe import VirtualDataFrame
 from pandasai.query_builders import ViewQueryBuilder
 
