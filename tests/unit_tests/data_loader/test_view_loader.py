@@ -1,12 +1,10 @@
 import pytest
-from unittest.mock import patch, MagicMock, PropertyMock
+from unittest.mock import patch, MagicMock
 import pandas as pd
 import duckdb
 
 from pandasai.data_loader.view_loader import ViewDatasetLoader
 from pandasai.data_loader.semantic_layer_schema import SemanticLayerSchema
-from pandasai.data_loader.local_loader import LocalDatasetLoader
-from pandasai.exceptions import MaliciousQueryError
 from pandasai.dataframe.virtual_dataframe import VirtualDataFrame
 from pandasai.query_builders import ViewQueryBuilder
 
