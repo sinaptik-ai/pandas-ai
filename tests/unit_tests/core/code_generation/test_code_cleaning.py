@@ -142,6 +142,9 @@ class TestCodeCleaner(unittest.TestCase):
         handler.context.logger = MagicMock()
         handler.context.last_prompt_id = 123
 
+        # Use a path with characters that could be escape sequences
+        test_dir = os.path.join("C:", "temp", "test", "nested")
+
         # Create a code string with a filename
         code = 'plt.savefig("original.png")'
 
