@@ -130,7 +130,9 @@ class TestCodeCleaner(unittest.TestCase):
 
         code = handler._replace_output_filenames_with_temp_chart(code)
 
-        expected_pattern = re.compile(r'some text "exports[/\\]+charts[/\\]+temp_chart_.*\.png" more text')
+        expected_pattern = re.compile(
+            r'some text "exports[/\\]+charts[/\\]+temp_chart_.*\.png" more text'
+        )
         self.assertRegex(code, expected_pattern)
 
     def test_replace_output_filenames_with_temp_chart_windows_paths(self):
