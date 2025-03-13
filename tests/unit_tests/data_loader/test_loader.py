@@ -112,3 +112,34 @@ class TestDatasetLoader:
         loader = LocalDatasetLoader(sample_schema, "test/test")
         with pytest.raises(RuntimeError):
             loader.execute_query("SELECT * FROM nonexistent_table")
+
+    def test_read_parquet_file(self, sample_schema):
+        loader = LocalDatasetLoader(sample_schema, "test/test")
+        with pytest.raises(RuntimeError):
+            loader.execute_query(
+                """SELECT
+            "*",
+            FROM READ_PARQUET(
+            'http://127.0.0.1:54321/storage/v1/object/sign/datasets/pai-personal-32771/spf-base/data.parquet?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkYXRhc2V0cy9wYWktcGVyc29uYWwtMzI3NzEvaGEzMDIwZS1jbGktc3BmLWJhc2UvZGF0YS5wYXJxdWV0IiwiaWF0IjoxNzQxODcwMTI3LCJleHAiOjE3NDE4NzAxNTd9.pzCL4efZJbZiAXzzbjFEiI--a3WAwECYzKhMwF3r5vE'
+            )"""
+            )
+
+    def test_read_parquet_file_with_mock_query_validator(self, sample_schema):
+        with patch("os.path.exists", return_value=True), patch(
+            "pandasai.data_loader.local_loader.is_sql_query_safe"
+        ) as mock_is_query_safe:
+            loader = LocalDatasetLoader(sample_schema, "test/test")
+            with pytest.raises(RuntimeError):
+                loader.execute_query(
+                    """SELECT
+                "*",
+                FROM READ_PARQUET(
+                'http://127.0.0.1:54321/storage/v1/object/sign/datasets/pai-personal-32771/spf-base/data.parquet?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkYXRhc2V0cy9wYWktcGVyc29uYWwtMzI3NzEvaGEzMDIwZS1jbGktc3BmLWJhc2UvZGF0YS5wYXJxdWV0IiwiaWF0IjoxNzQxODcwMTI3LCJleHAiOjE3NDE4NzAxNTd9.pzCL4efZJbZiAXzzbjFEiI--a3WAwECYzKhMwF3r5vE'
+                )"""
+                )
+
+                mock_is_query_safe.assert_called_once_with(
+                    """SELECT
+                "*",
+                FROM dummy_table"""
+                )
