@@ -22,6 +22,8 @@ def convert_numpy_types(obj):
         ),
     ):
         return int(obj)
+    elif isinstance(obj, np.int64):
+        return float(obj)
     elif isinstance(obj, (np.floating, np.float16, np.float32, np.float64)):
         return float(obj)
     elif isinstance(obj, (np.ndarray,)):
