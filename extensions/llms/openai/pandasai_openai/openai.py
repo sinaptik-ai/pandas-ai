@@ -2,6 +2,7 @@ import os
 from typing import Any, Dict, Optional
 
 import openai
+import requests
 
 from pandasai.exceptions import APIKeyNotFoundError, UnsupportedModelError
 from pandasai.helpers import load_dotenv
@@ -81,7 +82,21 @@ class OpenAI(BaseOpenAI):
             self._is_chat_model = False
             self.client = openai.OpenAI(**self._client_params).completions
         else:
-            raise UnsupportedModelError(self.model)
+            self._is_chat_model = kwargs.get("is_chat_model", True)
+            model_names = [
+                model.get("id")
+                for model in requests.get(f"{self.api_base}/models")
+                .json()
+                .get("data", [])
+            ]
+            if self.model in model_names:
+                self.client = (
+                    openai.OpenAI(**self._client_params).chat.completions
+                    if self._is_chat_model
+                    else openai.OpenAI(**self._client_params).completions
+                )
+            else:
+                raise UnsupportedModelError(self.model)
 
     @property
     def _default_params(self) -> Dict[str, Any]:
