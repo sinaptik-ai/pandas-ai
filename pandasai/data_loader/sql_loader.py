@@ -32,7 +32,7 @@ class SQLDatasetLoader(DatasetLoader):
     def load(self) -> VirtualDataFrame:
         return VirtualDataFrame(
             schema=self.schema,
-            data_loader=SQLDatasetLoader(self.schema, self.dataset_path),
+            data_loader=self,
             path=self.dataset_path,
         )
 
