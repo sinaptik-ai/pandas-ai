@@ -22,7 +22,7 @@ def sanitize_sql_table_name(table_name: str) -> str:
 def sanitize_file_name(filepath: str) -> str:
     # Extract the file name without extension
     file_name = os.path.splitext(os.path.basename(filepath))[0]
-    return sanitize_sql_table_name(file_name)
+    return sanitize_sql_table_name(file_name).lower()
 
 
 def is_sql_query_safe(query: str, dialect: str = "postgres") -> bool:

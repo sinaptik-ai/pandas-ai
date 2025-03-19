@@ -4,7 +4,8 @@ description: "Understanding security implications and sandbox options in PandaAI
 ---
 
 <Note title="Beta Notice">
-PandaAI 3.0 is currently in beta. This documentation reflects the latest features and functionality, which may evolve before the final release.
+  PandaAI 3.0 is currently in beta. This documentation reflects the latest
+  features and functionality, which may evolve before the final release.
 </Note>
 
 ## Code Execution and Sandbox Environment
@@ -27,53 +28,35 @@ To use the sandbox environment, you first need to install the required package a
 ```bash
 pip install pandasai-docker
 ```
+
 <Note title="Sandbox Requirements">
-Make sure you have Docker running on your system before using the sandbox environment.
+  Make sure you have Docker running on your system before using the sandbox
+  environment.
 </Note>
 
-Here's how to enable the sandbox for your PandaAI agent:
+Here's how to enable the sandbox for your PandaAI chat:
 
-```python
-from pandasai import Agent
+```
+import pandasai as pai
 from pandasai_docker import DockerSandbox
 
-# Initialize and start the sandbox
+pai.api_key.set("YOUR_API_KEY")
+
+# initialize the sandbox
 sandbox = DockerSandbox()
 sandbox.start()
 
-# Create an agent with the sandbox enabled
-agent = Agent("data.csv", sandbox=sandbox)
+# read a csv as df
+df = pai.read_csv("./data/heart.csv")
 
-# The code will now run in an isolated Docker container
-response = agent.chat("What is the total sales for each country?")
+# pass the df and the sandbox
+result = pai.chat("plot total heart patients by gender", df, sandbox=sandbox)
 
-# Don't forget to stop the sandbox when done
+# display the chart
+result.show()
+
+# stop the sandbox (docker container)
 sandbox.stop()
-```
-
-You can also customize the sandbox environment:
-
-```python
-# Custom sandbox configuration
-sandbox = DockerSandbox(
-    "custom-sandbox-name",
-    "/path/to/custom/Dockerfile"
-)
-```
-
-For additional security in production environments, you can combine the sandbox with the Advanced Security Agent:
-
-```python
-from pandasai.ee.agents.advanced_security_agent import AdvancedSecurityAgent
-
-# Create a security agent
-security = AdvancedSecurityAgent()
-
-# Use both sandbox and security agent
-agent = Agent("data.csv", sandbox=sandbox, security=security)
-
-# Queries will be checked for security risks and run in isolation
-response = agent.chat("Calculate total sales")
 ```
 
 ### When to Use the Sandbox
