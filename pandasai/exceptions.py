@@ -208,7 +208,7 @@ class PandaAIApiKeyError(Exception):
     """
 
     def __init__(self, message=None):
-        default_message = "PandaAI API key not found. Please set your API key using PandaAI.set_api_key() or by setting the PANDASAI_API_KEY environment variable."
+        default_message = "PandaAI API key not found. Please set your API key using PandaAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
         super().__init__(message or default_message)
 
 

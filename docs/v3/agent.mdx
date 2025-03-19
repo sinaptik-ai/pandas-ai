@@ -243,3 +243,46 @@ smart_df = pai.SmartDataframe(df, config={
 ```
 
 The agent will use your custom head instead of the default first 5 rows of the dataframe when analyzing and responding to queries.
+
+### Using Sandbox
+
+To use the sandbox environment, you first need to install the required package and have Docker running on your system:
+
+```bash
+pip install pandasai-docker
+```
+
+<Note title="Sandbox Requirements">
+  Make sure you have Docker running on your system before using the sandbox
+  environment.
+</Note>
+
+Here's how to enable the sandbox for your PandaAI agent:
+
+```python
+from pandasai import Agent
+from pandasai_docker import DockerSandbox
+
+# Initialize and start the sandbox
+sandbox = DockerSandbox()
+sandbox.start()
+
+# Create an agent with the sandbox enabled
+agent = Agent("data.csv", sandbox=sandbox)
+
+# The code will now run in an isolated Docker container
+response = agent.chat("What is the total sales for each country?")
+
+# Don't forget to stop the sandbox when done
+sandbox.stop()
+```
+
+You can also customize the sandbox environment:
+
+```python
+# Custom sandbox configuration
+sandbox = DockerSandbox(
+    "custom-sandbox-name",
+    "/path/to/custom/Dockerfile"
+)
+```
