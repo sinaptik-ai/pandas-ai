@@ -87,37 +87,6 @@ class TestCodeCleaner(unittest.TestCase):
         updated_node = self.cleaner._validate_and_make_table_name_case_sensitive(node)
         self.assertEqual(updated_node.value.value, "SELECT * FROM my_table")
 
-    def test_extract_fix_dataframe_redeclarations(self):
-        node = ast.Assign(
-            targets=[ast.Name(id="df", ctx=ast.Store())],
-            value=ast.Call(
-                func=ast.Attribute(
-                    value=ast.Name(id="pd", ctx=ast.Load()),
-                    attr="DataFrame",
-                    ctx=ast.Load(),
-                ),
-                args=[],
-                keywords=[],
-            ),
-        )
-        self.cleaner.context.dfs = [self.sample_df]
-        code_lines = [
-            """df = pd.DataFrame({
-                "country": ["United States", "United Kingdom", "Japan", "China"],
-                "gdp": [
-                    19294482071552,
-                    2891615567872,
-                    4380756541440,
-                    14631844184064,
-                ],
-                "happiness_index": [6.94, 7.22, 5.87, 5.12],
-            })"""
-        ]
-        updated_node = self.cleaner.extract_fix_dataframe_redeclarations(
-            node, code_lines
-        )
-        self.assertIsInstance(updated_node, ast.AST)
-
     def test_replace_output_filenames_with_temp_chart(self):
         handler = self.cleaner
         handler.context = MagicMock()
