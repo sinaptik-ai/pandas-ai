@@ -169,7 +169,7 @@ class Agent:
                     attempts += 1
                     if attempts > max_retries:
                         self._state.logger.log(
-                            f"Maximum retry attempts exceeded.  Last error: {e}"
+                            f"Maximum retry attempts exceeded. Last error: {e}"
                         )
                         raise
                     self._state.logger.log(
