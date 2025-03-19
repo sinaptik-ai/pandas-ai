@@ -2,7 +2,6 @@ import traceback
 import warnings
 from typing import Any, List, Optional, Union
 
-import duckdb
 import pandas as pd
 
 from pandasai.core.code_execution.code_executor import CodeExecutor
@@ -25,11 +24,8 @@ from pandasai.exceptions import (
 from pandasai.sandbox import Sandbox
 from pandasai.vectorstores.vectorstore import VectorStore
 
-from .. import SqlQueryBuilder
 from ..config import Config
-from ..constants import LOCAL_SOURCE_TYPES
 from ..data_loader.duck_db_connection_manager import DuckDBConnectionManager
-from ..data_loader.semantic_layer_schema import Source
 from ..query_builders.base_query_builder import BaseQueryBuilder
 from ..query_builders.sql_parser import SQLParser
 from .state import AgentState
@@ -155,6 +151,29 @@ class Agent:
         else:
             return df_executor(final_query)
 
+    def generate_code_with_retries(self, query: str) -> Any:
+        """Execute the code with retry logic."""
+        max_retries = self._state.config.max_retries
+        attempts = 0
+        try:
+            return self.generate_code(query)
+        except Exception as e:
+            exception = e
+            while attempts <= max_retries:
+                try:
+                    return self._regenerate_code_after_error(
+                        self._state.last_code_generated, exception
+                    )
+                except Exception as e:
+                    exception = e
+                    attempts += 1
+                    if attempts > max_retries:
+                        self._state.logger.log(f"Max retries reached. Error: {e}")
+                        raise
+                    self._state.logger.log(
+                        f"Retrying Code Generation ({attempts}/{max_retries})..."
+                    )
+
     def execute_with_retries(self, code: str) -> Any:
         """Execute the code with retry logic."""
         max_retries = self._state.config.max_retries
@@ -240,7 +259,7 @@ class Agent:
             self._state.assign_prompt_id()
 
             # Generate code
-            code = self.generate_code(query)
+            code = self.generate_code_with_retries(query)
 
             # Execute code with retries
             result = self.execute_with_retries(code)
