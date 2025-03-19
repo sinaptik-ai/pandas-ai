@@ -24,25 +24,16 @@ class CodeExecutor:
         """
         self._environment[key] = value
 
-    def execute(self, code: str) -> dict:
-        try:
-            exec(code, self._environment)
-        except Exception as e:
-            raise CodeExecutionError("Code execution failed") from e
-        return self._environment
-
-    def execute_and_return_result(self, code: str) -> Any:
+    def execute(
+        self, code: str, context: Optional[Dict[str, Any]] = None
+    ) -> CodeExecutionResult:
         """
-        Executes the return updated environment
+        Execute the code and return the result.
+
+        Args:
+            code (str): The code to execute.
+            context (Dict[str, Any], optional): The context to execute the code in.
+
+        Returns:
+            CodeExecutionResult: The result of the code execution.
         """
-        self.execute(code)
-
-        # Get the result
-        if "result" not in self._environment:
-            raise NoResultFoundError("No result returned")
-
-        return self._environment.get("result", None)
-
-    @property
-    def environment(self) -> dict:
-        return self._environment
