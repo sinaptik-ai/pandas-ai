@@ -83,7 +83,7 @@ def get_validated_dataset_path(path: str):
 
     if not validate_name_format(dataset_name):
         raise ValueError(
-            "Dataset name must be lowercase and use hyphens instead of spaces (e.g. 'my-dataset')"
+            "Dataset path name must be lowercase and use hyphens instead of spaces (e.g. 'my-dataset')"
         )
 
     return org_name, dataset_name
