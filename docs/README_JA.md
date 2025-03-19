@@ -118,7 +118,11 @@ df.chat(
 )
 ```
 
+<<<<<<< HEAD
 ![Chart](../assets/histogram-chart.png?raw=true)
+=======
+![Chart](assets/histogram-chart.png?raw=true)
+>>>>>>> 2bfbc53f54f9ce6325ced7611cbb54b8eff721f9
 
 #### 複数のデータフレーム
 
