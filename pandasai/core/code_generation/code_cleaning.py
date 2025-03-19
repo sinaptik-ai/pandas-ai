@@ -99,60 +99,6 @@ class CodeCleaner:
 
         return node
 
-    def extract_fix_dataframe_redeclarations(
-        self,
-        node: ast.AST,
-        code_lines: list[str],
-    ) -> ast.AST:
-        """
-        Checks if dataframe reclaration in the code like pd.DataFrame({...})
-        Args:
-            node (ast.AST): Code Node
-            code_lines (list[str]): List of code str line by line
-
-        Returns:
-            ast.AST: Updated Ast Node fixing redeclaration
-        """
-        if isinstance(node, ast.Assign):
-            target_names, is_slice, target = self.get_target_names(node.targets)
-
-            if target_names and self.check_is_df_declaration(node):
-                # Construct dataframe from node
-                code = "\n".join(code_lines)
-                code_executor = CodeExecutor(self.context.config)
-                env = code_executor.execute(code)
-
-                df_generated = (
-                    env[target_names[0]][target.slice.value]
-                    if is_slice
-                    else env[target_names[0]]
-                )
-
-                # check if exists in provided dfs
-                for index, df in enumerate(self.context.dfs):
-                    head = df.get_head()
-                    if head.shape == df_generated.shape and head.columns.equals(
-                        df_generated.columns
-                    ):
-                        target_var = (
-                            ast.Subscript(
-                                value=ast.Name(id=target_names[0], ctx=ast.Load()),
-                                slice=target.slice,
-                                ctx=ast.Store(),
-                            )
-                            if is_slice
-                            else ast.Name(id=target_names[0], ctx=ast.Store())
-                        )
-                        return ast.Assign(
-                            targets=[target_var],
-                            value=ast.Subscript(
-                                value=ast.Name(id="dfs", ctx=ast.Load()),
-                                slice=ast.Index(value=ast.Num(n=index)),
-                                ctx=ast.Load(),
-                            ),
-                        )
-        return None
-
     def get_target_names(self, targets):
         target_names = []
         is_slice = False
@@ -194,8 +140,6 @@ class CodeCleaner:
         # If plt.show is in the code, remove that line
         code = re.sub(r"plt.show\(\)", "", code)
 
-        clean_code_lines = []
-
         tree = ast.parse(code)
         new_body = []
 
@@ -205,12 +149,7 @@ class CodeCleaner:
 
             node = self._validate_and_make_table_name_case_sensitive(node)
 
-            clean_code_lines.append(astor.to_source(node))
-
-            new_body.append(
-                self.extract_fix_dataframe_redeclarations(node, clean_code_lines)
-                or node
-            )
+            new_body.append(node)
 
         new_tree = ast.Module(body=new_body)
         return astor.to_source(new_tree, pretty_source=lambda x: "".join(x)).strip()
