@@ -22,20 +22,19 @@ class DataframeSerializer:
         """
 
         # Start building the table metadata
-        dataframe_info = f'<table dialect="{dialect}" table_name="{getattr(df.schema, "name", "unknown")}"'
+        dataframe_info = f'<table dialect="{dialect}" table_name="{df.schema.name}"'
 
         # Add description attribute if available
-        description = getattr(df.schema, "description", None)
-        if description:
-            dataframe_info += f' description="{description}"'
+        if df.schema.description is not None:
+            dataframe_info += f' description="{df.schema.description}"'
 
-        dataframe_info += f' dimensions="{getattr(df, "rows_count", len(df))}x{getattr(df, "columns_count", len(df.columns))}">\n'
+        dataframe_info += f' dimensions="{df.rows_count}x{df.columns_count}">'
 
         # Truncate long values
         df_truncated = cls._truncate_dataframe(df.head())
 
         # Convert to CSV format
-        dataframe_info += df_truncated.to_csv(index=False)
+        dataframe_info += f"\n{df_truncated.to_csv(index=False)}"
 
         # Close the table tag
         dataframe_info += "</table>\n"
@@ -51,7 +50,7 @@ class DataframeSerializer:
                 value = json.dumps(value, ensure_ascii=False)
 
             if isinstance(value, str) and len(value) > cls.MAX_COLUMN_TEXT_LENGTH:
-                return f"{value[: cls.MAX_COLUMN_TEXT_LENGTH]} …"
+                return f"{value[: cls.MAX_COLUMN_TEXT_LENGTH]}…"
             return value
 
         return df.applymap(truncate_value)
