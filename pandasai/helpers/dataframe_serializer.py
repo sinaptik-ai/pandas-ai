@@ -11,7 +11,7 @@ class DataframeSerializer:
     @classmethod
     def serialize(cls, df: "DataFrame", dialect: str = "postgres") -> str:
         """
-        Convert df to a CSV-like format wrapped inside <table> tags, truncating long text values.
+        Convert df to a CSV-like format wrapped inside <table> tags, truncating long text values, and serializing only a subset of rows using df.head().
 
         Args:
             df (pd.DataFrame): Pandas DataFrame
