@@ -1,5 +1,12 @@
 # ![PandaAI](assets/logo.png)
 
+<p align="center">
+[ <b>En</b> |
+<a href="docs/README_CN.md">中</a> |
+<a href="docs/README_FR.md">Fr</a> |
+<a href="docs/README_JA.md">日</a> ] 
+</p>
+
 [![Release](https://img.shields.io/pypi/v/pandasai?label=Release&style=flat-square)](https://pypi.org/project/pandasai/)
 [![CI](https://github.com/sinaptik-ai/pandas-ai/actions/workflows/ci-core.yml/badge.svg)](https://github.com/sinaptik-ai/pandas-ai/actions/workflows/ci-core.yml/badge.svg)
 [![CD](https://github.com/sinaptik-ai/pandas-ai/actions/workflows/cd.yml/badge.svg)](https://github.com/sinaptik-ai/pandas-ai/actions/workflows/cd.yml/badge.svg)
