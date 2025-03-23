@@ -75,6 +75,37 @@ class TestAgent:
         assert response == "print(United States has the highest gdp)"
 
     @patch("pandasai.agent.base.CodeGenerator")
+    def test_code_generation_with_retries(self, mock_generate_code, sample_df, config):
+        # Create an Agent instance for testing
+        mock_generate_code.generate_code.side_effect = Exception("Exception")
+        agent = Agent(sample_df, config)
+        agent._code_generator = mock_generate_code
+        agent._regenerate_code_after_error = MagicMock()
+
+        # Test the chat function
+        agent.generate_code_with_retries("Which country has the highest gdp?")
+        assert agent._code_generator.generate_code.called
+        assert agent._regenerate_code_after_error.call_count == 1
+
+    @patch("pandasai.agent.base.CodeGenerator")
+    def test_code_generation_with_retries_three_times(
+        self, mock_generate_code, sample_df, config
+    ):
+        # Create an Agent instance for testing
+        mock_generate_code.generate_code.side_effect = Exception("Exception")
+        agent = Agent(sample_df, config)
+        agent._code_generator = mock_generate_code
+        agent._regenerate_code_after_error = MagicMock()
+        agent._regenerate_code_after_error.side_effect = Exception("Exception")
+
+        # Test the chat function
+        with pytest.raises(Exception):
+            agent.generate_code_with_retries("Which country has the highest gdp?")
+
+        assert agent._code_generator.generate_code.called
+        assert agent._regenerate_code_after_error.call_count == 4
+
+    @patch("pandasai.agent.base.CodeGenerator")
     def test_generate_code_with(self, mock_generate_code, agent: Agent):
         # Mock the code generator to return a SQL-based response
         mock_generate_code.generate_code.return_value = (

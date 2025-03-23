@@ -16,7 +16,7 @@ def test_session_init_without_api_key():
         Session()
     assert (
         str(exc_info.value)
-        == "PandaAI API key not found. Please set your API key using PandaAI.set_api_key() or by setting the PANDASAI_API_KEY environment variable."
+        == "PandaAI API key not found. Please set your API key using PandaAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
     )
 
 
@@ -27,7 +27,7 @@ def test_session_init_with_none_api_key():
         Session(api_key=None)
     assert (
         str(exc_info.value)
-        == "PandaAI API key not found. Please set your API key using PandaAI.set_api_key() or by setting the PANDASAI_API_KEY environment variable."
+        == "PandaAI API key not found. Please set your API key using PandaAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
     )
 
 
@@ -77,7 +77,7 @@ def test_get_pandaai_session_without_credentials():
         get_pandaai_session()
     assert (
         str(exc_info.value)
-        == "PandaAI API key not found. Please set your API key using PandaAI.set_api_key() or by setting the PANDASAI_API_KEY environment variable."
+        == "PandaAI API key not found. Please set your API key using PandaAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
     )
 
 

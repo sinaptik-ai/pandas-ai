@@ -365,7 +365,7 @@ class TestPandaAIInit:
 
     def test_create_invalid_dataset_name(self, sample_df):
         """Test creating a dataset with invalid dataset name."""
-        with pytest.raises(ValueError, match="Dataset name must be lowercase"):
+        with pytest.raises(ValueError, match="Dataset path name must be lowercase"):
             pandasai.create("test-org/Invalid-Dataset", sample_df)
 
     def test_create_empty_org_name(self, sample_df):

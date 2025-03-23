@@ -73,7 +73,7 @@ class ViewDatasetLoader(SQLDatasetLoader):
     def load(self) -> VirtualDataFrame:
         return VirtualDataFrame(
             schema=self.schema,
-            data_loader=ViewDatasetLoader(self.schema, self.dataset_path),
+            data_loader=self,
             path=self.dataset_path,
         )
 
@@ -82,11 +82,6 @@ class ViewDatasetLoader(SQLDatasetLoader):
     ) -> pd.DataFrame:
         try:
             db_manager = DuckDBConnectionManager()
-
-            for loader in list(self.schema_dependencies_dict.values()):
-                if isinstance(loader, LocalDatasetLoader):
-                    loader.register_table()
-
             return db_manager.sql(query, params).df()
         except duckdb.Error as e:
             raise RuntimeError(f"SQL execution failed: {e}") from e

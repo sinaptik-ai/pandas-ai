@@ -4,7 +4,8 @@ description: "Set up Large Language Model in PandaAI"
 ---
 
 <Note title="Beta Notice">
-Release v3 is currently in beta. This documentation reflects the features and functionality in progress and may change before the final release.
+  Release v3 is currently in beta. This documentation reflects the features and
+  functionality in progress and may change before the final release.
 </Note>
 
 PandaAI supports multiple LLMs.
@@ -79,7 +80,7 @@ llm = AzureOpenAI(api_base="https://<your-endpoint>.openai.azure.com/",
 pai.config.set({"llm": llm})
 ```
 
-## LiteLLM
+## How to set up any LLM?
 
 LiteLLM provides a unified interface to interact with 100+ LLM models from various providers including OpenAI, Azure, Anthropic, Google, AWS, Hugging Face, and many more. This makes it easy to switch between different LLM providers without changing your code.
 
@@ -115,6 +116,7 @@ pai.config.set({"llm": llm})
 ```
 
 LiteLLM supports a wide range of models from various providers, including but not limited to:
+
 - OpenAI (gpt-3.5-turbo, gpt-4, etc.)
 - Anthropic (claude-2, claude-instant-1, etc.)
 - Google (gemini-pro, palm2, etc.)

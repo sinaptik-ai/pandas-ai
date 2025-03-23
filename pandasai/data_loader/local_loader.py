@@ -1,3 +1,4 @@
+import re
 from typing import Optional
 
 import duckdb
@@ -39,11 +40,24 @@ class LocalDatasetLoader(DatasetLoader):
             path=self.dataset_path,
         )
 
+    def _replace_readparquet_block_with_table(
+        self, sql_query, table: str = "dummy_table"
+    ):
+        read_parquet_pattern = re.compile(r"(READ_PARQUET\(\s*'[^']+'\s*\))", re.DOTALL)
+        read_parquet_blocks = read_parquet_pattern.findall(sql_query)
+        for block in read_parquet_blocks:
+            sql_query = sql_query.replace(block, table)
+
+        return sql_query
+
     def execute_query(self, query: str, params: Optional[list] = None) -> pd.DataFrame:
         try:
             db_manager = DuckDBConnectionManager()
 
-            if not is_sql_query_safe(query, dialect="duckdb"):
+            # Replace READ_PARQUET blocks with a dummy table for validation
+            validation_query = self._replace_readparquet_block_with_table(query)
+
+            if not is_sql_query_safe(validation_query, dialect="duckdb"):
                 raise MaliciousQueryError(
                     "The SQL query is deemed unsafe and will not be executed."
                 )

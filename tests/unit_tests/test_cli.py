@@ -102,7 +102,7 @@ def test_get_validated_dataset_path_invalid_dataset():
     """Test get_validated_dataset_path with invalid dataset name"""
     with pytest.raises(
         ValueError,
-        match="Dataset name must be lowercase and use hyphens instead of spaces",
+        match="Dataset path name must be lowercase and use hyphens instead of spaces",
     ):
         get_validated_dataset_path("my-org/INVALID_DATASET")
 
@@ -111,7 +111,7 @@ def test_get_validated_dataset_path_start_with_hyphen():
     """Test get_validated_dataset_path with invalid dataset name"""
     with pytest.raises(
         ValueError,
-        match="Dataset name must be lowercase and use hyphens instead of spaces",
+        match="Dataset path name must be lowercase and use hyphens instead of spaces",
     ):
         get_validated_dataset_path("my-org/-INVALID-DATASET")
 
@@ -120,14 +120,15 @@ def test_get_validated_dataset_path_end_with_hyphen():
     """Test get_validated_dataset_path with invalid dataset name"""
     with pytest.raises(
         ValueError,
-        match="Dataset name must be lowercase and use hyphens instead of spaces",
+        match="Dataset path name must be lowercase and use hyphens instead of spaces",
     ):
         get_validated_dataset_path("my-org/-INVALID-DATASET")
 
 
 @pytest.fixture
 def mock_dataset_loader():
-    with patch("pandasai.cli.main.DatasetLoader") as mock:
+    with patch("pandasai.cli.main.DatasetLoader.create_loader_from_path") as mock:
+        mock.return_value
         yield mock
 
 
@@ -199,9 +200,7 @@ def test_pull_command(mock_dataset_loader):
     result = runner.invoke(cli, ["pull", "test-org/test-dataset"])
 
     assert result.exit_code == 0
-    mock_dataset_loader.return_value.load.assert_called_once_with(
-        "test-org/test-dataset"
-    )
+    mock_dataset_loader.return_value.load.assert_called_once()
     mock_df.pull.assert_called_once()
     assert "✨ Dataset successfully pulled" in result.output
 
@@ -215,9 +214,7 @@ def test_push_command(mock_dataset_loader):
     result = runner.invoke(cli, ["push", "test-org/test-dataset"])
 
     assert result.exit_code == 0
-    mock_dataset_loader.return_value.load.assert_called_once_with(
-        "test-org/test-dataset"
-    )
+    mock_dataset_loader.return_value.load.assert_called_once()
     mock_df.push.assert_called_once()
     assert "✨ Dataset successfully pushed" in result.output
 
