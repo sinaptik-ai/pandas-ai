@@ -17,14 +17,17 @@ from pandasai.query_builders.sql_parser import SQLParser
 class DuckDBConnectionManager:
     _instance = None
     _lock = threading.Lock()
-    _pool_size = 60  # Default connection pool size
-    _max_wait_time = 60 # Maximum wait time for getting a connection
+    _default_pool_size = 60  # Default connection pool size
+    _default_max_wait_time = 60  # Default maximum wait time for getting a connection
 
-    def __new__(cls):
+    def __new__(cls, pool_size=None, max_wait_time=None):
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:
                     cls._instance = super(DuckDBConnectionManager, cls).__new__(cls)
+                    # Set pool size and wait time with provided values or defaults
+                    cls._instance._pool_size = pool_size if pool_size is not None else cls._default_pool_size
+                    cls._instance._max_wait_time = max_wait_time if max_wait_time is not None else cls._default_max_wait_time
                     cls._instance._init_connection_pool()
                     weakref.finalize(cls._instance, cls._close_connections)
         return cls._instance
