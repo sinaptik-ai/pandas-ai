@@ -120,7 +120,7 @@ class DuckDBConnectionManager:
                 except duckdb.TransactionException as e:
                     if "Catalog write-write conflict" in str(e) and attempt < max_retries - 1:
                         # Wait a bit before retrying (exponential backoff)
-                        time.sleep(0.1 * (attempt + 1))
+                        time.sleep(0.1 * (2 ** attempt))
                         continue
                     elif "already exists" in str(e):
                         # Table was created by another thread, consider this success
