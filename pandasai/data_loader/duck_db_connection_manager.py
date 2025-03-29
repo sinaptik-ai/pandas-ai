@@ -1,8 +1,8 @@
 import logging
 import os
-import time
 import tempfile
 import threading
+import time
 import weakref
 from queue import Empty, Queue
 from typing import Optional
@@ -26,8 +26,14 @@ class DuckDBConnectionManager:
                 if cls._instance is None:
                     cls._instance = super(DuckDBConnectionManager, cls).__new__(cls)
                     # Set pool size and wait time with provided values or defaults
-                    cls._instance._pool_size = pool_size if pool_size is not None else cls._default_pool_size
-                    cls._instance._max_wait_time = max_wait_time if max_wait_time is not None else cls._default_max_wait_time
+                    cls._instance._pool_size = (
+                        pool_size if pool_size is not None else cls._default_pool_size
+                    )
+                    cls._instance._max_wait_time = (
+                        max_wait_time
+                        if max_wait_time is not None
+                        else cls._default_max_wait_time
+                    )
                     cls._instance._init_connection_pool()
                     weakref.finalize(cls._instance, cls._close_connections)
         return cls._instance
@@ -71,7 +77,9 @@ class DuckDBConnectionManager:
                     conn = cls._instance._connection_pool.get()
                     conn.close()
                 # Remove the temporary database file
-                if hasattr(cls._instance, '_db_file') and os.path.exists(cls._instance._db_file):
+                if hasattr(cls._instance, "_db_file") and os.path.exists(
+                    cls._instance._db_file
+                ):
                     try:
                         os.remove(cls._instance._db_file)
                     except Exception as e:
@@ -80,26 +88,26 @@ class DuckDBConnectionManager:
 
     def register(self, name: str, df):
         """Registers a DataFrame as a DuckDB table.
-        
+
         Args:
             name: Table name to register
             df: DataFrame to register as table
-            
+
         Note:
             This method is thread-safe and handles concurrent table creation attempts.
-            If multiple threads try to create the same table simultaneously, 
+            If multiple threads try to create the same table simultaneously,
             only one will succeed and others will reuse the existing table.
         """
         # First check if table is already registered in our tracking set
         with self._tables_lock:
             if name in self._registered_tables:
                 return  # Table already exists, no need to register again
-                
+
         conn = self._get_connection()
         try:
             # Register the DataFrame as a temporary view
             conn.register(name, df)
-            
+
             # Try to create the table with retry logic for concurrent scenarios
             max_retries = 3
             for attempt in range(max_retries):
@@ -108,7 +116,9 @@ class DuckDBConnectionManager:
                     conn.begin()
                     try:
                         # Use CREATE TABLE IF NOT EXISTS to handle race conditions
-                        conn.execute(f"CREATE TABLE IF NOT EXISTS {name} AS SELECT * FROM {name}")
+                        conn.execute(
+                            f"CREATE TABLE IF NOT EXISTS {name} AS SELECT * FROM {name}"
+                        )
                         conn.commit()
                         with self._tables_lock:
                             self._registered_tables.add(name)
@@ -118,9 +128,12 @@ class DuckDBConnectionManager:
                         conn.rollback()
                         raise
                 except duckdb.TransactionException as e:
-                    if "Catalog write-write conflict" in str(e) and attempt < max_retries - 1:
+                    if (
+                        "Catalog write-write conflict" in str(e)
+                        and attempt < max_retries - 1
+                    ):
                         # Wait a bit before retrying (exponential backoff)
-                        time.sleep(0.1 * (2 ** attempt))
+                        time.sleep(0.1 * (2**attempt))
                         continue
                     elif "already exists" in str(e):
                         # Table was created by another thread, consider this success
