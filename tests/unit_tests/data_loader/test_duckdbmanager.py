@@ -77,7 +77,7 @@ class TestDuckDBConnectionManager:
         
         # Wait for all threads to complete
         for t in threads:
-            t.join()
+            t.join(timeout=10)
         
         # Verify no errors occurred
         assert not errors
