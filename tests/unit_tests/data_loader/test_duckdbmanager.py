@@ -1,4 +1,6 @@
+import multiprocessing
 import os
+import tempfile
 import threading
 import time
 
@@ -6,6 +8,32 @@ import pytest
 
 import pandasai as pd
 from pandasai.data_loader.duck_db_connection_manager import DuckDBConnectionManager
+
+
+def worker_process(process_id: int, sample_df: pd.DataFrame):
+    try:
+        # Each process creates its own manager instance
+        manager = DuckDBConnectionManager()
+
+        # Verify each process gets its own db file with correct PID
+        assert str(os.getpid()) in manager._db_file
+
+        # Register a table unique to this process
+        table_name = f"process_{process_id}_table"
+        manager.register(table_name, sample_df)
+
+        # Perform multiple operations
+        for i in range(10):
+            # Insert some data
+            manager.sql(f"INSERT INTO {table_name} VALUES ({i}, 'data_{i}')")
+            # Query the data
+            result = manager.sql(f"SELECT COUNT(*) FROM {table_name}").df()
+            assert result.iloc[0, 0] == i + 1 + 3  # 3 initial rows + i + 1 inserts
+
+        manager.close()
+        return True
+    except Exception as e:
+        return f"Process {process_id} failed: {str(e)}"
 
 
 class TestDuckDBConnectionManager:
@@ -53,7 +81,7 @@ class TestDuckDBConnectionManager:
 
     def test_concurrent_access_thread_safety(self, duck_db_manager, sample_df):
         """Test thread safety with concurrent access"""
-        num_threads = 10
+        num_threads = 50
         results = []
         errors = []
 
@@ -149,3 +177,62 @@ class TestDuckDBConnectionManager:
     def test_connection_correct_closing_doesnt_throw(self, duck_db_manager):
         """Test that closing connections doesn't throw exceptions"""
         duck_db_manager.close()
+
+    def test_connection_release_after_multiple_operations(
+        self, duck_db_manager, sample_df
+    ):
+        """Test that connections are properly released after multiple sql and register operations"""
+        # Store initial queue size
+        initial_queue_size = duck_db_manager._connection_pool.qsize()
+
+        # Define number of iterations
+        num_operations = 100
+
+        # Perform multiple register and sql operations
+        for i in range(num_operations):
+            table_name = f"test_table_{i}"
+            # Register new table
+            duck_db_manager.register(table_name, sample_df)
+            # Execute multiple queries
+            duck_db_manager.sql(f"SELECT * FROM {table_name}")
+            duck_db_manager.sql(f"SELECT COUNT(*) FROM {table_name}")
+            duck_db_manager.sql(f"SELECT AVG(col1) FROM {table_name}")
+
+        # Verify all connections were released back to pool
+        assert (
+            duck_db_manager._connection_pool.qsize() == initial_queue_size
+        ), "Not all connections were released back to pool"
+
+        # Verify we can still get all connections (no leaks)
+        connections = []
+        try:
+            for _ in range(initial_queue_size):
+                connections.append(duck_db_manager._get_connection())
+            # All connections should be obtainable
+            assert len(connections) == initial_queue_size
+        finally:
+            # Release connections back to pool
+            for conn in connections:
+                duck_db_manager._release_connection(conn)
+
+    def test_multiprocess_concurrency(self, sample_df):
+        """Test that multiple processes can use DuckDBConnectionManager concurrently without issues"""
+
+        # Create a pool of processes
+        num_processes = 4
+        with multiprocessing.Pool(num_processes) as pool:
+            # Option 1: Use starmap with tuple arguments
+            results = pool.starmap(
+                worker_process, [(i, sample_df) for i in range(num_processes)]
+            )
+
+        # Verify all processes completed successfully
+        for result in results:
+            assert result is True, f"A process failed: {result}"
+
+        # Verify no leftover db files
+        temp_dir = tempfile.gettempdir()
+        leftover_files = [
+            f for f in os.listdir(temp_dir) if f.startswith("pandasai_duckdb_temp_")
+        ]
+        assert not leftover_files, "Some temporary db files were not cleaned up"

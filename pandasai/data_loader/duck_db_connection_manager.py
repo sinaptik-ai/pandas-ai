@@ -47,7 +47,8 @@ class DuckDBConnectionManager:
         self._tables_lock = threading.Lock()
         # Create a temporary file with cross-platform compatibility
         temp_dir = tempfile.gettempdir()
-        self._db_file = os.path.join(temp_dir, "pandasai_duckdb_temp.db")
+        # Add process PID to filename to avoid multi-process conflicts
+        self._db_file = os.path.join(temp_dir, f"pandasai_duckdb_temp_{os.getpid()}.db")
         # Create the first connection to initialize the database
         initial_conn = duckdb.connect(self._db_file)
         self._connection_pool.put(initial_conn)
@@ -154,9 +155,9 @@ class DuckDBConnectionManager:
         try:
             query = SQLParser.transpile_sql_dialect(query, to_dialect="duckdb")
             result = conn.sql(query, params=params)
-            return result
         finally:
             self._release_connection(conn)
+        return result
 
     def close(self):
         """Manually close the connection if needed."""
