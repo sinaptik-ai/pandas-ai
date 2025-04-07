@@ -107,7 +107,7 @@ class DatasetPaginator:
         if not pagination:
             return query, params
 
-        # Convert query to target dialect to generate pagination query in postgres
+        # Convert query from target dialect to postgres to generate standardized pagination query
         query = sqlglot.transpile(query, read=target_dialect, write="postgres")[0]
 
         filtering_query = f"SELECT * FROM ({query}) AS filtered_data"
