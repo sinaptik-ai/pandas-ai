@@ -82,7 +82,7 @@ class TestDatasetPaginator:
         query, parameters = DatasetPaginator.apply_pagination(
             sample_query, sample_columns, params
         )
-        assert "name ILIKE %s" in query
+        assert '"name" ILIKE %s' in query
         assert parameters[0] == "%John%"  # First parameter is search term
         assert len(parameters) == 3  # search + LIMIT/OFFSET
 
@@ -92,8 +92,8 @@ class TestDatasetPaginator:
         query, parameters = DatasetPaginator.apply_pagination(
             sample_query, sample_columns, params
         )
-        assert "id = %s" in query
-        assert "age = %s" in query
+        assert '"id" = %s' in query
+        assert '"age" = %s' in query
         assert parameters.count("25") >= 2  # At least id and age columns
         assert len(parameters) > 2  # search params + LIMIT/OFFSET
 
@@ -103,7 +103,7 @@ class TestDatasetPaginator:
         query, parameters = DatasetPaginator.apply_pagination(
             sample_query, sample_columns, params
         )
-        assert "created_at = %s" in query
+        assert '"created_at" = %s' in query
         # Convert the datetime string to expected format
         expected_dt = datetime.datetime.strptime(
             "2023-01-01 12:00:00", "%Y-%m-%d %H:%M:%S"
@@ -120,7 +120,7 @@ class TestDatasetPaginator:
         query, parameters = DatasetPaginator.apply_pagination(
             sample_query, sample_columns, params
         )
-        assert "age IN (%s, %s, %s)" in query
+        assert '"age" IN (%s, %s, %s)' in query
         assert all(
             x in parameters for x in [25, 30, 35]
         )  # Filter values are in parameters
@@ -134,7 +134,7 @@ class TestDatasetPaginator:
         query, parameters = DatasetPaginator.apply_pagination(
             sample_query, sample_columns, params
         )
-        assert "ORDER BY age DESC" in query
+        assert 'ORDER BY "age" DESC' in query
 
     def test_invalid_sort_column(self, sample_query, sample_columns):
         """Test error on invalid sort column"""
@@ -183,7 +183,7 @@ class TestDatasetPaginator:
         query, parameters = DatasetPaginator.apply_pagination(
             sample_query, sample_columns, params
         )
-        assert "is_active = %s" in query
+        assert '"is_active" = %s' in query
         assert "true" in [str(p).lower() for p in parameters]
 
     def test_uuid_search(self, sample_query, sample_columns):
@@ -193,7 +193,7 @@ class TestDatasetPaginator:
         query, parameters = DatasetPaginator.apply_pagination(
             sample_query, sample_columns, params
         )
-        assert "CAST(user_id AS TEXT) = %s" in query
+        assert '"user_id"::TEXT = %s' in query
         assert uuid_value in parameters
 
     def test_filter_single_value(self, sample_query, sample_columns):
@@ -206,7 +206,7 @@ class TestDatasetPaginator:
         query, parameters = DatasetPaginator.apply_pagination(
             sample_query, sample_columns, params
         )
-        assert "age IN (%s)" in query
+        assert '"age" IN (%s)' in query
         assert 25 in parameters
 
     def test_invalid_json_filter(self, sample_query, sample_columns):

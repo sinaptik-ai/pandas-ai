@@ -107,6 +107,9 @@ class DatasetPaginator:
         if not pagination:
             return query, params
 
+        # Convert query to target dialect to generate pagination query in postgres
+        query = sqlglot.transpile(query, read=target_dialect, write="postgres")[0]
+
         filtering_query = f"SELECT * FROM ({query}) AS filtered_data"
         conditions = []
 
@@ -118,26 +121,26 @@ class DatasetPaginator:
                 column_type = column["type"]
 
                 if column_type == "string":
-                    search_conditions.append(f"{column_name} ILIKE %s")
+                    search_conditions.append(f'"{column_name}" ILIKE %s')
                     params.append(f"%{pagination.search}%")
 
                 elif column_type == "float" and DatasetPaginator.is_float(
                     pagination.search
                 ):
-                    search_conditions.append(f"{column_name} = %s")
+                    search_conditions.append(f'"{column_name}" = %s')
                     params.append(pagination.search)
 
                 elif (
                     column_type in ["number", "integer"]
                     and pagination.search.isnumeric()
                 ):
-                    search_conditions.append(f"{column_name} = %s")
+                    search_conditions.append(f'"{column_name}" = %s')
                     params.append(pagination.search)
 
                 elif column_type == "datetime" and DatasetPaginator.is_valid_datetime(
                     pagination.search
                 ):
-                    search_conditions.append(f"{column_name} = %s")
+                    search_conditions.append(f'"{column_name}" = %s')
                     params.append(
                         datetime.datetime.strptime(
                             pagination.search, "%Y-%m-%d %H:%M:%S"
@@ -147,13 +150,13 @@ class DatasetPaginator:
                 elif column_type == "boolean" and DatasetPaginator.is_valid_boolean(
                     pagination.search
                 ):
-                    search_conditions.append(f"{column_name} = %s")
+                    search_conditions.append(f'"{column_name}" = %s')
                     params.append(pagination.search)
 
                 elif column_type == "uuid" and DatasetPaginator.is_valid_uuid(
                     pagination.search
                 ):
-                    search_conditions.append(f"{column_name}::TEXT = %s")
+                    search_conditions.append(f'"{column_name}"::TEXT = %s')
                     params.append(pagination.search)
 
             if search_conditions:
@@ -171,7 +174,7 @@ class DatasetPaginator:
                     if not isinstance(values, list):
                         values = [values]
                     placeholders = ", ".join(["%s"] * len(values))
-                    conditions.append(f"{column} IN ({placeholders})")
+                    conditions.append(f'"{column}" IN ({placeholders})')
                     params.extend(values)
             except json.JSONDecodeError as e:
                 raise ValueError(f"Invalid filters format: {e}")
@@ -188,7 +191,7 @@ class DatasetPaginator:
                 )
 
             filtering_query += (
-                f" ORDER BY {pagination.sort_by} {pagination.sort_order.upper()}"
+                f' ORDER BY "{pagination.sort_by}" {pagination.sort_order.upper()}'
             )
 
         # Handle page and page_size
@@ -198,12 +201,4 @@ class DatasetPaginator:
                 [pagination.page_size, (pagination.page - 1) * pagination.page_size]
             )
 
-        # Replace placeholders for target dialect
-        placeholder = "___PLACEHOLDER___"
-        temp_query = filtering_query.replace("%s", placeholder)
-        transpiled_query = sqlglot.transpile(
-            temp_query, read="postgres", write=target_dialect
-        )[0]
-        final_query = transpiled_query.replace(placeholder, "%s")
-
-        return final_query, params
+        return filtering_query, params
