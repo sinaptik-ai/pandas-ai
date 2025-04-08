@@ -2,10 +2,18 @@ import os
 import re
 
 import sqlglot
+from sqlglot import parse_one
+from sqlglot.optimizer.qualify_columns import quote_identifiers
 
 
 def sanitize_view_column_name(relation_name: str) -> str:
-    return ".".join(list(map(sanitize_sql_table_name, relation_name.split("."))))
+    return (
+        parse_one(
+            ".".join(list(map(sanitize_sql_table_name, relation_name.split("."))))
+        )
+        .transform(quote_identifiers)
+        .sql()
+    )
 
 
 def sanitize_sql_table_name(table_name: str) -> str:

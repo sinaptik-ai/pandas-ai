@@ -24,13 +24,12 @@ class ViewQueryBuilder(BaseQueryBuilder):
 
     @staticmethod
     def normalize_view_column_name(name: str) -> str:
-        return normalize_identifiers(parse_one(sanitize_view_column_name(name))).sql()
+        return sanitize_view_column_name(name)
 
     @staticmethod
     def normalize_view_column_alias(name: str) -> str:
-        return normalize_identifiers(
-            sanitize_view_column_name(name).replace(".", "_")
-        ).sql()
+        col_name = name.replace(".", "_")
+        return sanitize_view_column_name(col_name)
 
     def _get_group_by_columns(self) -> list[str]:
         """Get the group by columns with proper view column aliasing."""
