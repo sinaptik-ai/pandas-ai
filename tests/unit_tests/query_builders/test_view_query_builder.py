@@ -178,7 +178,6 @@ class TestViewQueryBuilder:
     def test_column_name_injection(self, view_query_builder):
         view_query_builder.schema.columns[0].name = "column; DROP TABLE users;"
         query = view_query_builder.build_query()
-        print(query)
         assert query == (
             """SELECT
   "column__DROP_TABLE_users_",
@@ -247,7 +246,6 @@ FROM (
             0
         ].name = "column UNION SELECT username, password FROM users;"
         query = view_query_builder.build_query()
-        print(query)
         assert query == (
             """SELECT
   "column_UNION_SELECT_username__password_FROM_users_",
