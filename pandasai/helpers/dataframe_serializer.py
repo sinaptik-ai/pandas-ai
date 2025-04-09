@@ -53,4 +53,4 @@ class DataframeSerializer:
                 return f"{value[: cls.MAX_COLUMN_TEXT_LENGTH]}…"
             return value
 
-        return df.applymap(truncate_value)
+        return df.apply(lambda row: row.apply(truncate_value), axis=1)
