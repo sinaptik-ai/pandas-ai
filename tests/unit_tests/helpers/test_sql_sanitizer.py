@@ -25,7 +25,7 @@ class TestSqlSanitizer:
 
     def test_sanitize_relation_name_valid(self):
         relation = "dataset-name.column"
-        expected = "dataset_name.column"
+        expected = '"dataset_name"."column"'
         assert sanitize_view_column_name(relation) == expected
 
     def test_safe_select_query(self):
