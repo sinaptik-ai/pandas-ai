@@ -17,8 +17,6 @@ class DuckDBConnectionManager:
 
     def register(self, name: str, df):
         """Registers a DataFrame as a DuckDB table."""
-        if name in self._registered_tables:
-            self.connection.unregister(name)
         self.connection.register(name, df)
         self._registered_tables.add(name)
 
