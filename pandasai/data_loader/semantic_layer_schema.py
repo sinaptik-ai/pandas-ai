@@ -63,12 +63,13 @@ class Column(BaseModel):
 
     @field_validator("expression")
     @classmethod
-    def is_expression_valid(cls, expr: str) -> str:
-        try:
-            parse_one(expr)
-            return expr
-        except ParseError as e:
-            raise ValueError(f"Invalid SQL expression: {expr}. Error: {str(e)}")
+    def is_expression_valid(cls, expr: str) -> Optional[str]:
+        if expr is not None:
+            try:
+                parse_one(expr)
+                return expr
+            except ParseError as e:
+                raise ValueError(f"Invalid SQL expression: {expr}. Error: {str(e)}")
 
 
 class Relation(BaseModel):

@@ -28,6 +28,10 @@ class DataframeSerializer:
         if df.schema.description is not None:
             dataframe_info += f' description="{df.schema.description}"'
 
+        if df.schema.columns:
+            columns = [column.model_dump() for column in df.schema.columns]
+            dataframe_info += f' columns="{json.dumps(columns, ensure_ascii=False)}"'
+
         dataframe_info += f' dimensions="{df.rows_count}x{df.columns_count}">'
 
         # Truncate long values
