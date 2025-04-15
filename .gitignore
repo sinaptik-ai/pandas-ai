@@ -48,3 +48,4 @@ pgdata/
 
 # datasets
 datasets/
+**/envs.toml
