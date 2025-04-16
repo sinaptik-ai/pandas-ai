@@ -1,6 +1,6 @@
 import re
 from functools import partial
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List
 
 import yaml
 from pydantic import (
@@ -45,115 +45,107 @@ class SQLConnectionConfig(BaseModel):
 
 class Column(BaseModel):
     name: str = Field(..., description="Name of the column.")
-    type: Optional[str] = Field(None, description="Data type of the column.")
-    description: Optional[str] = Field(None, description="Description of the column")
-    expression: Optional[str] = Field(
-        None, description="Aggregation expression (avg, min, max, sum)"
-    )
-    alias: Optional[str] = Field(None, description="Alias for the column")
+    type: str | None = Field(None, description="Data type of the column.")
+    description: str | None = Field(None, description="Description of the column")
+    expression: str | None = Field(None, description="Aggregation expression (avg, min, max, sum)")
+    alias: str | None = Field(None, description="Alias for the column")
 
     @field_validator("type")
-    @classmethod
-    def is_column_type_supported(cls, type: str) -> str:
-        if type and type not in VALID_COLUMN_TYPES:
+    def is_column_type_supported(cls, v: str) -> str:
+        if v and v not in VALID_COLUMN_TYPES:
             raise ValueError(
-                f"Unsupported column type: {type}. Supported types are: {VALID_COLUMN_TYPES}"
+                f"Unsupported column type: {v}. Supported types are: {VALID_COLUMN_TYPES}"
             )
-        return type
+        return v
 
     @field_validator("expression")
-    @classmethod
-    def is_expression_valid(cls, expr: str) -> Optional[str]:
-        if expr is not None:
+    def is_expression_valid(cls, v: str) -> str | None:
+        if v is not None:
             try:
-                parse_one(expr)
-                return expr
+                parse_one(v)
+                return v
             except ParseError as e:
-                raise ValueError(f"Invalid SQL expression: {expr}. Error: {str(e)}")
+                raise ValueError(f"Invalid SQL expression: {v}. Error: {str(e)}")
 
 
 class Relation(BaseModel):
-    name: Optional[str] = Field(None, description="Name of the relationship.")
-    description: Optional[str] = Field(
-        None, description="Description of the relationship."
-    )
-    from_: str = Field(
-        ..., alias="from", description="Source column for the relationship."
-    )
+    name: str | None = Field(None, description="Name of the relationship.")
+    description: str | None = Field(None, description="Description of the relationship.")
+    from_: str = Field(..., alias="from", description="Source column for the relationship.")
     to: str = Field(..., description="Target column for the relationship.")
 
 
 class TransformationParams(BaseModel):
-    column: Optional[str] = Field(None, description="Column to transform")
-    value: Optional[Union[str, int, float, bool]] = Field(
+    column: str | None = Field(None, description="Column to transform")
+    value: str | int | float | bool | None = Field(
         None, description="Value for fill_na and other transformations"
     )
-    mapping: Optional[Dict[str, str]] = Field(
+    mapping: Dict[str, str] | None = Field(
         None, description="Mapping dictionary for map_values transformation"
     )
-    format: Optional[str] = Field(None, description="Format string for date formatting")
-    decimals: Optional[int] = Field(
+    format: str | None = Field(None, description="Format string for date formatting")
+    decimals: int | None = Field(
         None, description="Number of decimal places for rounding"
     )
-    factor: Optional[Union[int, float]] = Field(None, description="Scaling factor")
-    to_tz: Optional[str] = Field(None, description="Target timezone or format")
-    from_tz: Optional[str] = Field(None, description="From timezone or format")
-    errors: Optional[str] = Field(
+    factor: int | float | None = Field(None, description="Scaling factor")
+    to_tz: str | None = Field(None, description="Target timezone or format")
+    from_tz: str | None = Field(None, description="From timezone or format")
+    errors: str | None = Field(
         None, description="Error handling mode for numeric/datetime conversion"
     )
-    old_value: Optional[Any] = Field(
+    old_value: Any | None = Field(
         None, description="Old value for replace transformation"
     )
-    new_value: Optional[Any] = Field(
+    new_value: Any | None = Field(
         None, description="New value for replace transformation"
     )
-    new_name: Optional[str] = Field(
+    new_name: str | None = Field(
         None, description="New name for column in rename transformation"
     )
-    pattern: Optional[str] = Field(
+    pattern: str | None = Field(
         None, description="Pattern for extract transformation"
     )
-    length: Optional[int] = Field(
+    length: int | None = Field(
         None, description="Length for truncate transformation"
     )
-    add_ellipsis: Optional[bool] = Field(
+    add_ellipsis: bool | None = Field(
         True, description="Whether to add ellipsis in truncate"
     )
-    width: Optional[int] = Field(None, description="Width for pad transformation")
-    side: Optional[str] = Field("left", description="Side for pad transformation")
-    pad_char: Optional[str] = Field(" ", description="Character for pad transformation")
-    lower: Optional[Union[int, float]] = Field(None, description="Lower bound for clip")
-    upper: Optional[Union[int, float]] = Field(None, description="Upper bound for clip")
-    bins: Optional[Union[int, List[Union[int, float]]]] = Field(
+    width: int | None = Field(None, description="Width for pad transformation")
+    side: str | None = Field("left", description="Side for pad transformation")
+    pad_char: str | None = Field(" ", description="Character for pad transformation")
+    lower: int | float | None = Field(None, description="Lower bound for clip")
+    upper: int | float | None = Field(None, description="Upper bound for clip")
+    bins: int | List[int | float] | None = Field(
         None, description="Bins for binning"
     )
-    labels: Optional[List[str]] = Field(None, description="Labels for bins")
-    drop_first: Optional[bool] = Field(
+    labels: List[str] | None = Field(None, description="Labels for bins")
+    drop_first: bool | None = Field(
         True, description="Whether to drop first category in encoding"
     )
-    drop_invalid: Optional[bool] = Field(
+    drop_invalid: bool | None = Field(
         False, description="Whether to drop invalid values"
     )
-    start_date: Optional[str] = Field(
+    start_date: str | None = Field(
         None, description="Start date for date range validation"
     )
-    end_date: Optional[str] = Field(
+    end_date: str | None = Field(
         None, description="End date for date range validation"
     )
-    country_code: Optional[str] = Field(
+    country_code: str | None = Field(
         "+1", description="Country code for phone normalization"
     )
-    columns: Optional[List[str]] = Field(
+    columns: List[str] | None = Field(
         None, description="List of columns for multi-column operations"
     )
-    keep: Optional[str] = Field("first", description="Which duplicates to keep")
-    ref_table: Optional[Any] = Field(
+    keep: str | None = Field("first", description="Which duplicates to keep")
+    ref_table: Any | None = Field(
         None, description="Reference DataFrame for foreign key validation"
     )
-    ref_column: Optional[str] = Field(
+    ref_column: str | None = Field(
         None, description="Reference column for foreign key validation"
     )
-    drop_negative: Optional[bool] = Field(
+    drop_negative: bool | None = Field(
         False, description="Whether to drop negative values"
     )
 
@@ -173,7 +165,7 @@ class TransformationParams(BaseModel):
 
 class Transformation(BaseModel):
     type: str = Field(..., description="Type of transformation to be applied.")
-    params: Optional[TransformationParams] = Field(
+    params: TransformationParams | None = Field(
         None, description="Parameters for the transformation."
     )
 
@@ -196,11 +188,11 @@ class Transformation(BaseModel):
 
 class Source(BaseModel):
     type: str = Field(..., description="Type of the data source.")
-    path: Optional[str] = Field(None, description="Path of the local data source.")
-    connection: Optional[SQLConnectionConfig] = Field(
+    path: str | None = Field(None, description="Path of the local data source.")
+    connection: SQLConnectionConfig | None = Field(
         None, description="Connection object of the data source."
     )
-    table: Optional[str] = Field(None, description="Table of the data source.")
+    table: str | None = Field(None, description="Table of the data source.")
 
     def is_compatible_source(self, source2: "Source"):
         """
@@ -268,33 +260,33 @@ class Destination(BaseModel):
 
 class SemanticLayerSchema(BaseModel):
     name: str = Field(..., description="Dataset name.")
-    source: Optional[Source] = Field(None, description="Data source for your dataset.")
-    view: Optional[bool] = Field(None, description="Whether table is a view")
-    description: Optional[str] = Field(
+    source: Source | None = Field(None, description="Data source for your dataset.")
+    view: bool | None = Field(None, description="Whether table is a view")
+    description: str | None = Field(
         None, description="Dataset’s contents and purpose description."
     )
-    columns: Optional[List[Column]] = Field(
+    columns: List[Column] | None = Field(
         None, description="Structure and metadata of your dataset’s columns"
     )
-    relations: Optional[List[Relation]] = Field(
+    relations: List[Relation] | None = Field(
         None, description="Relationships between columns and tables."
     )
-    order_by: Optional[List[str]] = Field(
+    order_by: List[str] | None = Field(
         None, description="Ordering criteria for the dataset."
     )
-    limit: Optional[int] = Field(
+    limit: int | None = Field(
         None, description="Maximum number of records to retrieve."
     )
-    transformations: Optional[List[Transformation]] = Field(
+    transformations: List[Transformation] | None = Field(
         None, description="List of transformations to apply to the data."
     )
-    destination: Optional[Destination] = Field(
+    destination: Destination | None = Field(
         None, description="Destination for saving the dataset."
     )
-    update_frequency: Optional[str] = Field(
+    update_frequency: str | None = Field(
         None, description="Frequency of dataset updates."
     )
-    group_by: Optional[List[str]] = Field(
+    group_by: List[str] | None = Field(
         None,
         description="List of columns to group by. Every non-aggregated column must be included in group_by.",
     )
