@@ -1,48 +1,73 @@
-from typing import Any
+"""Code Executor module."""
 
-from pandasai.config import Config
-from pandasai.core.code_execution.environment import get_environment
-from pandasai.exceptions import CodeExecutionError, NoResultFoundError
+import ast
+import sys
+from typing import Any, Dict, List, Optional, Union
+
+from pandasai.core.code_execution.code_execution_context import CodeExecutionContext
+from pandasai.core.code_execution.code_execution_output import CodeExecutionOutput
+from pandasai.core.code_execution.code_execution_result import CodeExecutionResult
+from pandasai.core.code_execution.code_execution_status import CodeExecutionStatus
+from pandasai.core.code_execution.code_execution_type import CodeExecutionType
+from pandasai.core.code_execution.code_execution_warning import CodeExecutionWarning
+from pandasai.core.code_execution.code_execution_error import CodeExecutionError
 
 
 class CodeExecutor:
-    """
-    Handle the logic on how to handle different lines of code
-    """
+    """Code Executor class."""
 
-    _environment: dict
-
-    def __init__(self, config: Config) -> None:
-        self._environment = get_environment()
-
-    def add_to_env(self, key: str, value: Any) -> None:
+    def execute(
+        self, code: str, context: CodeExecutionContext
+    ) -> CodeExecutionResult:
         """
-        Expose extra variables in the code to be used
+        Execute the code and return the result.
+
         Args:
-            key (str): Name of variable or lib alias
-            value (Any): It can any value int, float, function, class etc.
-        """
-        self._environment[key] = value
+            code (str): The code to execute
+            context (CodeExecutionContext): The context to execute the code in
 
-    def execute(self, code: str) -> dict:
+        Returns:
+            CodeExecutionResult: The result of the code execution
+        """
+        # Create a restricted globals dictionary for safer execution
+        restricted_globals = {
+            "__builtins__": {
+                name: getattr(__builtins__, name)
+                for name in dir(__builtins__)
+                if name not in ["eval", "exec", "compile", "__import__"]
+            }
+        }
+        
+        # Add context variables to globals
+        for key, value in context.variables.items():
+            restricted_globals[key] = value
+
+        # Create a local namespace for execution
+        local_namespace = {}
+        
         try:
-            exec(code, self._environment)
+            # Parse the code to validate it before execution
+            ast.parse(code)
+            
+            # Execute the code in the restricted environment
+            compiled_code = compile(code, "<string>", "exec")
+            exec(compiled_code, restricted_globals, local_namespace)
+            
+            return CodeExecutionResult(
+                status=CodeExecutionStatus.SUCCESS,
+                output=CodeExecutionOutput(
+                    type=CodeExecutionType.PYTHON_OBJECT,
+                    value=local_namespace.get("result", None),
+                ),
+            )
         except Exception as e:
-            raise CodeExecutionError("Code execution failed") from e
-        return self._environment
-
-    def execute_and_return_result(self, code: str) -> Any:
-        """
-        Executes the return updated environment
-        """
-        self.execute(code)
-
-        # Get the result
-        if "result" not in self._environment:
-            raise NoResultFoundError("No result returned")
-
-        return self._environment.get("result", None)
-
-    @property
-    def environment(self) -> dict:
-        return self._environment
+            error_type = type(e).__name__
+            error_message = str(e)
+            
+            return CodeExecutionResult(
+                status=CodeExecutionStatus.ERROR,
+                error=CodeExecutionError(
+                    type=error_type,
+                    message=error_message,
+                ),
+            )
