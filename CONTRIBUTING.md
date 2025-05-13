@@ -65,7 +65,25 @@ make spell_fix
 We use `pytest` to test our code. You can run the tests by running the following command:
 
 ```bash
-make tests
+make test_all
+```
+
+If you prefer, you can run only the core tests with the command:
+
+```bash
+make test_core
+```
+
+or the test of extensions with the command:
+
+```bash
+make test_extensions
+```
+
+You can also run the tests with coverage by running the following command:
+
+```bash
+make test-coverage
 ```
 
 Make sure that all tests pass before submitting a pull request.
