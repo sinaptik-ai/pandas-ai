@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pandasai-pinecone"
 version = "0.1.4"
-description = "Pinecone integration for PandaAI"
+description = "Pinecone integration for PandasAI"
 authors = ["Gabriele Venturi"]
 readme = "README.md"
 license = "Proprietary"

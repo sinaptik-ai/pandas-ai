@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-PandaAI is a wrapper around a LLM to make dataframes conversational
+PandasAI is a wrapper around a LLM to make dataframes conversational
 """
 
 import os
@@ -20,13 +20,13 @@ from pandasai.data_loader.semantic_layer_schema import (
     Transformation,
     TransformationParams,
 )
-from pandasai.exceptions import DatasetNotFound, InvalidConfigError, PandaAIApiKeyError
+from pandasai.exceptions import DatasetNotFound, InvalidConfigError, PandasAIApiKeyError
 from pandasai.helpers.path import (
     find_project_root,
     get_validated_dataset_path,
     transform_dash_to_underscore,
 )
-from pandasai.helpers.session import get_pandaai_session
+from pandasai.helpers.session import get_PandasAI_session
 from pandasai.query_builders import SqlQueryBuilder
 from pandasai.sandbox.sandbox import Sandbox
 
@@ -135,7 +135,7 @@ def create(
         Dataset saved successfully to path: datasets/my-org/sales
     """
     if df is not None and not isinstance(df, DataFrame):
-        raise ValueError("df must be a PandaAI DataFrame")
+        raise ValueError("df must be a PandasAI DataFrame")
 
     org_name, dataset_name = get_validated_dataset_path(path)
     underscore_dataset_name = transform_dash_to_underscore(dataset_name)
@@ -261,7 +261,7 @@ def load(dataset_path: str) -> DataFrame:
         dataset_path (str): Path in the format 'organization/dataset_name'.
 
     Returns:
-        DataFrame: A new PandaAI DataFrame instance with loaded data.
+        DataFrame: A new PandasAI DataFrame instance with loaded data.
     """
 
     # Validate the dataset path
@@ -276,11 +276,11 @@ def load(dataset_path: str) -> DataFrame:
         api_url = os.environ.get("PANDABI_API_URL", DEFAULT_API_URL)
 
         if not api_url or not api_key:
-            raise PandaAIApiKeyError(
+            raise PandasAIApiKeyError(
                 f'The dataset "{dataset_path}" does not exist in your local datasets directory. In addition, no API Key has been provided. Set an API key with valid permits if you want to fetch the dataset from the remote server.'
             )
 
-        request_session = get_pandaai_session()
+        request_session = get_PandasAI_session()
 
         headers = {"accept": "application/json", "x-authorization": f"Bearer {api_key}"}
 

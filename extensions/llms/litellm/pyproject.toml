@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pandasai-litellm"
 version = "0.0.1"
-description = "LiteLLM integration for PandaAI"
+description = "LiteLLM integration for PandasAI"
 authors = ["Gabriele Venturi"]
 license = "MIT"
 readme = "README.md"

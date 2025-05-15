@@ -1,6 +1,6 @@
-# Qdrant Extension for PandaAI
+# Qdrant Extension for PandasAI
 
-This extension integrates Qdrant with PandaAI, providing vector storage capabilities for enhanced data analysis and machine learning tasks.
+This extension integrates Qdrant with PandasAI, providing vector storage capabilities for enhanced data analysis and machine learning tasks.
 
 ## Installation
 

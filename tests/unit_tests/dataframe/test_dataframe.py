@@ -6,7 +6,7 @@ import pytest
 import pandasai
 from pandasai.agent import Agent
 from pandasai.dataframe.base import DataFrame
-from pandasai.exceptions import PandaAIApiKeyError
+from pandasai.exceptions import PandasAIApiKeyError
 
 
 class TestDataFrame:
@@ -81,7 +81,7 @@ class TestDataFrame:
         assert isinstance(sample_df.column_hash, str)
         assert len(sample_df.column_hash) == 32  # MD5 hash length
 
-    @patch("pandasai.dataframe.base.get_pandaai_session")
+    @patch("pandasai.dataframe.base.get_PandasAI_session")
     @patch("pandasai.helpers.filemanager.os.path.exists")
     @patch("pandasai.helpers.filemanager.open", new_callable=mock_open)
     @patch("pandasai.dataframe.base.os.environ")
@@ -154,13 +154,13 @@ class TestDataFrame:
         mock_environ.get.return_value = None
 
         # Call the method and assert the exception
-        with pytest.raises(PandaAIApiKeyError):
+        with pytest.raises(PandasAIApiKeyError):
             sample_df.path = "test/test"
             sample_df.push()
 
     @patch("pandasai.helpers.filemanager.os.path.exists")
     @patch("pandasai.helpers.filemanager.open", new_callable=mock_open)
-    @patch("pandasai.dataframe.base.get_pandaai_session")
+    @patch("pandasai.dataframe.base.get_PandasAI_session")
     @patch("pandasai.dataframe.base.os.environ")
     def test_push_closes_files_on_completion(
         self,

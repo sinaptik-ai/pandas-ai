@@ -1,11 +1,11 @@
 ---
-title: "Introduction to PandaAI"
-description: "PandaAI is a Python library that makes it easy to ask questions to your data in natural language."
+title: "Introduction to PandasAI"
+description: "PandasAI is a Python library that makes it easy to ask questions to your data in natural language."
 ---
 
-# ![PandaAI](https://github.com/Sinaptik-AI/pandas-ai/blob/main/assets/logo.png?raw=true)
+# ![PandasAI](https://github.com/Sinaptik-AI/pandas-ai/blob/main/assets/logo.png?raw=true)
 
-Beyond querying, PandaAI offers functionalities to visualize data through graphs, cleanse datasets by addressing missing values, and enhance data quality through feature generation, making it a comprehensive tool for data scientists and analysts.
+Beyond querying, PandasAI offers functionalities to visualize data through graphs, cleanse datasets by addressing missing values, and enhance data quality through feature generation, making it a comprehensive tool for data scientists and analysts.
 
 ## Features
 
@@ -15,39 +15,23 @@ Beyond querying, PandaAI offers functionalities to visualize data through graphs
 - **Feature generation**: Enhance data quality through feature generation.
 - **Data connectors**: Connect to various data sources like CSV, XLSX, PostgreSQL, MySQL, BigQuery, Databrick, Snowflake, etc.
 
-## How does PandaAI work?
+## How does PandasAI work?
 
-PandaAI uses a generative AI model to understand and interpret natural language queries and translate them into python code and SQL queries. It then uses the code to interact with the data and return the results to the user.
+PandasAI uses a generative AI model to understand and interpret natural language queries and translate them into python code and SQL queries. It then uses the code to interact with the data and return the results to the user.
 
-## Who should use PandaAI?
+## Who should use PandasAI?
 
-PandaAI is designed for data scientists, analysts, and engineers who want to interact with their data in a more natural way. It is particularly useful for those who are not familiar with SQL or Python or who want to save time and effort when working with data. It is also useful for those who are familiar with SQL and Python, as it allows them to ask questions to their data without having to write any complex code.
+PandasAI is designed for data scientists, analysts, and engineers who want to interact with their data in a more natural way. It is particularly useful for those who are not familiar with SQL or Python or who want to save time and effort when working with data. It is also useful for those who are familiar with SQL and Python, as it allows them to ask questions to their data without having to write any complex code.
 
-## How to get started with PandaAI?
+## How to get started with PandasAI?
 
-PandaAI is available as a Python library and a web-based platform. You can install the library using pip or poetry and use it in your Python code. You can also use the web-based platform to interact with your data in a more visual way.
-
-### ☁️ Using the platform
-
-The PandaAI platform provides a web-based interface for interacting with your data in a more visual way. You can ask questions to your data in natural language, generate graphs and charts to visualize your data, and cleanse datasets by addressing missing values. It uses FastAPI as the backend and NextJS as the frontend.
-
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/kh61wEy9GYM"
-  title="PandaAI UI"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowfullscreen
-></iframe>
-
-If you want to learn more how to start the platform on your local machine, you can check out the [platform documentation](/v2/platform).
+PandasAI is available as a Python library and a web-based platform. You can install the library using pip or poetry and use it in your Python code. You can also use the web-based platform to interact with your data in a more visual way.
 
 ### 📚 Using the library
 
-The PandaAI library provides a Python interface for interacting with your data in natural language. You can use it to ask questions to your data, generate graphs and charts, cleanse datasets, and enhance data quality through feature generation. It uses LLMs to understand and interpret natural language queries and translate them into python code and SQL queries.
+The PandasAI library provides a Python interface for interacting with your data in natural language. You can use it to ask questions to your data, generate graphs and charts, cleanse datasets, and enhance data quality through feature generation. It uses LLMs to understand and interpret natural language queries and translate them into python code and SQL queries.
 
-Once you have installed PandaAI, you can start using it by importing the `Agent` class and instantiating it with your data. You can then use the `chat` method to ask questions to your data in natural language.
+Once you have installed PandasAI, you can start using it by importing the `Agent` class and instantiating it with your data. You can then use the `chat` method to ask questions to your data in natural language.
 
 ```python
 import os
@@ -59,10 +43,6 @@ sales_by_country = pd.DataFrame({
     "country": ["United States", "United Kingdom", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "Japan", "China"],
     "sales": [5000, 3200, 2900, 4100, 2300, 2100, 2500, 2600, 4500, 7000]
 })
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 agent = Agent(sales_by_country)
 agent.chat('Which are the top 5 countries by sales?')
@@ -78,9 +58,9 @@ If you have any questions or need help, please join our **[discord server](https
 
 ## License
 
-PandaAI is available under the MIT expat license, except for the `pandasai/ee` directory, which has its [license here](https://github.com/Sinaptik-AI/pandas-ai/blob/master/pandasai/ee/LICENSE) if applicable.
+PandasAI is available under the MIT expat license, except for the `pandasai/ee` directory, which has its [license here](https://github.com/Sinaptik-AI/pandas-ai/blob/master/pandasai/ee/LICENSE) if applicable.
 
-If you are interested in managed PandaAI Cloud or self-hosted Enterprise Offering, [contact us](https://pandas-ai.com/pricing).
+If you are interested in managed PandasAI Cloud or self-hosted Enterprise Offering, [contact us](https://pandas-ai.com/pricing).
 
 ## Analytics
 

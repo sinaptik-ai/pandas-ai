@@ -54,7 +54,7 @@ def mock_dataset_pull():
     fake_zip_bytes.seek(0)
 
     # We need to patch the session.get method to return a response-like object
-    with patch("pandasai.dataframe.base.get_pandaai_session") as mock_session_getter:
+    with patch("pandasai.dataframe.base.get_PandasAI_session") as mock_session_getter:
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.content = fake_zip_bytes.read()

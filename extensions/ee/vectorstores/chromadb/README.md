@@ -1,6 +1,6 @@
-# ChromaDB Extension for PandaAI
+# ChromaDB Extension for PandasAI
 
-This extension integrates ChromaDB with PandaAI, providing vector storage capabilities for enhanced data analysis and machine learning tasks.
+This extension integrates ChromaDB with PandasAI, providing vector storage capabilities for enhanced data analysis and machine learning tasks.
 
 ## Installation
 

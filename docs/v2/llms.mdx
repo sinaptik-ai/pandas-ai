@@ -1,6 +1,6 @@
 ---
 title: "Large Language Models"
-description: "PandaAI supports several large language models (LLMs) that are used to generate code from natural language queries."
+description: "PandasAI supports several large language models (LLMs) that are used to generate code from natural language queries."
 ---
 
 The generated code is then executed to produce the result.
@@ -8,37 +8,6 @@ The generated code is then executed to produce the result.
 [![Choose the LLM](https://cdn.loom.com/sessions/thumbnails/5496c9c07ee04f69bfef1bc2359cd591-00001.jpg)](https://www.loom.com/share/5496c9c07ee04f69bfef1bc2359cd591 "Choose the LLM")
 
 You can instantiate the LLM by passing it as a config to the SmartDataFrame or SmartDatalake constructor.
-
-## BambooLLM
-
-BambooLLM is the state-of-the-art language model developed by [PandaAI](https://pandas-ai.com) with data analysis in
-mind. It is designed to understand and execute natural language queries related to data analysis, data manipulation, and
-data visualization. You can get your free API key signing up at [https://pandabi.ai](https://pandabi.ai)
-
-```python
-from pandasai import SmartDataframe
-from pandasai.llm import BambooLLM
-
-llm = BambooLLM(api_key="my-bamboo-api-key")
-df = SmartDataframe("data.csv", config={"llm": llm})
-
-response = df.chat("Calculate the sum of the gdp of north american countries")
-print(response)
-```
-
-As an alternative, you can set the `PANDASAI_API_KEY` environment variable and instantiate the `BambooLLM` object
-without passing the API key:
-
-```python
-from pandasai import SmartDataframe
-from pandasai.llm import BambooLLM
-
-llm = BambooLLM()  # no need to pass the API key, it will be read from the environment variable
-df = SmartDataframe("data.csv", config={"llm": llm})
-
-response = df.chat("Calculate the sum of the gdp of north american countries")
-print(response)
-```
 
 ## OpenAI models
 
@@ -74,7 +43,7 @@ the `OPENAI_PROXY` environment variable to pass through.
 You can count the number of tokens used by a prompt as follows:
 
 ```python
-"""Example of using PandaAI with a pandas dataframe"""
+"""Example of using PandasAI with a pandas dataframe"""
 
 from pandasai import SmartDataframe
 from pandasai.llm import OpenAI
@@ -194,7 +163,7 @@ df = SmartDataframe("data.csv", config={"llm": llm})
 
 ## LangChain models
 
-PandaAI has also built-in support for [LangChain](https://langchain.com/) models.
+PandasAI has also built-in support for [LangChain](https://langchain.com/) models.
 
 In order to use LangChain models, you need to install the `langchain` package:
 
@@ -212,7 +181,7 @@ langchain_llm = OpenAI(openai_api_key="my-openai-api-key")
 df = SmartDataframe("data.csv", config={"llm": langchain_llm})
 ```
 
-PandaAI will automatically detect that you are using a LangChain LLM and will convert it to a PandaAI LLM.
+PandasAI will automatically detect that you are using a LangChain LLM and will convert it to a PandasAI LLM.
 
 ## Amazon Bedrock models
 
@@ -271,7 +240,7 @@ found [here](https://ibm.github.io/watsonx-ai-python-sdk/setup_cloud.html#authen
 
 In order to use watsonx.ai models, you need to install the `ibm-watsonx-ai` package.
 
-_At this time, watsonx.ai does **not** support the PandaAI agent_.
+_At this time, watsonx.ai does **not** support the PandasAI agent_.
 
 ```bash
 pip install pandasai[ibm-watsonx-ai]
@@ -300,7 +269,7 @@ more [here](https://ibm.github.io/watsonx-ai-python-sdk/fm_model.html).
 
 ## Local models
 
-PandaAI supports local models, though smaller models typically don't perform as well. To use local models, first host
+PandasAI supports local models, though smaller models typically don't perform as well. To use local models, first host
 one on a local inference server that adheres to the OpenAI API. This has been tested to work
 with [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/).
 

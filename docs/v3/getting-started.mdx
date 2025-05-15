@@ -1,17 +1,17 @@
 ---
 title: 'Quickstart'
-description: 'Start building your data preparation layer with PandaAI and chat with your data'
+description: 'Start building your data preparation layer with PandasAI and chat with your data'
 ---
 
 <Note title="Beta Notice">
-PandaAI 3.0 is currently in beta. This documentation reflects the latest features and functionality, which may evolve before the final release.
+PandasAI 3.0 is currently in beta. This documentation reflects the latest features and functionality, which may evolve before the final release.
 </Note>
 
 <iframe
   width="560"
   height="315"
   src="https://www.youtube.com/embed/JOlvaU-VJBA"
-  title="PandaAI Pills - #1 Quickstart"
+  title="PandasAI Pills - #1 Quickstart"
   frameborder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
   allowfullscreen
@@ -19,7 +19,7 @@ PandaAI 3.0 is currently in beta. This documentation reflects the latest feature
 
 ## Installation
 
-PandaAI requires Python `3.8+ <3.12`. We recommend using Poetry for dependency management:
+PandasAI requires Python `3.8+ <3.12`. We recommend using Poetry for dependency management:
 
 ```bash
 # Using poetry (recommended)
@@ -31,10 +31,10 @@ pip install "pandasai>=3.0.0b2"
 
 ## Quick setup
 
-In order to use PandaAI, you need a large language model (LLM). While you can use any LLM, for the purpose of this guide, we are using BambooLLM. 
+In order to use PandasAI, you need a large language model (LLM). While you can use any LLM, for the purpose of this guide, we are using BambooLLM. 
 You can get your free API key signing up at [app.pandabi.ai](https://app.pandabi.ai), which allows you to both use the data platform and get BambooLLM credits.
 
-First, import PandaAI and set up your API key:
+First, import PandasAI and set up your API key:
 
 ```python
 import pandasai as pai
@@ -56,7 +56,7 @@ response = df.chat("What is the average revenue by region?")
 print(response)
 ```
 
-When you ask a question, PandaAI will use the LLM to generate the answer and output a response.
+When you ask a question, PandasAI will use the LLM to generate the answer and output a response.
 Depending on your question, it can return different kind of responses:
 - string
 - dataframe
@@ -95,7 +95,7 @@ This dataset will be saved in the `datasets/my-org/companies` folder of your pro
   width="560"
   height="315"
   src="https://www.youtube.com/embed/-VM_Ob0sjgQ"
-  title="PandaAI Pills - #2 Your First Data Layer"
+  title="PandasAI Pills - #2 Your First Data Layer"
   frameborder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
   allowfullscreen
@@ -158,7 +158,7 @@ companies.push()
 
 Team members can then access and query the shared datasets through:
 - The web interface at [app.pandabi.ai](https://app.pandabi.ai)
-- Their own PandaAI code using `pai.load("organization/dataset-name")`
+- Their own PandasAI code using `pai.load("organization/dataset-name")`
 
 Of course, they will only be able to see the datasets they have access to. You can control access using the [permission management](/v3/permission-management) features.
 

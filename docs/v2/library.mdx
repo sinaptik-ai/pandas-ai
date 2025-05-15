@@ -1,6 +1,6 @@
 ---
 title: "Getting started with the Library"
-description: "Get started with PandaAI by installing it and using the SmartDataframe class."
+description: "Get started with PandasAI by installing it and using the SmartDataframe class."
 ---
 
 ## Installation
@@ -57,10 +57,6 @@ sales_by_country = pd.DataFrame({
     "sales": [5000, 3200, 2900, 4100, 2300, 2100, 2500, 2600, 4500, 7000]
 })
 
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
-
 df = SmartDataframe(sales_by_country)
 df.chat('Which are the top 5 countries by sales?')
 # Output: China, United States, Japan, Germany, Australia
@@ -69,14 +65,6 @@ df.chat('Which are the top 5 countries by sales?')
 If you want to learn more about the `SmartDataframe` class, check out this video:
 
 [![Intro to SmartDataframe](https://cdn.loom.com/sessions/thumbnails/1ec1b8fbaa0e4ae0ab99b728b8b05fdb-00001.jpg)](https://www.loom.com/embed/1ec1b8fbaa0e4ae0ab99b728b8b05fdb?sid=7370854b-57c3-4f00-801b-69811a98d970 "Intro to the SmartDataframe")
-
-### How to generate a BambooLLM API Token
-
-In order to use BambooLLM, you need to generate an API token. Follow these simple steps to generate a token with [PandaBI](https://pandabi.ai):
-
-1. Go to https://pandabi.ai and signup with your email address or connect your Google Account.
-2. Go to the API section on the settings page.
-3. Select Create new API key.
 
 ### How to generate an OpenAI API Token
 
@@ -99,7 +87,7 @@ df = SmartDataframe(df, name="My DataFrame", description="Brief description of w
 
 ## SmartDatalake
 
-PandaAI also supports queries with multiple dataframes. To perform such queries, you can use a `SmartDatalake` instead of a `SmartDataframe`.
+PandasAI also supports queries with multiple dataframes. To perform such queries, you can use a `SmartDatalake` instead of a `SmartDataframe`.
 
 Similarly to a `SmartDataframe`, you can instantiate a `SmartDatalake` as follows:
 
@@ -122,16 +110,12 @@ salaries_data = {
 employees_df = pd.DataFrame(employees_data)
 salaries_df = pd.DataFrame(salaries_data)
 
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
-
 lake = SmartDatalake([employees_df, salaries_df])
 lake.chat("Who gets paid the most?")
 # Output: Olivia gets paid the most
 ```
 
-PandaAI will automatically figure out which dataframe or dataframes are relevant to the query and will use only those dataframes to answer the query.
+PandasAI will automatically figure out which dataframe or dataframes are relevant to the query and will use only those dataframes to answer the query.
 
 [![Intro to the SmartDatalake](https://cdn.loom.com/sessions/thumbnails/a2006ac27b0545189cb5b9b2e011bc72-00001.jpg)](https://www.loom.com/share/a2006ac27b0545189cb5b9b2e011bc72 "Intro to SmartDatalake")
 
@@ -153,10 +137,6 @@ sales_by_country = pd.DataFrame({
     "deals_opened": [142, 80, 70, 90, 60, 50, 40, 30, 110, 120],
     "deals_closed": [120, 70, 60, 80, 50, 40, 30, 20, 100, 110]
 })
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 agent = Agent(sales_by_country)
 agent.chat('Which are the top 5 countries by sales?')
@@ -205,23 +185,23 @@ print("The rephrased query is", rephrased_query)
 
 ## Config
 
-To customize PandaAI's `SmartDataframe`, you can either pass a `config` object with specific settings upon instantiation or modify the `pandasai.json` file in your project's root. The latter serves as the default configuration but can be overridden by directly specifying settings in the `config` object at creation. This approach ensures flexibility and precision in how PandaAI handles your data.
+To customize PandasAI's `SmartDataframe`, you can either pass a `config` object with specific settings upon instantiation or modify the `pandasai.json` file in your project's root. The latter serves as the default configuration but can be overridden by directly specifying settings in the `config` object at creation. This approach ensures flexibility and precision in how PandasAI handles your data.
 
 Settings:
 
 - `llm`: the LLM to use. You can pass an instance of an LLM or the name of an LLM. You can use one of the LLMs supported. You can find more information about LLMs [here](/v2/llms)
 - `save_logs`: whether to save the logs of the LLM. Defaults to `True`. You will find the logs in the `pandasai.log` file in the root of your project.
-- `verbose`: whether to print the logs in the console as PandaAI is executed. Defaults to `False`.
-- `save_charts`: whether to save the charts generated by PandaAI. Defaults to `False`. You will find the charts in the root of your project or in the path specified by `save_charts_path`.
+- `verbose`: whether to print the logs in the console as PandasAI is executed. Defaults to `False`.
+- `save_charts`: whether to save the charts generated by PandasAI. Defaults to `False`. You will find the charts in the root of your project or in the path specified by `save_charts_path`.
 - `save_charts_path`: the path where to save the charts. Defaults to `exports/charts/`. You can use this setting to override the default path.
 - `open_charts`: whether to open the chart during parsing of the response from the LLM. Defaults to `True`. You can completely disable displaying of charts by setting this option to `False`.
-- `enable_cache`: whether to enable caching. Defaults to `True`. If set to `True`, PandaAI will cache the results of the LLM to improve the response time. If set to `False`, PandaAI will always call the LLM.
+- `enable_cache`: whether to enable caching. Defaults to `True`. If set to `True`, PandasAI will cache the results of the LLM to improve the response time. If set to `False`, PandasAI will always call the LLM.
 - `max_retries`: the maximum number of retries to use when using the error correction framework. Defaults to `3`. You can use this setting to override the default number of retries.
 - `security`: The “security” parameter allows for three levels depending on specific use cases: “none,” “standard,” and “advanced.” "standard" and "advanced" are especially useful for detecting malicious intent from user queries and avoiding the execution of potentially harmful code. By default, the “security” is set to "standard." The security check might introduce stricter rules that could flag benign queries as harmful. You can deactivate it in the configuration by setting “security” to “none.”
 
 ## Demo in Google Colab
 
-Try out PandaAI in your browser:
+Try out PandasAI in your browser:
 
 [![Open in Colab](https://camo.githubusercontent.com/84f0493939e0c4de4e6dbe113251b4bfb5353e57134ffd9fcab6b8714514d4d1/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667)](https://colab.research.google.com/drive/1ZnO-njhL7TBOYPZaqvMvGtsjckZKrv2E?usp=sharing)
 

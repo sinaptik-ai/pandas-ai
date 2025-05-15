@@ -1,6 +1,6 @@
 ---
 title: "Agent"
-description: "Add few-shot learning to your PandaAI agent"
+description: "Add few-shot learning to your PandasAI agent"
 ---
 
 <Note title="Beta Notice">
@@ -8,11 +8,11 @@ description: "Add few-shot learning to your PandaAI agent"
   functionality in progress and may change before the final release.
 </Note>
 
-You can train PandaAI to understand your data better and to improve its performance. Training is as easy as calling the `train` method on the `Agent`.
+You can train PandasAI to understand your data better and to improve its performance. Training is as easy as calling the `train` method on the `Agent`.
 
 ## Prerequisites
 
-Before you start training PandaAI, you need to set your PandaAI API key.
+Before you start training PandasAI, you need to set your PandasAI API key.
 You can generate your API key by signing up at [https://app.pandabi.ai](https://app.pandabi.ai).
 
 ```python
@@ -25,11 +25,11 @@ It is important that you set the API key, or it will fail with the following err
 
 ## Instructions training
 
-Instructions training is used to teach PandaAI how you expect it to respond to certain queries. You can provide generic instructions about how you expect the model to approach certain types of queries, and PandaAI will use these instructions to generate responses to similar queries.
+Instructions training is used to teach PandasAI how you expect it to respond to certain queries. You can provide generic instructions about how you expect the model to approach certain types of queries, and PandasAI will use these instructions to generate responses to similar queries.
 
 For example, you might want the LLM to be aware that your company's fiscal year starts in April, or about specific ways you want to handle missing data. Or you might want to teach it about specific business rules or data analysis best practices that are specific to your organization.
 
-To train PandaAI with instructions, you can use the `train` method on the `Agent`, as it follows:
+To train PandasAI with instructions, you can use the `train` method on the `Agent`, as it follows:
 
 The training uses by default the `BambooVectorStore` to store the training data, and it's accessible with the API key.
 
@@ -53,9 +53,9 @@ Your training data is persisted, so you only need to train the model once.
 
 ## Q/A training
 
-Q/A training is used to teach PandaAI the desired process to answer specific questions, enhancing the model's performance and determinism. One of the biggest challenges with LLMs is that they are not deterministic, meaning that the same question can produce different answers at different times. Q/A training can help to mitigate this issue.
+Q/A training is used to teach PandasAI the desired process to answer specific questions, enhancing the model's performance and determinism. One of the biggest challenges with LLMs is that they are not deterministic, meaning that the same question can produce different answers at different times. Q/A training can help to mitigate this issue.
 
-To train PandaAI with Q/A, you can use the `train` method on the `Agent`, as it follows:
+To train PandasAI with Q/A, you can use the `train` method on the `Agent`, as it follows:
 
 ```python
 from pandasai import Agent
@@ -136,7 +136,7 @@ print(response)
 
 ## Using the Sandbox Environment
 
-To enhance security and protect against malicious code through prompt injection, PandaAI provides a sandbox environment for code execution. The sandbox runs your code in an isolated Docker container, ensuring that potentially harmful operations are contained.
+To enhance security and protect against malicious code through prompt injection, PandasAI provides a sandbox environment for code execution. The sandbox runs your code in an isolated Docker container, ensuring that potentially harmful operations are contained.
 
 ### Installation
 
@@ -150,7 +150,7 @@ pip install pandasai-docker
 
 ### Basic Usage
 
-Here's how to use the sandbox with your PandaAI agent:
+Here's how to use the sandbox with your PandasAI agent:
 
 ```python
 from pandasai import Agent
@@ -257,7 +257,7 @@ pip install pandasai-docker
   environment.
 </Note>
 
-Here's how to enable the sandbox for your PandaAI agent:
+Here's how to enable the sandbox for your PandasAI agent:
 
 ```python
 from pandasai import Agent

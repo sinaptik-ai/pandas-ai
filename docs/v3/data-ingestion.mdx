@@ -1,6 +1,6 @@
 ---
 title: 'Add Data Sources'
-description: 'Learn how to ingest data from various sources in PandaAI'
+description: 'Learn how to ingest data from various sources in PandasAI'
 ---
 
 <Note title="Beta Notice">
@@ -8,8 +8,8 @@ Release v3 is currently in beta. This documentation reflects the features and fu
 </Note>
 
 
-## What type of data does PandaAI support?
-PandaAI mission is to make data analysis and manipulation more efficient and accessible to everyone. You can work with data in various ways:
+## What type of data does PandasAI support?
+PandasAI mission is to make data analysis and manipulation more efficient and accessible to everyone. You can work with data in various ways:
 
 - **CSV and Excel Files**: Load data directly from files using simple Python functions
 - **SQL Databases**: Connect to various SQL databases using our extensions
@@ -18,9 +18,9 @@ PandaAI mission is to make data analysis and manipulation more efficient and acc
 Let's start with the basics of loading CSV files, and then we'll explore the different extensions available.
 
 
-## How to work with CSV files in PandaAI?
+## How to work with CSV files in PandasAI?
 
-Loading data from CSV files is straightforward with PandaAI:
+Loading data from CSV files is straightforward with PandasAI:
 
 ```python
 import pandasai as pai
@@ -47,9 +47,9 @@ response = df.chat("Which product has the highest sales?")
 
 ```
 
-## How to work with SQL in PandaAI?
+## How to work with SQL in PandasAI?
 
-PandaAI provides a sql extension for you to work with SQL, PostgreSQL, MySQL, and CockroachDB databases.
+PandasAI provides a sql extension for you to work with SQL, PostgreSQL, MySQL, and CockroachDB databases.
 To make the library lightweight and easy to use, the basic installation of the library does not include this extension.
 It can be easily installed using pip with the specific database you want to use:
 
@@ -93,9 +93,9 @@ sql_table = pai.create(
 )
 ```
 
-## How to work with Enterprise Cloud Data in PandaAI?
+## How to work with Enterprise Cloud Data in PandasAI?
 
-PandaAI provides Enterprise Edition extensions for connecting to cloud data. These extensions require an Enterprise License or [Data Platform](/v3/ai-dashboards) team plan.
+PandasAI provides Enterprise Edition extensions for connecting to cloud data. These extensions require an Enterprise License or [Data Platform](/v3/ai-dashboards) team plan.
 Once you have installed a enterprise cloud data extension, you can use it to connect to your cloud data.
 
 ### Snowflake extension (ee)

@@ -44,10 +44,6 @@ def plot_salaries(names: list[str], salaries: list[int]):
     plt.title("Employee Salaries")
     plt.xticks(rotation=45)
 
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
-
 agent = Agent([employees_df, salaries_df], memory_size=10)
 agent.add_skills(plot_salaries)
 
@@ -98,10 +94,6 @@ def plot_salaries(names: list[str], salaries: list[int]):
     plt.savefig("temp_chart.png")
     fig = plt.gcf()
     st.pyplot(fig)
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 agent = Agent([employees_df, salaries_df], memory_size=10)
 agent.add_skills(plot_salaries)

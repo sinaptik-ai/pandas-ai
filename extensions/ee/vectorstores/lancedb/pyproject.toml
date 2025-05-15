@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pandasai-lancedb"
 version = "0.1.4"
-description = "LanceDB integration for PandaAI"
+description = "LanceDB integration for PandasAI"
 authors = ["Gabriele Venturi"]
 readme = "README.md"
 license = "Proprietary"

@@ -1,17 +1,17 @@
 ---
 title: "Getting started with the Platform"
-description: "A comprehensive guide on configuring, and using the PandaAI dockerized UI platform."
+description: "A comprehensive guide on configuring, and using the PandasAI dockerized UI platform."
 ---
 
 # Using the Dockerized Platform
 
-PandaAI provides a dockerized client-server architecture for easy deployment and local usage that adds a simple UI for conversational data analysis. This guide will walk you through the steps to set up and run the PandaAI platform on your local machine.
+PandasAI provides a dockerized client-server architecture for easy deployment and local usage that adds a simple UI for conversational data analysis. This guide will walk you through the steps to set up and run the PandasAI platform on your local machine.
 
 <iframe
   width="560"
   height="315"
   src="https://www.youtube.com/embed/kh61wEy9GYM"
-  title="PandaAI UI"
+  title="PandasAI UI"
   frameborder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
   allowfullscreen
@@ -28,7 +28,7 @@ Before you begin, ensure you have the following installed on your system:
 
 ## Step-by-Step Installation Instructions
 
-1. Clone the PandaAI repository:
+1. Clone the PandasAI repository:
 
    ```bash
    git clone https://github.com/sinaptik-ai/pandas-ai/
@@ -52,7 +52,7 @@ Before you begin, ensure you have the following installed on your system:
    sed -i "" "s/^PANDASAI_API_KEY=.*/PANDASAI_API_KEY=${API_KEY}/" server/.env
    ```
 
-   Replace `YOUR_PANDASAI_API_KEY` with your PandaAI API key. You can get your free API key by signing up at [PandaAI](https://pandabi.ai).
+   Replace `YOUR_PANDASAI_API_KEY` with your PandasAI API key. You can get your free API key by signing up at [PandasAI](https://pandabi.ai).
 
 4. Build the Docker images:
 
@@ -85,7 +85,7 @@ After deployment, the client can be accessed at `http://localhost:3000`, and the
 The `docker-compose.yml` file outlines the services required for the dockerized platform, including the client and server. Here's a brief overview of the service configurations:
 
 - `postgresql`: Configures the PostgreSQL database used by the server.
-- `server`: Builds and runs the PandaAI server.
-- `client`: Builds and runs the PandaAI client interface.
+- `server`: Builds and runs the PandasAI server.
+- `client`: Builds and runs the PandasAI client interface.
 
 For detailed information on each service configuration, refer to the comments within the `docker-compose.yml` file.

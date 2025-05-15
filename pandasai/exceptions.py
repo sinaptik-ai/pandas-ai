@@ -1,4 +1,4 @@
-"""PandaAI's custom exceptions.
+"""PandasAI's custom exceptions.
 
 This module contains the implementation of Custom Exceptions.
 
@@ -202,21 +202,21 @@ class MissingVectorStoreError(Exception):
     """
 
 
-class PandaAIApiKeyError(Exception):
+class PandasAIApiKeyError(Exception):
     """
     Raise error if api key is not found for remote vectorstore and llm
     """
 
     def __init__(self, message=None):
-        default_message = "PandaAI API key not found. Please set your API key using PandaAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
+        default_message = "PandasAI API key not found. Please set your API key using PandasAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
         super().__init__(message or default_message)
 
 
-class PandaAIApiCallError(Exception):
+class PandasAIApiCallError(Exception):
     """
     Raise error if exception in API request fails
     Args:
-        Exception (Exception): PandaAIApiCallError
+        Exception (Exception): PandasAIApiCallError
     """
 
 

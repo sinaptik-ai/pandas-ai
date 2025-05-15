@@ -8,7 +8,7 @@ import pytest
 import pandasai
 from pandasai.data_loader.semantic_layer_schema import Column, SemanticLayerSchema
 from pandasai.dataframe.base import DataFrame
-from pandasai.exceptions import DatasetNotFound, InvalidConfigError, PandaAIApiKeyError
+from pandasai.exceptions import DatasetNotFound, InvalidConfigError, PandasAIApiKeyError
 from pandasai.helpers.filemanager import DefaultFileManager
 from pandasai.llm.bamboo_llm import BambooLLM
 
@@ -20,7 +20,7 @@ def create_test_zip():
     return zip_buffer.getvalue()
 
 
-class TestPandaAIInit:
+class TestPandasAIInit:
     @pytest.fixture
     def mysql_connection_json(self):
         return {
@@ -134,8 +134,8 @@ class TestPandaAIInit:
         """Test loading when dataset does not exist locally and API returns not found."""
         mockenviron.return_value = {"PANDABI_API_URL": "localhost:8000"}
         mock_request_session = MagicMock()
-        pandasai.get_pandaai_session = mock_request_session
-        pandasai.get_pandaai_session.return_value = MagicMock()
+        pandasai.get_PandasAI_session = mock_request_session
+        pandasai.get_PandasAI_session.return_value = MagicMock()
         mock_request_session.get.return_value.status_code = 404
 
         dataset_path = "org/dataset-name"
@@ -145,7 +145,7 @@ class TestPandaAIInit:
 
     @patch("pandasai.os.path.exists")
     @patch("pandasai.os.environ", {})
-    @patch("pandasai.get_pandaai_session")
+    @patch("pandasai.get_PandasAI_session")
     def test_load_missing_not_found_locally_and_no_remote_key(
         self, mock_session, mock_exists
     ):
@@ -157,7 +157,7 @@ class TestPandaAIInit:
         dataset_path = "org/dataset-name"
 
         with pytest.raises(
-            PandaAIApiKeyError,
+            PandasAIApiKeyError,
             match='The dataset "org/dataset-name" does not exist in your local datasets directory. In addition, no API Key has been provided. Set an API key with valid permits if you want to fetch the dataset from the remote server.',
         ):
             pandasai.load(dataset_path)
@@ -174,7 +174,7 @@ class TestPandaAIInit:
 
     @patch("pandasai.os.path.exists")
     @patch("pandasai.os.environ", {"PANDABI_API_KEY": "key"})
-    @patch("pandasai.get_pandaai_session")
+    @patch("pandasai.get_PandasAI_session")
     def test_load_missing_not_found(self, mock_session, mock_exists):
         """Test loading when API URL is missing."""
         mock_exists.return_value = False
@@ -188,14 +188,14 @@ class TestPandaAIInit:
 
     @patch("pandasai.os.environ", new_callable=dict)
     @patch("pandasai.os.path.exists")
-    @patch("pandasai.get_pandaai_session")
+    @patch("pandasai.get_PandasAI_session")
     @patch("pandasai.ZipFile")
     @patch("pandasai.BytesIO")
     def test_load_successful_zip_extraction(
         self,
         mock_bytes_io,
         mock_zip_file,
-        mock_get_pandaai_session,
+        mock_get_PandasAI_session,
         mock_exists,
         mock_os_environ,
         mock_loader_instance,
@@ -204,7 +204,7 @@ class TestPandaAIInit:
         mock_exists.return_value = False
         mock_os_environ.update({"PANDABI_API_KEY": "key", "PANDABI_API_URL": "url"})
         mock_request_session = MagicMock()
-        mock_get_pandaai_session.return_value = mock_request_session
+        mock_get_PandasAI_session.return_value = mock_request_session
         mock_request_session.get.return_value.status_code = 200
         mock_request_session.get.return_value.content = b"mock zip content"
 
@@ -222,8 +222,8 @@ class TestPandaAIInit:
     def test_load_without_api_credentials(
         self,
     ):
-        """Test that load raises PandaAIApiKeyError when no API credentials are provided"""
-        with pytest.raises(PandaAIApiKeyError) as exc_info:
+        """Test that load raises PandasAIApiKeyError when no API credentials are provided"""
+        with pytest.raises(PandasAIApiKeyError) as exc_info:
             pandasai.load("test/dataset")
         assert (
             str(exc_info.value)
@@ -238,7 +238,7 @@ class TestPandaAIInit:
             pandasai.load("test_test/data_set")
 
     @patch.dict(os.environ, {"PANDABI_API_KEY": "test-key"})
-    @patch("pandasai.get_pandaai_session")
+    @patch("pandasai.get_PandasAI_session")
     @patch("pandasai.os.path.exists")
     @patch("pandasai.helpers.path.find_project_root")
     @patch("pandasai.os.makedirs")
@@ -273,7 +273,7 @@ class TestPandaAIInit:
         os.environ,
         {"PANDABI_API_KEY": "test-key", "PANDABI_API_URL": "https://custom.api.url"},
     )
-    @patch("pandasai.get_pandaai_session")
+    @patch("pandasai.get_PandasAI_session")
     @patch("pandasai.os.path.exists")
     @patch("pandasai.helpers.path.find_project_root")
     @patch("pandasai.os.makedirs")
@@ -588,7 +588,7 @@ class TestPandaAIInit:
         mock_makedirs,
         mock_find_project_root,
     ):
-        with pytest.raises(ValueError, match="df must be a PandaAI DataFrame"):
+        with pytest.raises(ValueError, match="df must be a PandasAI DataFrame"):
             pandasai.create("test-org/test-dataset", df={"test": "test"})
 
     def test_create_valid_view(

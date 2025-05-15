@@ -2,7 +2,7 @@
 title: "Custom Response"
 ---
 
-PandaAI offers the flexibility to handle chat responses in a customized manner. By default, PandaAI includes a ResponseParser class that can be extended to modify the response output according to your needs.
+PandasAI offers the flexibility to handle chat responses in a customized manner. By default, PandasAI includes a ResponseParser class that can be extended to modify the response output according to your needs.
 
 You have the option to provide a custom parser, such as `StreamlitResponse`, to the configuration object like this:
 
@@ -16,7 +16,7 @@ from pandasai import SmartDatalake
 from pandasai.responses.response_parser import ResponseParser
 
 # This class overrides default behaviour how dataframe is returned
-# By Default PandaAI returns the SmartDataFrame
+# By Default PandasAI returns the SmartDataFrame
 class PandasDataFrame(ResponseParser):
 
     def __init__(self, context) -> None:
@@ -41,10 +41,6 @@ salaries_df = pd.DataFrame(
         "Salary": [5000, 6000, 4500, 7000, 5500],
     }
 )
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 agent = SmartDatalake(
     [employees_df, salaries_df],
@@ -79,11 +75,6 @@ salaries_df = pd.DataFrame(
         "Salary": [5000, 6000, 4500, 7000, 5500],
     }
 )
-
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 agent = SmartDatalake(
     [employees_df, salaries_df],

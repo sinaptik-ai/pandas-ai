@@ -1,6 +1,6 @@
 ---
 title: "Set up LLM"
-description: "Set up Large Language Model in PandaAI"
+description: "Set up Large Language Model in PandasAI"
 ---
 
 <Note title="Beta Notice">
@@ -8,15 +8,15 @@ description: "Set up Large Language Model in PandaAI"
   functionality in progress and may change before the final release.
 </Note>
 
-PandaAI supports multiple LLMs.
-To make the library lightweight, the default LLM is BambooLLM, developed by PandaAI team themselves.
+PandasAI supports multiple LLMs.
+To make the library lightweight, the default LLM is BambooLLM, developed by PandasAI team themselves.
 To use other LLMs, you need to install the corresponding llm extension.
 Once a LLM extension is installed, you can configure it simply using [`pai.config.set()`](/v3/overview-nl#configure-the-nl-layer).
 Then, every time you use the [`.chat()`](/v3/chat-and-output) method, it will use the configured LLM.
 
 ## BambooLLM
 
-BambooLLM is the default LLM for PandaAI, fine-tuned for data analysis.
+BambooLLM is the default LLM for PandasAI, fine-tuned for data analysis.
 You can get your free API key by signing up at [app.pandabi.ai](https://app.pandabi.ai).
 
 ```python

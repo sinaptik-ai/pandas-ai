@@ -4,7 +4,7 @@ description: "Create a new semantic layer schema using the `create` method"
 ---
 
 <Note title="Beta Notice">
-PandaAI 3.0 is currently in beta. This documentation reflects the latest features and functionality, which may evolve before the final release.
+PandasAI 3.0 is currently in beta. This documentation reflects the latest features and functionality, which may evolve before the final release.
 </Note>
 
 ### Using the `pai.create()` method with CSV and parquet files
@@ -46,7 +46,7 @@ df = pai.create(
 
 #### - path
 
-The path uniquely identifies your dataset in the PandaAI ecosystem using the format "organization/dataset".
+The path uniquely identifies your dataset in the PandasAI ecosystem using the format "organization/dataset".
 
 ```python
 file = pai.read_csv("data.csv")
@@ -62,7 +62,7 @@ pai.create(
 - Must follow the format: "organization-identifier/dataset-identifier"
 - Organization identifier should be unique to your organization
 - Dataset identifier should be unique within your organization
-- Can be used both locally and with the PandaAI Data Platform
+- Can be used both locally and with the PandasAI Data Platform
 - Examples: "acme-corp/sales-data", "my-org/customer-profiles"
 
 #### - df
@@ -110,7 +110,7 @@ pai.create(
 
 #### - columns
 
-Define the structure and metadata of your dataset's columns to help PandaAI understand your data better.
+Define the structure and metadata of your dataset's columns to help PandasAI understand your data better.
 
 **Note**: If the `columns` parameter is not provided, all columns from the input dataframe will be included in the semantic layer.
 When specified, only the declared columns will be included, allowing you to select specific columns for your semantic layer.
@@ -169,7 +169,7 @@ pai.create(
 
 <Note title="Extra Dependency Required">
   You need to install the `pandasai-sql` extra dependency for this feature. 
-  See [SQL installation instructions](/v3/data-ingestion#how-to-work-with-sql-in-pandaai).
+  See [SQL installation instructions](/v3/data-ingestion#how-to-work-with-sql-in-PandasAI).
 </Note>
 
 For SQL databases, you can use the `create` method to define your data source and schema. Here's an example using a MySQL database:
@@ -274,7 +274,7 @@ source:
 
 #### - columns
 
-Define the structure and metadata of your dataset's columns to help PandaAI understand your data better.
+Define the structure and metadata of your dataset's columns to help PandasAI understand your data better.
 
 ```yaml
 columns:

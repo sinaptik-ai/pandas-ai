@@ -1,6 +1,6 @@
-# SQL Extension for PandaAI
+# SQL Extension for PandasAI
 
-This extension integrates SQL connectors with PandaAI, providing support for various SQL databases (mysql, postgres, cockroachdb, sqlite).
+This extension integrates SQL connectors with PandasAI, providing support for various SQL databases (mysql, postgres, cockroachdb, sqlite).
 
 ## Installation
 

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pandasai-bigquery"
 version = "0.1.4"
-description = "Google BigQuery connector integration for PandaAI"
+description = "Google BigQuery connector integration for PandasAI"
 authors = ["Gabriele Venturi"]
 readme = "README.md"
 license = "Proprietary"

@@ -1,6 +1,6 @@
-# Yahoo Finance Extension for PandaAI
+# Yahoo Finance Extension for PandasAI
 
-This extension integrates Yahoo Finance connectors with PandaAI, providing support for retrieving stock data.
+This extension integrates Yahoo Finance connectors with PandasAI, providing support for retrieving stock data.
 
 ## Installation
 

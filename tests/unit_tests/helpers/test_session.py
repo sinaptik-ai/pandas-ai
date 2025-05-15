@@ -5,29 +5,29 @@ import pytest
 import requests
 
 from pandasai.constants import DEFAULT_API_URL
-from pandasai.exceptions import PandaAIApiCallError, PandaAIApiKeyError
-from pandasai.helpers.session import Session, get_pandaai_session
+from pandasai.exceptions import PandasAIApiCallError, PandasAIApiKeyError
+from pandasai.helpers.session import Session, get_PandasAI_session
 
 
 @patch("pandasai.os.environ", {})
 def test_session_init_without_api_key():
-    """Test that Session initialization raises PandaAIApiKeyError when no API key is provided"""
-    with pytest.raises(PandaAIApiKeyError) as exc_info:
+    """Test that Session initialization raises PandasAIApiKeyError when no API key is provided"""
+    with pytest.raises(PandasAIApiKeyError) as exc_info:
         Session()
     assert (
         str(exc_info.value)
-        == "PandaAI API key not found. Please set your API key using PandaAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
+        == "PandasAI API key not found. Please set your API key using PandasAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
     )
 
 
 @patch("pandasai.os.environ", {})
 def test_session_init_with_none_api_key():
-    """Test that Session initialization raises PandaAIApiKeyError when API key is None"""
-    with pytest.raises(PandaAIApiKeyError) as exc_info:
+    """Test that Session initialization raises PandasAIApiKeyError when API key is None"""
+    with pytest.raises(PandasAIApiKeyError) as exc_info:
         Session(api_key=None)
     assert (
         str(exc_info.value)
-        == "PandaAI API key not found. Please set your API key using PandaAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
+        == "PandasAI API key not found. Please set your API key using PandasAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
     )
 
 
@@ -71,21 +71,21 @@ def test_session_init_with_env_api_url():
 
 
 @patch("pandasai.os.environ", {})
-def test_get_pandaai_session_without_credentials():
-    """Test that get_pandaai_session raises PandaAIApiKeyError when no credentials are provided"""
-    with pytest.raises(PandaAIApiKeyError) as exc_info:
-        get_pandaai_session()
+def test_get_PandasAI_session_without_credentials():
+    """Test that get_PandasAI_session raises PandasAIApiKeyError when no credentials are provided"""
+    with pytest.raises(PandasAIApiKeyError) as exc_info:
+        get_PandasAI_session()
     assert (
         str(exc_info.value)
-        == "PandaAI API key not found. Please set your API key using PandaAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
+        == "PandasAI API key not found. Please set your API key using PandasAI.api_key.set() or by setting the PANDASAI_API_KEY environment variable."
     )
 
 
 @patch("pandasai.os.environ", {})
-def test_get_pandaai_session_with_default_api_url():
-    """Test that get_pandaai_session uses DEFAULT_API_URL when no URL is provided"""
+def test_get_PandasAI_session_with_default_api_url():
+    """Test that get_PandasAI_session uses DEFAULT_API_URL when no URL is provided"""
     with patch.dict(os.environ, {"PANDABI_API_KEY": "test-key"}):
-        session = get_pandaai_session()
+        session = get_PandasAI_session()
         assert session._endpoint_url == DEFAULT_API_URL
 
 
@@ -93,9 +93,9 @@ def test_get_pandaai_session_with_default_api_url():
     os.environ,
     {"PANDABI_API_KEY": "test-env-key", "PANDABI_API_URL": "http://test.url"},
 )
-def test_get_pandaai_session_with_env_credentials():
-    """Test that get_pandaai_session works with credentials from environment"""
-    session = get_pandaai_session()
+def test_get_PandasAI_session_with_env_credentials():
+    """Test that get_PandasAI_session works with credentials from environment"""
+    session = get_PandasAI_session()
     assert isinstance(session, Session)
     assert session._api_key == "test-env-key"
     assert session._endpoint_url == "http://test.url"
@@ -105,9 +105,9 @@ def test_get_pandaai_session_with_env_credentials():
     os.environ,
     {"PANDABI_API_KEY": "test-env-key", "PANDABI_API_URL": "https://env.api.url"},
 )
-def test_get_pandaai_session_with_env_api_url():
-    """Test that get_pandaai_session uses URL from environment"""
-    session = get_pandaai_session()
+def test_get_PandasAI_session_with_env_api_url():
+    """Test that get_PandasAI_session uses URL from environment"""
+    session = get_PandasAI_session()
     assert session._endpoint_url == "https://env.api.url"
 
 
@@ -148,7 +148,7 @@ def test_make_request_error_response(mock_request):
     mock_response.json.return_value = {"message": "Bad request"}
 
     session = Session(api_key="test-key")
-    with pytest.raises(PandaAIApiCallError) as exc_info:
+    with pytest.raises(PandasAIApiCallError) as exc_info:
         session.make_request("POST", "/test")
 
     assert str(exc_info.value) == "Bad request"
@@ -161,7 +161,7 @@ def test_make_request_network_error(mock_request):
     mock_request.side_effect = requests.exceptions.RequestException("Network error")
 
     session = Session(api_key="test-key")
-    with pytest.raises(PandaAIApiCallError) as exc_info:
+    with pytest.raises(PandasAIApiCallError) as exc_info:
         session.make_request("GET", "/test")
 
     assert "Request failed: Network error" in str(exc_info.value)

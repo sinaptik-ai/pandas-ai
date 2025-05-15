@@ -1,6 +1,6 @@
-# Databricks Extension for PandaAI
+# Databricks Extension for PandasAI
 
-This extension integrates Databricks connectors with PandaAI, providing support for Databricks.
+This extension integrates Databricks connectors with PandasAI, providing support for Databricks.
 
 ## Installation
 
