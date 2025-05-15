@@ -1,6 +1,6 @@
-# OpenAI Extension for PandaAI
+# OpenAI Extension for PandasAI
 
-This extension integrates OpenAI with PandaAI, providing OpenAI LLMs support.
+This extension integrates OpenAI with PandasAI, providing OpenAI LLMs support.
 
 ## Installation
 

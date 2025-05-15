@@ -1,6 +1,6 @@
-# Oracle Extension for PandaAI
+# Oracle Extension for PandasAI
 
-This extension integrates Oracle connectors with PandaAI, providing support for Oracle.
+This extension integrates Oracle connectors with PandasAI, providing support for Oracle.
 
 ## Installation
 

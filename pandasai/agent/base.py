@@ -33,7 +33,7 @@ from .state import AgentState
 
 class Agent:
     """
-    Base Agent class to improve the conversational experience in PandaAI
+    Base Agent class to improve the conversational experience in PandasAI
     """
 
     def __init__(
@@ -253,7 +253,7 @@ class Agent:
         query = UserQuery(query)
         self._state.logger.log(f"Question: {query}")
         self._state.logger.log(
-            f"Running PandaAI with {self._state.config.llm.type} LLM..."
+            f"Running PandasAI with {self._state.config.llm.type} LLM..."
         )
 
         self._state.output_type = output_type

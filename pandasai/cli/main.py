@@ -20,7 +20,7 @@ def validate_api_key(api_key: str) -> bool:
 
 @click.group()
 def cli():
-    """🐼 PandaAI CLI - Manage your datasets with ease"""
+    """🐼 PandasAI CLI - Manage your datasets with ease"""
     pass
 
 

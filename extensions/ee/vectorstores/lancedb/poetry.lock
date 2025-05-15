@@ -1314,7 +1314,7 @@ xml = ["lxml (>=4.6.3)"]
 [[package]]
 name = "pandasai"
 version = "3.0.0b4"
-description = "Chat with your database (SQL, CSV, pandas, mongodb, noSQL, etc). PandaAI makes data analysis conversational using LLMs (GPT 3.5 / 4, Anthropic, VertexAI) and RAG."
+description = "Chat with your database (SQL, CSV, pandas, mongodb, noSQL, etc). PandasAI makes data analysis conversational using LLMs (GPT 3.5 / 4, Anthropic, VertexAI) and RAG."
 optional = false
 python-versions = "<3.12,>=3.8"
 files = [

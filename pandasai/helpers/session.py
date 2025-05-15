@@ -9,7 +9,7 @@ from urllib.parse import urljoin
 import requests
 
 from pandasai.constants import DEFAULT_API_URL
-from pandasai.exceptions import PandaAIApiCallError, PandaAIApiKeyError
+from pandasai.exceptions import PandasAIApiCallError, PandasAIApiKeyError
 from pandasai.helpers import load_dotenv
 from pandasai.helpers.logger import Logger
 
@@ -30,7 +30,7 @@ class Session:
         if api_key is None:
             api_key = os.environ.get("PANDABI_API_KEY") or None
         if api_key is None:
-            raise PandaAIApiKeyError()
+            raise PandasAIApiKeyError()
         self._api_key = api_key
 
         if endpoint_url is None:
@@ -93,19 +93,19 @@ class Session:
 
             if response.status_code not in [200, 201]:
                 if "message" in data:
-                    raise PandaAIApiCallError(data["message"])
+                    raise PandasAIApiCallError(data["message"])
                 elif "detail" in data:
-                    raise PandaAIApiCallError(data["detail"])
+                    raise PandasAIApiCallError(data["detail"])
 
             return data
 
         except requests.exceptions.RequestException as e:
             self._logger.log(f"Request failed: {traceback.format_exc()}", logging.ERROR)
-            raise PandaAIApiCallError(f"Request failed: {e}") from e
+            raise PandasAIApiCallError(f"Request failed: {e}") from e
 
 
-def get_pandaai_session() -> Session:
-    """Get a requests session with the PandaAI API key.
+def get_PandasAI_session() -> Session:
+    """Get a requests session with the PandasAI API key.
 
     Returns:
         requests.Session: Session with API key.
@@ -114,6 +114,6 @@ def get_pandaai_session() -> Session:
     api_key = os.environ.get("PANDABI_API_KEY", None)
     api_url = os.environ.get("PANDABI_API_URL", DEFAULT_API_URL)
     if not api_url or not api_key:
-        raise PandaAIApiKeyError()
+        raise PandasAIApiKeyError()
 
     return Session(endpoint_url=api_url, api_key=api_key)

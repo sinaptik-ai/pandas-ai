@@ -2,12 +2,12 @@
 title: "Examples"
 ---
 
-Here are some examples of how to use PandaAI.
+Here are some examples of how to use PandasAI.
 More [examples](https://github.com/Sinaptik-AI/pandas-ai/tree/main/examples) are included in the repository along with samples of data.
 
 ## Working with pandas dataframes
 
-Using PandaAI with a Pandas DataFrame
+Using PandasAI with a Pandas DataFrame
 
 ```python
 import os
@@ -21,10 +21,6 @@ sales_by_country = pd.DataFrame({
 })
 
 
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
-
 # convert to SmartDataframe
 sdf = SmartDataframe(sales_by_country)
 
@@ -35,15 +31,11 @@ print(response)
 
 ## Working with CSVs
 
-Example of using PandaAI with a CSV file
+Example of using PandasAI with a CSV file
 
 ```python
 import os
 from pandasai import SmartDataframe
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 # You can instantiate a SmartDataframe with a path to a CSV file
 sdf = SmartDataframe("data/Loan payments data.csv")
@@ -55,21 +47,18 @@ print(response)
 
 ## Working with Excel files
 
-Example of using PandaAI with an Excel file. In order to use Excel files as a data source, you need to install the `pandasai[excel]` extra dependency.
+Example of using PandasAI with an Excel file. In order to use Excel files as a data source, you need to install the `pandasai[excel]` extra dependency.
 
 ```console
 pip install pandasai[excel]
 ```
 
-Then, you can use PandaAI with an Excel file as follows:
+Then, you can use PandasAI with an Excel file as follows:
 
 ```python
 import os
 from pandasai import SmartDataframe
 
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 # You can instantiate a SmartDataframe with a path to an Excel file
 sdf = SmartDataframe("data/Loan payments data.xlsx")
@@ -81,15 +70,11 @@ print(response)
 
 ## Working with Parquet files
 
-Example of using PandaAI with a Parquet file
+Example of using PandasAI with a Parquet file
 
 ```python
 import os
 from pandasai import SmartDataframe
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 # You can instantiate a SmartDataframe with a path to a Parquet file
 sdf = SmartDataframe("data/Loan payments data.parquet")
@@ -101,21 +86,17 @@ print(response)
 
 ## Working with Google Sheets
 
-Example of using PandaAI with a Google Sheet. In order to use Google Sheets as a data source, you need to install the `pandasai[google-sheet]` extra dependency.
+Example of using PandasAI with a Google Sheet. In order to use Google Sheets as a data source, you need to install the `pandasai[google-sheet]` extra dependency.
 
 ```console
 pip install pandasai[google-sheet]
 ```
 
-Then, you can use PandaAI with a Google Sheet as follows:
+Then, you can use PandasAI with a Google Sheet as follows:
 
 ```python
 import os
 from pandasai import SmartDataframe
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 # You can instantiate a SmartDataframe with a path to a Google Sheet
 sdf = SmartDataframe("https://docs.google.com/spreadsheets/d/fake/edit#gid=0")
@@ -128,23 +109,19 @@ Remember that at the moment, you need to make sure that the Google Sheet is publ
 
 ## Working with Modin dataframes
 
-Example of using PandaAI with a Modin DataFrame. In order to use Modin dataframes as a data source, you need to install the `pandasai[modin]` extra dependency.
+Example of using PandasAI with a Modin DataFrame. In order to use Modin dataframes as a data source, you need to install the `pandasai[modin]` extra dependency.
 
 ```console
 pip install pandasai[modin]
 ```
 
-Then, you can use PandaAI with a Modin DataFrame as follows:
+Then, you can use PandasAI with a Modin DataFrame as follows:
 
 ```python
 import os
 import pandasai
 from pandasai import SmartDataframe
 import modin.pandas as pd
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 sales_by_country = pd.DataFrame({
     "country": ["United States", "United Kingdom", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "Japan", "China"],
@@ -163,22 +140,18 @@ print(response)
 
 ## Working with Polars dataframes
 
-Example of using PandaAI with a Polars DataFrame (still in beta). In order to use Polars dataframes as a data source, you need to install the `pandasai[polars]` extra dependency.
+Example of using PandasAI with a Polars DataFrame (still in beta). In order to use Polars dataframes as a data source, you need to install the `pandasai[polars]` extra dependency.
 
 ```console
 pip install pandasai[polars]
 ```
 
-Then, you can use PandaAI with a Polars DataFrame as follows:
+Then, you can use PandasAI with a Polars DataFrame as follows:
 
 ```python
 import os
 from pandasai import SmartDataframe
 import polars as pl
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 # You can instantiate a SmartDataframe with a Polars DataFrame
 sales_by_country = pl.DataFrame({
@@ -194,15 +167,11 @@ print(response)
 
 ## Plotting
 
-Example of using PandaAI to plot a chart from a Pandas DataFrame
+Example of using PandasAI to plot a chart from a Pandas DataFrame
 
 ```python
 import os
 from pandasai import SmartDataframe
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 sdf = SmartDataframe("data/Countries.csv")
 response = sdf.chat(
@@ -223,10 +192,6 @@ from pandasai import SmartDataframe
 
 user_defined_path = os.getcwd()
 
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
-
 sdf = SmartDataframe("data/Countries.csv", config={
     "save_charts": True,
     "save_charts_path": user_defined_path,
@@ -241,7 +206,7 @@ print(response)
 
 ## Working with multiple dataframes (using the SmartDatalake)
 
-Example of using PandaAI with multiple dataframes. In order to use multiple dataframes as a data source, you need to use a `SmartDatalake` instead of a `SmartDataframe`. You can instantiate a `SmartDatalake` as follows:
+Example of using PandasAI with multiple dataframes. In order to use multiple dataframes as a data source, you need to use a `SmartDatalake` instead of a `SmartDataframe`. You can instantiate a `SmartDatalake` as follows:
 
 ```python
 import os
@@ -261,10 +226,6 @@ salaries_data = {
 
 employees_df = pd.DataFrame(employees_data)
 salaries_df = pd.DataFrame(salaries_data)
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 lake = SmartDatalake([employees_df, salaries_df])
 response = lake.chat("Who gets paid the most?")
@@ -306,10 +267,6 @@ employees_df = pd.DataFrame(employees_data)
 salaries_df = pd.DataFrame(salaries_data)
 
 
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
-
 agent = Agent([employees_df, salaries_df], memory_size=10)
 
 query = "Who gets paid the most?"
@@ -341,10 +298,6 @@ Some examples of descriptions can be:
 ```python
 import os
 from pandasai import Agent
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 agent = Agent(
     "data.csv",
@@ -392,10 +345,6 @@ def plot_salaries(merged_df: pd.DataFrame):
     plt.xticks(rotation=45)
     plt.savefig("temp_chart.png")
     plt.close()
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://pandabi.ai (you can also configure it in your .env file)
-os.environ["PANDASAI_API_KEY"] = "YOUR_API_KEY"
 
 agent = Agent([employees_df, salaries_df], memory_size=10)
 agent.add_skills(plot_salaries)

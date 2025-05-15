@@ -1,6 +1,6 @@
-# LiteLLM Extension for PandaAI
+# LiteLLM Extension for PandasAI
 
-This extension integrates LiteLLM with PandaAI.
+This extension integrates LiteLLM with PandasAI.
 
 ## Installation
 

@@ -1,6 +1,6 @@
-# Pinecone Extension for PandaAI
+# Pinecone Extension for PandasAI
 
-This extension integrates Pinecone with PandaAI, providing vector storage capabilities for enhanced data analysis and machine learning tasks.
+This extension integrates Pinecone with PandasAI, providing vector storage capabilities for enhanced data analysis and machine learning tasks.
 
 ## Installation
 
