@@ -2,7 +2,7 @@
 title: "Custom whitelisted dependencies"
 ---
 
-By default, PandaAI only allows to run code that uses some whitelisted modules. This is to prevent malicious code from being executed on the server or locally.
+By default, PandasAI only allows to run code that uses some whitelisted modules. This is to prevent malicious code from being executed on the server or locally.
 
 The whitelisted modules are:
 
@@ -18,7 +18,7 @@ These libraries are sandboxed for security reasons, so that malicious code canno
 
 However, it is possible to add custom modules to the whitelist. This can be done by passing a list of modules to the `custom_whitelisted_dependencies` parameter when instantiating the `Agent` class.
 
-**Note**: PandaAI cannot sandbox arbitrary code execution for custom libraries that are whitelisted. If you add a custom library to the whitelist, arbitrary code execution will be possible for that library. Whitelisting a custom library means that the library is "trusted" and can be used without any limitations. **Only whitelist libraries that are under your control or that you trust**.
+**Note**: PandasAI cannot sandbox arbitrary code execution for custom libraries that are whitelisted. If you add a custom library to the whitelist, arbitrary code execution will be possible for that library. Whitelisting a custom library means that the library is "trusted" and can be used without any limitations. **Only whitelist libraries that are under your control or that you trust**.
 
 For example, to add the `scikit-learn` module to the whitelist:
 
@@ -29,6 +29,6 @@ agent = Agent("data.csv", config={
 })
 ```
 
-The `custom_whitelisted_dependencies` parameter accepts a list of strings, where each string is the name of a module. The module must be installed in the environment where PandaAI is running.
+The `custom_whitelisted_dependencies` parameter accepts a list of strings, where each string is the name of a module. The module must be installed in the environment where PandasAI is running.
 
-Please, make sure you have installed the module in the environment where PandaAI is running. Otherwise, you will get an error when trying to run the code.
+Please, make sure you have installed the module in the environment where PandasAI is running. Otherwise, you will get an error when trying to run the code.

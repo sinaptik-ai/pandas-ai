@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pandasai-yfinance"
 version = "0.1.4"
-description = "YFinance integration for PandaAI"
+description = "YFinance integration for PandasAI"
 authors = ["Gabriele Venturi"]
 license = "MIT"
 readme = "README.md"

@@ -1,6 +1,6 @@
-# Google BigQuery Extension for PandaAI
+# Google BigQuery Extension for PandasAI
 
-This extension integrates Google BigQuery connectors with PandaAI, providing support for Google BigQuery.
+This extension integrates Google BigQuery connectors with PandasAI, providing support for Google BigQuery.
 
 ## Installation
 

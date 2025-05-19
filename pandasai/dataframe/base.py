@@ -19,9 +19,9 @@ from pandasai.data_loader.semantic_layer_schema import (
     SemanticLayerSchema,
     Source,
 )
-from pandasai.exceptions import DatasetNotFound, PandaAIApiKeyError
+from pandasai.exceptions import DatasetNotFound, PandasAIApiKeyError
 from pandasai.helpers.dataframe_serializer import DataframeSerializer
-from pandasai.helpers.session import get_pandaai_session
+from pandasai.helpers.session import get_PandasAI_session
 from pandasai.sandbox.sandbox import Sandbox
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 class DataFrame(pd.DataFrame):
     """
-    PandaAI DataFrame that extends pandas DataFrame with natural language capabilities.
+    PandasAI DataFrame that extends pandas DataFrame with natural language capabilities.
 
     Attributes:
         name (Optional[str]): Name of the dataframe
@@ -83,7 +83,7 @@ class DataFrame(pd.DataFrame):
         )
         metadata = ", ".join(filter(None, [name_str, desc_str]))
 
-        return f"PandaAI DataFrame({metadata})\n{super().__repr__()}"
+        return f"PandasAI DataFrame({metadata})\n{super().__repr__()}"
 
     def _calculate_column_hash(self):
         column_string = ",".join(self.columns)
@@ -162,7 +162,7 @@ class DataFrame(pd.DataFrame):
 
         api_key = os.environ.get("PANDABI_API_KEY", None)
 
-        request_session = get_pandaai_session()
+        request_session = get_PandasAI_session()
 
         params = {
             "path": f"{org_name}/{dataset_name}",
@@ -203,9 +203,9 @@ class DataFrame(pd.DataFrame):
         api_key = os.environ.get("PANDABI_API_KEY", None)
 
         if not api_key:
-            raise PandaAIApiKeyError()
+            raise PandasAIApiKeyError()
 
-        request_session = get_pandaai_session()
+        request_session = get_PandasAI_session()
 
         headers = {"accept": "application/json", "x-authorization": f"Bearer {api_key}"}
 

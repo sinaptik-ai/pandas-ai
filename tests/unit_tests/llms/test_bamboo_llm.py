@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from pandasai.core.prompts.base import BasePrompt
-from pandasai.exceptions import PandaAIApiCallError
+from pandasai.exceptions import PandasAIApiCallError
 from pandasai.llm.bamboo_llm import BambooLLM
 
 
@@ -49,7 +49,7 @@ class TestBambooLLM(unittest.TestCase):
     def test_status_code_not_200(self, mock_post):
         prompt = self.get_prompt()
         context = self.get_context()
-        mock_post.side_effect = PandaAIApiCallError("Invalid API key")
+        mock_post.side_effect = PandasAIApiCallError("Invalid API key")
         bllm = BambooLLM(api_key="dummy_key")
-        with self.assertRaises(PandaAIApiCallError):
+        with self.assertRaises(PandasAIApiCallError):
             bllm.call(prompt, context)

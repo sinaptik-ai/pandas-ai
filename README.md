@@ -1,4 +1,4 @@
-# ![PandaAI](assets/logo.png)
+# ![PandasAI](assets/logo.png)
 
 [![Release](https://img.shields.io/pypi/v/pandasai?label=Release&style=flat-square)](https://pypi.org/project/pandasai/)
 [![CI](https://github.com/sinaptik-ai/pandas-ai/actions/workflows/ci-core.yml/badge.svg)](https://github.com/sinaptik-ai/pandas-ai/actions/workflows/ci-core.yml/badge.svg)
@@ -8,13 +8,13 @@
 [![Downloads](https://static.pepy.tech/badge/pandasai)](https://pepy.tech/project/pandasai) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1ZnO-njhL7TBOYPZaqvMvGtsjckZKrv2E?usp=sharing)
 
-PandaAI is a Python platform that makes it easy to ask questions to your data in natural language. It helps non-technical users to interact with their data in a more natural way, and it helps technical users to save time, and effort when working with data.
+PandasAI is a Python platform that makes it easy to ask questions to your data in natural language. It helps non-technical users to interact with their data in a more natural way, and it helps technical users to save time, and effort when working with data.
 
 # 🔧 Getting started
 
-You can find the full documentation for PandaAI [here](https://pandas-ai.readthedocs.io/en/latest/).
+You can find the full documentation for PandasAI [here](https://pandas-ai.readthedocs.io/en/latest/).
 
-You can either decide to use PandaAI in your Jupyter notebooks, Streamlit apps, or use the client and server architecture from the repo.
+You can either decide to use PandasAI in your Jupyter notebooks, Streamlit apps, or use the client and server architecture from the repo.
 
 ## ☁️ Using the platform
 
@@ -39,7 +39,7 @@ dataset.push()
 
 Your team can now access and query this data using natural language through the platform.
 
-![PandaAI](assets/demo.gif)
+![PandasAI](assets/demo.gif)
 
 ## 📚 Using the library
 
@@ -49,7 +49,7 @@ Python version `3.8+ <3.12`
 
 ### 📦 Installation
 
-You can install the PandaAI library using pip or poetry.
+You can install the PandasAI library using pip or poetry.
 
 With pip:
 
@@ -103,7 +103,7 @@ The total sales for the top 3 countries by sales is 16500.
 
 #### Visualize charts
 
-You can also ask PandaAI to generate charts for you:
+You can also ask PandasAI to generate charts for you:
 
 ```python
 df.chat(
@@ -115,7 +115,7 @@ df.chat(
 
 #### Multiple DataFrames
 
-You can also pass in multiple dataframes to PandaAI and ask questions relating them.
+You can also pass in multiple dataframes to PandasAI and ask questions relating them.
 
 ```python
 import pandasai as pai
@@ -147,7 +147,7 @@ Olivia gets paid the most.
 
 #### Docker Sandbox
 
-You can run PandaAI in a Docker sandbox, providing a secure, isolated environment to execute code safely and mitigate the risk of malicious attacks.
+You can run PandasAI in a Docker sandbox, providing a secure, isolated environment to execute code safely and mitigate the risk of malicious attacks.
 
 ##### Python Requirements
 
@@ -197,9 +197,9 @@ You can find more examples in the [examples](examples) directory.
 
 ## 📜 License
 
-PandaAI is available under the MIT expat license, except for the `pandasai/ee` directory of this repository, which has its [license here](https://github.com/sinaptik-ai/pandas-ai/blob/main/ee/LICENSE).
+PandasAI is available under the MIT expat license, except for the `pandasai/ee` directory of this repository, which has its [license here](https://github.com/sinaptik-ai/pandas-ai/blob/main/ee/LICENSE).
 
-If you are interested in managed PandaAI Cloud or self-hosted Enterprise Offering, [contact us](https://getpanda.ai/pricing).
+If you are interested in managed PandasAI Cloud or self-hosted Enterprise Offering, [contact us](https://getpanda.ai/pricing).
 
 ## Resources
 
@@ -208,7 +208,7 @@ If you are interested in managed PandaAI Cloud or self-hosted Enterprise Offerin
 
 - [Docs](https://pandas-ai.readthedocs.io/en/latest/) for comprehensive documentation
 - [Examples](examples) for example notebooks
-- [Discord](https://discord.gg/KYKj9F2FRH) for discussion with the community and PandaAI team
+- [Discord](https://discord.gg/KYKj9F2FRH) for discussion with the community and PandasAI team
 
 ## 🤝 Contributing
 

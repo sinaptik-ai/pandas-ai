@@ -13,7 +13,7 @@ from pandasai.data_loader.semantic_layer_schema import (
     Source,
 )
 from pandasai.dataframe.base import DataFrame
-from pandasai.exceptions import DatasetNotFound, PandaAIApiKeyError
+from pandasai.exceptions import DatasetNotFound, PandasAIApiKeyError
 from pandasai.helpers.path import find_project_root
 
 
@@ -48,7 +48,7 @@ def mock_schema():
 
 
 def test_pull_success(mock_env, sample_df, mock_zip_content, mock_schema, tmp_path):
-    with patch("pandasai.dataframe.base.get_pandaai_session") as mock_session, patch(
+    with patch("pandasai.dataframe.base.get_PandasAI_session") as mock_session, patch(
         "pandasai.helpers.path.find_project_root"
     ) as mock_root, patch(
         "pandasai.DatasetLoader.create_loader_from_path"
@@ -87,13 +87,13 @@ def test_pull_success(mock_env, sample_df, mock_zip_content, mock_schema, tmp_pa
 def test_pull_missing_api_key(sample_df, mock_schema):
     with patch("os.environ.get") as mock_env_get:
         mock_env_get.return_value = None
-        with pytest.raises(PandaAIApiKeyError):
+        with pytest.raises(PandasAIApiKeyError):
             df = DataFrame(sample_df, path="test/path", schema=mock_schema)
             df.pull()
 
 
 def test_pull_api_error(mock_env, sample_df, mock_schema):
-    with patch("pandasai.dataframe.base.get_pandaai_session") as mock_session:
+    with patch("pandasai.dataframe.base.get_PandasAI_session") as mock_session:
         mock_response = Mock()
         mock_response.status_code = 404
         mock_session.return_value.get.return_value = mock_response
@@ -104,7 +104,7 @@ def test_pull_api_error(mock_env, sample_df, mock_schema):
 
 
 def test_pull_file_exists(mock_env, sample_df, mock_zip_content, mock_schema, tmp_path):
-    with patch("pandasai.dataframe.base.get_pandaai_session") as mock_session, patch(
+    with patch("pandasai.dataframe.base.get_PandasAI_session") as mock_session, patch(
         "pandasai.helpers.path.find_project_root"
     ) as mock_root, patch(
         "pandasai.DatasetLoader.create_loader_from_path"

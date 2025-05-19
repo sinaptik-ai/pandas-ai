@@ -1,5 +1,5 @@
 {
-    "name": "PandaAI",
+    "name": "PandasAI",
     "logo": {
       "light": "/logo/logo.png",
       "dark": "/logo/logo.png",
@@ -69,7 +69,7 @@
       },
       {
         "group": "Data Platform",
-        "pages": ["v3/ai-dashboards", "v3/share-dataframes", "v3/permission-management"],
+        "pages": ["v3/ai-dashboards", "v3/permission-management"],
         "version": "v3"
       },
       {

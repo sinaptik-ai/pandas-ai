@@ -1,6 +1,6 @@
-# Snowflake Extension for PandaAI
+# Snowflake Extension for PandasAI
 
-This extension integrates Snowflake connectors with PandaAI, providing support for Snowflake.
+This extension integrates Snowflake connectors with PandasAI, providing support for Snowflake.
 
 ## Installation
 
