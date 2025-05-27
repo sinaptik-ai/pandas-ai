@@ -82,7 +82,7 @@ def execute_sql_query(sql_query: str) -> pd.Dataframe
 </function>
 
 For the charts, you can either use `matplotlib.pyplot` or `plotly.express` to generate the charts.
-If you use `plotly.express`, you have to save each chart as a dictionary into a JSON file.
+If you use `plotly.express`, you have to save each chart by using `fig.write_json` (e.g., `fig.write_json("path/to/file.json", pretty=True)`).
 
 
 Update this initial code:
