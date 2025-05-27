@@ -9,6 +9,7 @@ from PIL import Image
 from pandasai.core.response import (
     ChartResponse,
     DataFrameResponse,
+    InteractiveChartResponse,
     NumberResponse,
     StringResponse,
 )
@@ -54,6 +55,14 @@ class TestResponseParser(unittest.TestCase):
         self.assertEqual(response.value, "path/to/plot.png")
         self.assertEqual(response.last_code_executed, None)
         self.assertEqual(response.type, "chart")
+
+    def test_parse_valid_interactive_plot(self):
+        result = {"type": "iplot", "value": "path/to/plot.json"}
+        response = self.response_parser.parse(result)
+        self.assertIsInstance(response, InteractiveChartResponse)
+        self.assertEqual(response.value, "path/to/plot.json")
+        self.assertEqual(response.last_code_executed, None)
+        self.assertEqual(response.type, "ichart")
 
     def test_plot_img_show_triggered(self):
         result = {

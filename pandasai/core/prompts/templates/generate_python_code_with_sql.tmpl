@@ -10,6 +10,9 @@ def execute_sql_query(sql_query: str) -> pd.Dataframe
     """This method connects to the database, executes the sql query and returns the dataframe"""
 </function>
 
+For the charts, you can either use `matplotlib.pyplot` or `plotly.express` to generate the charts.
+If you use `plotly.express`, you have to save each chart as a dictionary into a JSON file.
+
 {% if last_code_generated != "" and context.memory.count() > 0 %}
 {{ last_code_generated }}
 {% else %}
@@ -31,4 +34,4 @@ At the end, declare "result" variable as a dictionary of type and value.
 
 Generate python code and return full updated code:
 
-### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+### Note: Use only relevant table for query and do aggregation, sorting, joins and group by through sql query

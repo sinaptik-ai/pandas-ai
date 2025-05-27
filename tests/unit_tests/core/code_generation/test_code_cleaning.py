@@ -104,6 +104,23 @@ class TestCodeCleaner(unittest.TestCase):
         )
         self.assertRegex(code, expected_pattern)
 
+    def test_replace_output_filenames_with_temp_json_chart(self):
+        handler = self.cleaner
+        handler.context = MagicMock()
+        handler.context.config.save_charts = True
+        handler.context.logger = MagicMock()  # Mock logger
+        handler.context.last_prompt_id = 123
+        handler.context.config.save_charts_path = "/custom/path"
+
+        code = 'some text "hello.json" more text'
+
+        code = handler._replace_output_filenames_with_temp_json_chart(code)
+
+        expected_pattern = re.compile(
+            r'some text "exports[/\\]+charts[/\\]+temp_chart_.*\.json" more text'
+        )
+        self.assertRegex(code, expected_pattern)
+
     def test_replace_output_filenames_with_temp_chart_windows_paths(self):
         handler = self.cleaner
         handler.context = MagicMock()
@@ -156,6 +173,18 @@ class TestCodeCleaner(unittest.TestCase):
             result, expected_code, f"Expected '{expected_code}', but got '{result}'"
         )
 
+    def test_replace_output_filenames_with_temp_json_chart_empty_code(self):
+        handler = self.cleaner
+
+        code = ""
+        expected_code = ""  # It should remain empty, as no substitution is made
+
+        result = handler._replace_output_filenames_with_temp_json_chart(code)
+
+        self.assertEqual(
+            result, expected_code, f"Expected '{expected_code}', but got '{result}'"
+        )
+
     def test_replace_output_filenames_with_temp_chart_no_png(self):
         handler = self.cleaner
 
@@ -163,6 +192,18 @@ class TestCodeCleaner(unittest.TestCase):
         expected_code = "some text without png"  # No change should occur
 
         result = handler._replace_output_filenames_with_temp_chart(code)
+
+        self.assertEqual(
+            result, expected_code, f"Expected '{expected_code}', but got '{result}'"
+        )
+
+    def test_replace_output_filenames_with_temp_json_chart_no_json(self):
+        handler = self.cleaner
+
+        code = "some text without json"
+        expected_code = "some text without json"  # No change should occur
+
+        result = handler._replace_output_filenames_with_temp_json_chart(code)
 
         self.assertEqual(
             result, expected_code, f"Expected '{expected_code}', but got '{result}'"

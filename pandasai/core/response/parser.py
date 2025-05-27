@@ -8,6 +8,7 @@ from pandasai.exceptions import InvalidOutputValueMismatch
 from .base import BaseResponse
 from .chart import ChartResponse
 from .dataframe import DataFrameResponse
+from .interactive_chart import InteractiveChartResponse
 from .number import NumberResponse
 from .string import StringResponse
 
@@ -26,6 +27,8 @@ class ResponseParser:
             return DataFrameResponse(result["value"], last_code_executed)
         elif result["type"] == "plot":
             return ChartResponse(result["value"], last_code_executed)
+        elif result["type"] == "iplot":
+            return InteractiveChartResponse(result["value"], last_code_executed)
         else:
             raise InvalidOutputValueMismatch(f"Invalid output type: {result['type']}")
 
@@ -65,6 +68,18 @@ class ResponseParser:
                 and "data:image/png;base64" in result["value"]
             ):
                 return True
+
+            path_to_plot_pattern = r"^(\/[\w.-]+)+(/[\w.-]+)*$|^[^\s/]+(/[\w.-]+)*$"
+            if not bool(re.match(path_to_plot_pattern, result["value"])):
+                raise InvalidOutputValueMismatch(
+                    "Invalid output: Expected a plot save path str but received an incompatible type."
+                )
+
+        elif result["type"] == "iplot":
+            if not isinstance(result["value"], (str, dict)):
+                raise InvalidOutputValueMismatch(
+                    "Invalid output: Expected a plot save path str but received an incompatible type."
+                )
 
             path_to_plot_pattern = r"^(\/[\w.-]+)+(/[\w.-]+)*$|^[^\s/]+(/[\w.-]+)*$"
             if not bool(re.match(path_to_plot_pattern, result["value"])):
