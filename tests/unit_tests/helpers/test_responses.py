@@ -6,6 +6,8 @@ from unittest.mock import MagicMock, patch
 import pandas as pd
 from PIL import Image
 
+import pytest
+
 from pandasai.core.response import (
     ChartResponse,
     DataFrameResponse,
@@ -57,12 +59,23 @@ class TestResponseParser(unittest.TestCase):
         self.assertEqual(response.type, "chart")
 
     def test_parse_valid_interactive_plot(self):
-        result = {"type": "iplot", "value": "path/to/plot.json"}
-        response = self.response_parser.parse(result)
-        self.assertIsInstance(response, InteractiveChartResponse)
-        self.assertEqual(response.value, "path/to/plot.json")
-        self.assertEqual(response.last_code_executed, None)
-        self.assertEqual(response.type, "ichart")
+        path = "path/to/interactive_plot.json"
+        # mock os.path.exists to return True for the plot path
+        with patch("os.path.exists", return_value=True) as mock_exists:
+            result = {"type": "iplot", "value": path}
+            response = self.response_parser.parse(result)
+            self.assertIsInstance(response, InteractiveChartResponse)
+            self.assertEqual(response.value, path)
+            self.assertEqual(response.last_code_executed, None)
+            self.assertEqual(response.type, "ichart")
+
+            mock_exists.assert_called_once_with(path)
+
+    def test_parse_invalid_interactive_plot_because_of_not_existing_file(self):
+        path = "path/to/interactive_plot.json"
+        with pytest.raises(ValueError):
+            result = {"type": "iplot", "value": path}
+            self.response_parser.parse(result)
 
     def test_plot_img_show_triggered(self):
         result = {
