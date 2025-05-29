@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from pandasai.agent.state import AgentState
+from pandasai.constants import DEFAULT_CHART_DIRECTORY
 from pandasai.core.code_generation.code_cleaning import CodeCleaner
 from pandasai.dataframe.base import DataFrame
 from pandasai.exceptions import MaliciousQueryError
@@ -201,12 +202,43 @@ class TestCodeCleaner(unittest.TestCase):
         handler = self.cleaner
 
         code = "some text without json"
-        expected_code = "some text without json"  # No change should occur
 
         result = handler._replace_output_filenames_with_temp_json_chart(code)
 
         self.assertEqual(
+            result, code, f"Expected '{code}', but got '{result}'"
+        )
+
+    def test_remove_make_dirs(self):
+        handler = self.cleaner
+
+        code = "os.makedirs('/some/path')\nplt.show()\nfig.show()"
+        expected_code = "plt.show()\nfig.show()"  # Should remove the os.makedirs line
+        result = handler._remove_make_dirs(code)
+        self.assertEqual(
             result, expected_code, f"Expected '{expected_code}', but got '{result}'"
+        )
+
+        code = "os.mkdir('/some/path')\nplt.show()\nfig.show()"
+        expected_code = "plt.show()\nfig.show()"  # Should remove the os.mkdir line
+        result = handler._remove_make_dirs(code)
+        self.assertEqual(
+            result, expected_code, f"Expected '{expected_code}', but got '{result}'"
+        )
+
+    def test_do_not_remove_make_default_chart_dir(self):
+        handler = self.cleaner
+
+        code = f"os.makedirs({DEFAULT_CHART_DIRECTORY}')\nplt.show()\nfig.show()"
+        result = handler._remove_make_dirs(code)
+        self.assertEqual(
+            result, code, f"Expected '{code}', but got '{result}'"
+        )
+
+        code = f"os.mkdir({DEFAULT_CHART_DIRECTORY}')\nplt.show()\nfig.show()"
+        result = handler._remove_make_dirs(code)
+        self.assertEqual(
+            result, code, f"Expected '{code}', but got '{result}'"
         )
 
 
