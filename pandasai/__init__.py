@@ -307,10 +307,25 @@ def load(dataset_path: str) -> DataFrame:
     return df
 
 
-def read_csv(filepath: str) -> DataFrame:
+def read_csv(filepath: str | BytesIO) -> DataFrame:
     data = pd.read_csv(filepath)
-    table = f"table_{sanitize_file_name(filepath)}"
+    table = f"table_{sanitize_file_name(filepath)}" if isinstance(filepath, str) else "table_from_bytes"
     return DataFrame(data, _table_name=table)
+
+
+def read_excel(filepath: str | BytesIO) -> DataFrame | dict[str | int, DataFrame]:
+    data = pd.read_excel(filepath)
+
+    if isinstance(data, pd.DataFrame):
+        table = f"table_{sanitize_file_name(filepath)}" if isinstance(filepath, str) else "table_from_bytes"
+        return DataFrame(data, _table_name=table)
+    return {
+        k: DataFrame(
+            v,
+            _table_name=f"{sanitize_file_name(filepath)}_{k}" if isinstance(filepath, str) else f"table_from_bytes_{k}"
+        )
+        for k, v in data.items()
+    }
 
 
 __all__ = [
