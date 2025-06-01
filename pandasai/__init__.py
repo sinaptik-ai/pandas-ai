@@ -314,7 +314,7 @@ def read_csv(filepath: str | BytesIO) -> DataFrame:
 
 
 def read_excel(filepath: str | BytesIO) -> DataFrame | dict[str | int, DataFrame]:
-    data = pd.read_excel(filepath)
+    data = pd.read_excel(filepath, sheet_name=None)
 
     if isinstance(data, pd.DataFrame):
         table = f"table_{sanitize_file_name(filepath)}" if isinstance(filepath, str) else "table_from_bytes"
@@ -322,7 +322,7 @@ def read_excel(filepath: str | BytesIO) -> DataFrame | dict[str | int, DataFrame
     return {
         k: DataFrame(
             v,
-            _table_name=f"{sanitize_file_name(filepath)}_{k}" if isinstance(filepath, str) else f"table_from_bytes_{k}"
+            _table_name=f"{sanitize_file_name(filepath)}_{k}".lower() if isinstance(filepath, str) else f"table_from_bytes_{k}".lower()
         )
         for k, v in data.items()
     }
