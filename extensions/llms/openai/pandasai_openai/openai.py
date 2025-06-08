@@ -94,3 +94,71 @@ class OpenAI(BaseOpenAI):
     @property
     def type(self) -> str:
         return "openai"
+
+
+
+class VLLM(BaseOpenAI):
+    
+    """Generic VLLM-compatible LLM using BaseOpenAI Class.
+
+This class enables users to connect to any OpenAI-compatible API endpoint for inference,
+such as Groq, OpenRouter, or their own VLLM deployments. It sends API calls to the 
+configured endpoint and returns the response in a format compatible with OpenAI’s Chat API.
+
+The default configuration uses the Groq API with the **mistral-saba-24b** model.
+However, users can override the endpoint URL, model name, and API token to suit their needs.
+
+This class is part of an open-source effort to democratize access to fast and scalable
+LLM inference, empowering users to plug in their own infrastructure or community-hosted
+APIs while maintaining compatibility with standard OpenAI tooling."""
+
+    model: str = "mistral-saba-24b"  # ✅ Default model
+    api_base: str = "https://api.groq.com/openai/v1"  # ✅ Default endpoint
+
+    def __init__(
+        self,
+        api_token: Optional[str] = None,
+        model: Optional[str] = None,
+        api_base: Optional[str] = None,
+        **kwargs,
+    ):
+        """
+        Initialize VLLM Client with OpenAI-compatible interface.
+
+        Args:
+            api_token (str): API token for the provider.
+            model (str): Model name.
+            api_base (str): Custom API base URL.
+            **kwargs: Additional model parameters.
+        """
+        self.api_token = api_token or os.getenv("VLLM_API_KEY") or os.getenv("GROQ_API_KEY")
+        if not self.api_token:
+            raise APIKeyNotFoundError("API token is required")
+
+        self.model = model or self.model
+        self.api_base = api_base or self.api_base
+        self.openai_proxy = kwargs.get("openai_proxy") or os.getenv("VLLM_PROXY")
+
+        if self.openai_proxy:
+            openai.proxy = {"http": self.openai_proxy, "https": self.openai_proxy}
+
+        self._set_params(**kwargs)
+
+        # Always treat as chat model (OpenAI-style)
+        self._is_chat_model = True
+        self.client = openai.OpenAI(
+            **self._client_params
+        ).chat.completions
+
+    @property
+    def _default_params(self) -> Dict[str, Any]:
+        """Default parameters used for model calls."""
+        return {
+            **super()._default_params,
+            "model": self.model,
+        }
+
+    @property
+    def type(self) -> str:
+        return "vllm"
+
