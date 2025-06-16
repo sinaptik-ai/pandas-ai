@@ -307,7 +307,7 @@ def load(dataset_path: str) -> DataFrame:
     return df
 
 
-def read_csv(filepath: Union[str | BytesIO]) -> DataFrame:
+def read_csv(filepath: Union[str, BytesIO]) -> DataFrame:
     data = pd.read_csv(filepath)
     table = f"table_{sanitize_file_name(filepath)}" if isinstance(filepath, str) else "table_from_bytes"
     return DataFrame(data, _table_name=table)
