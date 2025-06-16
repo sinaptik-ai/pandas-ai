@@ -47,9 +47,7 @@ class Column(BaseModel):
     name: str = Field(..., description="Name of the column.")
     type: Optional[str] = Field(None, description="Data type of the column.")
     description: Optional[str] = Field(None, description="Description of the column")
-    expression: Optional[str] = Field(
-        None, description="Aggregation expression (avg, min, max, sum)"
-    )
+    expression: Optional[str] = Field(None, description="Aggregation expression (avg, min, max, sum)")
     alias: Optional[str] = Field(None, description="Alias for the column")
 
     @field_validator("type")
@@ -63,7 +61,9 @@ class Column(BaseModel):
 
     @field_validator("expression")
     @classmethod
-    def is_expression_valid(cls, expr: str) -> str:
+    def is_expression_valid(cls, expr: str) -> Optional[str]:
+        if expr is None:
+            return expr
         try:
             parse_one(expr)
             return expr
@@ -73,12 +73,8 @@ class Column(BaseModel):
 
 class Relation(BaseModel):
     name: Optional[str] = Field(None, description="Name of the relationship.")
-    description: Optional[str] = Field(
-        None, description="Description of the relationship."
-    )
-    from_: str = Field(
-        ..., alias="from", description="Source column for the relationship."
-    )
+    description: Optional[str] = Field(None, description="Description of the relationship.")
+    from_: str = Field(..., alias="from", description="Source column for the relationship.")
     to: str = Field(..., description="Target column for the relationship.")
 
 
