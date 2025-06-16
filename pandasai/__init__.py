@@ -333,11 +333,10 @@ def read_excel(
         )
 
     return {
-        k: DataFrame(
-            v, _table_name=f"{get_table_name_from_path(filepath)}_{k.lower()}"
-        )
+        k: DataFrame(v, _table_name=f"{get_table_name_from_path(filepath)}_{k.lower()}")
         for k, v in data.items()
     }
+
 
 __all__ = [
     "Agent",
