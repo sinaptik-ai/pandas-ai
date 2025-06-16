@@ -307,10 +307,46 @@ def load(dataset_path: str) -> DataFrame:
     return df
 
 
-def read_csv(filepath: str) -> DataFrame:
+def read_csv(filepath: Union[str, BytesIO]) -> DataFrame:
     data = pd.read_csv(filepath)
-    table = f"table_{sanitize_file_name(filepath)}"
+    table = (
+        f"table_{sanitize_file_name(filepath)}"
+        if isinstance(filepath, str)
+        else "table_from_bytes"
+    )
     return DataFrame(data, _table_name=table)
+
+
+def read_excel(
+    filepath: Union[str, BytesIO], sheet_name: Optional[str] = None
+) -> Union[DataFrame, dict[Union[str, int], DataFrame]]:
+    data = pd.read_excel(filepath, sheet_name=None)
+
+    if isinstance(data, pd.DataFrame):
+        table = (
+            f"table_{sanitize_file_name(filepath)}"
+            if isinstance(filepath, str)
+            else "table_from_bytes"
+        )
+        return DataFrame(data, _table_name=table)
+
+    if not sheet_name or sheet_name not in data:
+        return {
+            k: DataFrame(
+                v,
+                _table_name=f"{sanitize_file_name(filepath)}_{k}".lower()
+                if isinstance(filepath, str)
+                else f"table_from_bytes_{k}".lower(),
+            )
+            for k, v in data.items()
+        }
+
+    return DataFrame(
+        data[sheet_name],
+        _table_name=f"{sanitize_file_name(filepath)}_{sheet_name}".lower()
+        if isinstance(filepath, str)
+        else f"table_from_bytes_{sheet_name}".lower(),
+    )
 
 
 __all__ = [
