@@ -175,6 +175,7 @@ class Agent:
                     self._state.logger.log(
                         f"Retrying Code Generation ({attempts}/{max_retries})..."
                     )
+            return None
 
     def execute_with_retries(self, code: str) -> Any:
         """Execute the code with retry logic."""
@@ -194,6 +195,7 @@ class Agent:
                     f"Retrying execution ({attempts}/{max_retries})..."
                 )
                 code = self._regenerate_code_after_error(code, e)
+        return None
 
     def train(
         self,

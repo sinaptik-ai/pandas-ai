@@ -63,7 +63,9 @@ class Column(BaseModel):
 
     @field_validator("expression")
     @classmethod
-    def is_expression_valid(cls, expr: str) -> str:
+    def is_expression_valid(cls, expr: str) -> Optional[str]:
+        if expr is None:
+            return expr
         try:
             parse_one(expr)
             return expr
