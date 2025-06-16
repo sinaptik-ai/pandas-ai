@@ -191,8 +191,8 @@ class TestReadExcel:
 
         # Check parameter names and types
         params = sig.parameters
-        assert 'filepath' in params
-        assert 'sheet_name' in params
+        assert "filepath" in params
+        assert "sheet_name" in params
 
         # Check that sheet_name has default value
-        assert params['sheet_name'].default is None
+        assert params["sheet_name"].default is None
