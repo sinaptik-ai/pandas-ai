@@ -19,21 +19,18 @@ class TestReadExcel:
     @pytest.fixture
     def sample_pandas_df(self):
         """Sample pandas DataFrame for testing."""
-        return pd.DataFrame({
-            'col1': [1, 2, 3],
-            'col2': ['a', 'b', 'c']
-        })
+        return pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
 
     @pytest.fixture
     def sample_multi_sheet_data(self, sample_pandas_df):
         """Sample multi-sheet data structure."""
         return {
-            'Sheet1': sample_pandas_df,
-            'Sheet2': pd.DataFrame({'col3': [4, 5, 6]}),
-            'Sheet3': pd.DataFrame({'col4': ['x', 'y', 'z']})
+            "Sheet1": sample_pandas_df,
+            "Sheet2": pd.DataFrame({"col3": [4, 5, 6]}),
+            "Sheet3": pd.DataFrame({"col4": ["x", "y", "z"]}),
         }
 
-    @patch('pandas.read_excel')
+    @patch("pandas.read_excel")
     def test_read_excel_single_sheet_string_filepath(
         self, mock_pd_read_excel, sample_pandas_df
     ):
@@ -45,7 +42,7 @@ class TestReadExcel:
         pandasai.read_excel(filepath)
         mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=None)
 
-    @patch('pandas.read_excel')
+    @patch("pandas.read_excel")
     def test_read_excel_single_sheet_bytesio_filepath(
         self, mock_pd_read_excel, sample_pandas_df
     ):
@@ -57,7 +54,7 @@ class TestReadExcel:
         pandasai.read_excel(filepath)
         mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=None)
 
-    @patch('pandas.read_excel')
+    @patch("pandas.read_excel")
     def test_read_excel_multi_sheet_no_sheet_name_string_filepath(
         self, mock_pd_read_excel, sample_multi_sheet_data
     ):
@@ -77,7 +74,7 @@ class TestReadExcel:
             assert isinstance(df, pd.DataFrame)
             assert result[sheet_name].equals(sample_multi_sheet_data[sheet_name])
 
-    @patch('pandas.read_excel')
+    @patch("pandas.read_excel")
     def test_read_excel_multi_sheet_no_sheet_name_bytesio_filepath(
         self, mock_pd_read_excel, sample_multi_sheet_data
     ):
@@ -98,7 +95,7 @@ class TestReadExcel:
             assert isinstance(df, pd.DataFrame)
             assert result[sheet_name].equals(sample_multi_sheet_data[sheet_name])
 
-    @patch('pandas.read_excel')
+    @patch("pandas.read_excel")
     def test_read_excel_multi_sheet_specific_sheet_name_string_filepath(
         self, mock_pd_read_excel, sample_multi_sheet_data
     ):
@@ -114,7 +111,7 @@ class TestReadExcel:
         assert isinstance(result, pd.DataFrame)
         assert result.equals(sample_multi_sheet_data[sheet_name])
 
-    @patch('pandas.read_excel')
+    @patch("pandas.read_excel")
     def test_read_excel_multi_sheet_specific_sheet_name_bytesio_filepath(
         self, mock_pd_read_excel, sample_multi_sheet_data
     ):
@@ -130,7 +127,7 @@ class TestReadExcel:
         assert isinstance(result, pd.DataFrame)
         assert result.equals(sample_multi_sheet_data[sheet_name])
 
-    @patch('pandas.read_excel')
+    @patch("pandas.read_excel")
     def test_read_excel_multi_sheet_nonexistent_sheet_name(
         self, mock_pd_read_excel, sample_multi_sheet_data
     ):
@@ -151,7 +148,7 @@ class TestReadExcel:
             assert isinstance(df, pd.DataFrame)
             assert result[sheet_name].equals(sample_multi_sheet_data[sheet_name])
 
-    @patch('pandas.read_excel')
+    @patch("pandas.read_excel")
     def test_read_excel_pandas_exception(self, mock_pd_read_excel):
         """Test that pandas exceptions are propagated."""
         # Setup
@@ -162,7 +159,7 @@ class TestReadExcel:
         with pytest.raises(FileNotFoundError, match="File not found"):
             pandasai.read_excel(filepath)
 
-    @patch('pandas.read_excel')
+    @patch("pandas.read_excel")
     def test_read_excel_empty_sheet_name_string(
         self, mock_pd_read_excel, sample_multi_sheet_data
     ):
