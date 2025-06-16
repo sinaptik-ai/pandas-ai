@@ -37,7 +37,8 @@ from .data_loader.semantic_layer_schema import (
     Column,
 )
 from .dataframe import DataFrame, VirtualDataFrame
-from .helpers.sql_sanitizer import sanitize_file_name, sanitize_sql_table_name
+from .helpers.path import get_table_name_from_path
+from .helpers.sql_sanitizer import sanitize_sql_table_name
 from .smart_dataframe import SmartDataframe
 from .smart_datalake import SmartDatalake
 
@@ -309,45 +310,34 @@ def load(dataset_path: str) -> DataFrame:
 
 def read_csv(filepath: Union[str, BytesIO]) -> DataFrame:
     data = pd.read_csv(filepath)
-    table = (
-        f"table_{sanitize_file_name(filepath)}"
-        if isinstance(filepath, str)
-        else "table_from_bytes"
-    )
+    table = get_table_name_from_path(filepath)
     return DataFrame(data, _table_name=table)
 
 
 def read_excel(
-    filepath: Union[str, BytesIO], sheet_name: Optional[str] = None
+    filepath: Union[str, BytesIO], sheet_name: Optional[Union[str, int]] = None
 ) -> Union[DataFrame, dict[Union[str, int], DataFrame]]:
-    data = pd.read_excel(filepath, sheet_name=None)
+    try:
+        data = pd.read_excel(filepath, sheet_name=sheet_name)
+    except ValueError:
+        data = pd.read_excel(filepath, sheet_name=None)
 
     if isinstance(data, pd.DataFrame):
-        table = (
-            f"table_{sanitize_file_name(filepath)}"
-            if isinstance(filepath, str)
-            else "table_from_bytes"
-        )
+        table = get_table_name_from_path(filepath)
         return DataFrame(data, _table_name=table)
 
-    if not sheet_name or sheet_name not in data:
-        return {
-            k: DataFrame(
-                v,
-                _table_name=f"{sanitize_file_name(filepath)}_{k}".lower()
-                if isinstance(filepath, str)
-                else f"table_from_bytes_{k}".lower(),
-            )
-            for k, v in data.items()
-        }
+    if sheet_name and sheet_name in data:
+        return DataFrame(
+            data[sheet_name],
+            _table_name=f"{get_table_name_from_path(filepath)}_{sheet_name.lower()}",
+        )
 
-    return DataFrame(
-        data[sheet_name],
-        _table_name=f"{sanitize_file_name(filepath)}_{sheet_name}".lower()
-        if isinstance(filepath, str)
-        else f"table_from_bytes_{sheet_name}".lower(),
-    )
-
+    return {
+        k: DataFrame(
+            v, _table_name=f"{get_table_name_from_path(filepath)}_{k.lower()}"
+        )
+        for k, v in data.items()
+    }
 
 __all__ = [
     "Agent",
