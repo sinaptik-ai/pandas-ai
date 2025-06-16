@@ -22,7 +22,9 @@ class InteractiveChartResponse(BaseResponse):
 
             return json.loads(self.value)
 
-        raise ValueError("Invalid value type for InteractiveChartResponse. Expected dict or str.")
+        raise ValueError(
+            "Invalid value type for InteractiveChartResponse. Expected dict or str."
+        )
 
     def save(self, path: str):
         img = self._get_chart()
@@ -37,7 +39,9 @@ class InteractiveChartResponse(BaseResponse):
 
     def _validate(self):
         if not isinstance(self.value, (dict, str)):
-            raise ValueError("InteractiveChartResponse value must be a dict or a str representing a file path.")
+            raise ValueError(
+                "InteractiveChartResponse value must be a dict or a str representing a file path."
+            )
 
         # if a string, it can be a path to a file or a JSON string
         if isinstance(self.value, str):
@@ -46,4 +50,6 @@ class InteractiveChartResponse(BaseResponse):
             except json.JSONDecodeError:
                 # If it fails, check if it's a valid file path
                 if not os.path.exists(self.value):
-                    raise ValueError("InteractiveChartResponse value must be a valid file path or a JSON string.")
+                    raise ValueError(
+                        "InteractiveChartResponse value must be a valid file path or a JSON string."
+                    )

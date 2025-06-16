@@ -34,7 +34,9 @@ def sample_json():
             "width": 100,
             "height": 100,
             "format": "png",
-            "data": base64.b64encode(io.BytesIO(b"test_image_data").getvalue()).decode("utf-8"),
+            "data": base64.b64encode(io.BytesIO(b"test_image_data").getvalue()).decode(
+                "utf-8"
+            ),
         },
     }
 

@@ -4,9 +4,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
-from PIL import Image
-
 import pytest
+from PIL import Image
 
 from pandasai.core.response import (
     ChartResponse,

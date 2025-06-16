@@ -191,7 +191,9 @@ class CodeCleaner:
         code_lines = code.splitlines()
         cleaned_lines = []
         for line in code_lines:
-            if DEFAULT_CHART_DIRECTORY not in line and ("os.makedirs(" in line or "os.mkdir(" in line):
+            if DEFAULT_CHART_DIRECTORY not in line and (
+                "os.makedirs(" in line or "os.mkdir(" in line
+            ):
                 continue
             cleaned_lines.append(line)
         return "\n".join(cleaned_lines)

@@ -205,9 +205,7 @@ class TestCodeCleaner(unittest.TestCase):
 
         result = handler._replace_output_filenames_with_temp_json_chart(code)
 
-        self.assertEqual(
-            result, code, f"Expected '{code}', but got '{result}'"
-        )
+        self.assertEqual(result, code, f"Expected '{code}', but got '{result}'")
 
     def test_remove_make_dirs(self):
         handler = self.cleaner
@@ -231,15 +229,11 @@ class TestCodeCleaner(unittest.TestCase):
 
         code = f"os.makedirs({DEFAULT_CHART_DIRECTORY}')\nplt.show()\nfig.show()"
         result = handler._remove_make_dirs(code)
-        self.assertEqual(
-            result, code, f"Expected '{code}', but got '{result}'"
-        )
+        self.assertEqual(result, code, f"Expected '{code}', but got '{result}'")
 
         code = f"os.mkdir({DEFAULT_CHART_DIRECTORY}')\nplt.show()\nfig.show()"
         result = handler._remove_make_dirs(code)
-        self.assertEqual(
-            result, code, f"Expected '{code}', but got '{result}'"
-        )
+        self.assertEqual(result, code, f"Expected '{code}', but got '{result}'")
 
 
 if __name__ == "__main__":
