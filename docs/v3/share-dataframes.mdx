@@ -1,33 +1,21 @@
 ---
-title: 'Share Dataframes'
-description: 'Learn how to push and pull dataframes to/from the PandasAI Data Platform'
+title: "Share Dataframes"
+description: "Learn how to access and share dataframes using the PandasAI Data Platform"
 ---
 
 <Note title="Beta Notice">
-Release v3 is currently in beta. This documentation reflects the features and functionality in progress and may change before the final release.
+  Release v3 is currently in beta. This documentation reflects the features and
+  functionality in progress and may change before the final release.
 </Note>
 
-## Pushing Dataframes
-Once you have turned raw data into dataframes using the [semantic layer](/v3/semantic-layer), you can push them to our data platform with one line of code.
+## Sharing Dataframes
 
+Dataframes can be shared through the PandasAI Data Platform at [app.pandabi.ai](https://app.pandabi.ai). Once you've created your dataframes using the [semantic layer](/v3/semantic-layer), you can upload and manage them through the platform interface.
 
-```python
-import pandasai as pai
+The platform provides a collaborative environment where:
 
-df_customers = pai.load("company/heart-data")
+- Team members can access shared dataframes
+- Business users can chat with your data using natural language
+- Permissions can be managed centrally
 
-df.push()
-```
-When you push a dataframe to the platform, business users and team mates can chat with your data using natural language.
-![PandasAI](../assets/demo.gif) 
-
-## Pulling Dataframes
-
-You can pull dataframes your team-mates have pushed to the platform by combining the load and pull methods.
-
-
-```python
-
-df_customers = pai.load("company/heart-data")
-df_customers = pai.pull()
-```
+![PandasAI](../assets/demo.gif)

@@ -83,18 +83,3 @@ result = {{'type': 'dataframe', 'value': df}}"""
 
     result = dataset.chat("Give me all the dataset")
     compare_sorted_dataframe(result.value, expected_df, "loan_status")
-
-
-def test_parquet_push(parquet_dataset_transformed_slug, mock_pandasai_push, capsys):
-    dataset = pai.load(parquet_dataset_transformed_slug)
-    dataset.push()
-    captured = capsys.readouterr()
-    assert "Your dataset was successfully pushed to the remote server!" in captured.out
-    assert (
-        "https://app.pandabi.ai/datasets/integration-test-organization" in captured.out
-    )
-
-
-def test_parquet_pull(parquet_dataset_transformed_slug, mock_dataset_pull):
-    dataset = pai.load(parquet_dataset_transformed_slug)
-    dataset.pull()

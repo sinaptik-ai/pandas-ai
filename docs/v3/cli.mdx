@@ -4,7 +4,8 @@ description: "Learn how to use PandasAI's command-line interface"
 ---
 
 <Note title="Beta Notice">
-PandasAI 3.0 is currently in beta. This documentation reflects the latest features and functionality, which may evolve before the final release.
+  PandasAI 3.0 is currently in beta. This documentation reflects the latest
+  features and functionality, which may evolve before the final release.
 </Note>
 
 PandasAI comes with a command-line interface (CLI) that helps you manage your datasets and authentication.
@@ -18,6 +19,7 @@ pai login PAI-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
 This will:
+
 1. Validate your API key format
 2. Store it in your `.env` file
 3. Preserve any other environment variables you might have
@@ -33,47 +35,30 @@ pai dataset create
 ```
 
 You'll be prompted for:
+
 - Dataset path (organization/dataset)
 - Dataset name (optional)
 - Description (optional)
 - Source configuration (type, connection details, etc.)
 
-### Pushing a Dataset
-
-Push your local dataset to the remote server:
-
-```bash
-pai push organization/dataset
-```
-
-After pushing, you can access your dataset at: `https://app.pandabi.ai/datasets/organization/dataset`
-
-### Pulling a Dataset
-
-Pull a dataset from the remote server:
-
-```bash
-pai pull organization/dataset
-```
-
 ## Command Reference
 
-| Command | Description |
-|---------|-------------|
-| `login <api-key>` | Authenticate with your PandaBI API key |
-| `dataset create` | Create a new dataset through a guided process |
-| `push <path>` | Push a dataset to the remote server |
-| `pull <path>` | Pull a dataset from the remote server |
+| Command           | Description                                   |
+| ----------------- | --------------------------------------------- |
+| `login <api-key>` | Authenticate with your PandaBI API key        |
+| `dataset create`  | Create a new dataset through a guided process |
 
 ## Path Format
 
 Dataset paths should follow the format: `organization/dataset`
 
 Examples:
+
 - `my-org/sales-data`
 - `acme-corp/customer-metrics`
 
 Requirements:
+
 - Organization and dataset names must be lowercase
 - Only hyphens are allowed as separators
 - Both organization and dataset names are required
