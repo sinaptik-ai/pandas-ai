@@ -38,7 +38,10 @@ from .data_loader.semantic_layer_schema import (
 )
 from .dataframe import DataFrame, VirtualDataFrame
 from .helpers.path import get_table_name_from_path
-from .helpers.sql_sanitizer import sanitize_sql_table_name
+from .helpers.sql_sanitizer import (
+    sanitize_sql_table_name,
+    sanitize_sql_table_name_lowercase,
+)
 from .smart_dataframe import SmartDataframe
 from .smart_datalake import SmartDatalake
 
@@ -64,8 +67,6 @@ def create(
             must be lowercase, with hyphens instead of spaces.
         df (DataFrame, optional): The DataFrame containing the data to save. If not
             provided, a connector must be specified to define the dataset source.
-        name (str, optional): The name of the dataset. Defaults to None. If not
-            provided, a name will be automatically generated or inferred.
         description (str, optional): A textual description of the dataset. Defaults
             to None.
         columns (List[dict], optional): A list of dictionaries defining the column schema.
@@ -78,10 +79,12 @@ def create(
         relations (dict, optional): A dictionary specifying relationships between tables
             when the dataset is created as a view. Each relationship should be defined
             using keys such as 'type', 'source', and 'target'.
+        view (bool, optional): If True, the dataset will be created as a view instead
         group_by (List[str], optional): A list of column names to use for grouping in SQL
             queries. Each column name should correspond to a non-aggregated column in the
             dataset. Aggregated columns (those with expressions) cannot be included in
             group_by.
+        transformations (List[dict], optional): A list of transformation dictionaries
 
     Returns:
         Union[DataFrame, VirtualDataFrame]: The created dataset object. This may be
@@ -329,11 +332,18 @@ def read_excel(
     if sheet_name and sheet_name in data:
         return DataFrame(
             data[sheet_name],
-            _table_name=f"{get_table_name_from_path(filepath)}_{sheet_name.lower()}",
+            _table_name=sanitize_sql_table_name_lowercase(
+                f"{get_table_name_from_path(filepath)}_{sheet_name}"
+            ),
         )
 
     return {
-        k: DataFrame(v, _table_name=f"{get_table_name_from_path(filepath)}_{k.lower()}")
+        k: DataFrame(
+            v,
+            _table_name=sanitize_sql_table_name_lowercase(
+                f"{get_table_name_from_path(filepath)}_{k}"
+            ),
+        )
         for k, v in data.items()
     }
 
