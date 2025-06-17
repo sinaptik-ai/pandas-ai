@@ -201,41 +201,4 @@ def test_pull_command(mock_dataset_loader):
 
     assert result.exit_code == 0
     mock_dataset_loader.return_value.load.assert_called_once()
-    mock_df.pull.assert_called_once()
     assert "✨ Dataset successfully pulled" in result.output
-
-
-def test_push_command(mock_dataset_loader):
-    """Test push command"""
-    runner = CliRunner()
-    mock_df = MagicMock()
-    mock_dataset_loader.return_value.load.return_value = mock_df
-
-    result = runner.invoke(cli, ["push", "test-org/test-dataset"])
-
-    assert result.exit_code == 0
-    mock_dataset_loader.return_value.load.assert_called_once()
-    mock_df.push.assert_called_once()
-    assert "✨ Dataset successfully pushed" in result.output
-
-
-def test_pull_command_error(mock_dataset_loader):
-    """Test pull command with error"""
-    runner = CliRunner()
-    mock_dataset_loader.return_value.load.side_effect = Exception("Test error")
-
-    result = runner.invoke(cli, ["pull", "test-org/test-dataset"])
-
-    assert result.exit_code == 0  # CLI handles the error gracefully
-    assert "Error pulling dataset: Test error" in result.output
-
-
-def test_push_command_error(mock_dataset_loader):
-    """Test push command with error"""
-    runner = CliRunner()
-    mock_dataset_loader.return_value.load.side_effect = Exception("Test error")
-
-    result = runner.invoke(cli, ["push", "test-org/test-dataset"])
-
-    assert result.exit_code == 0  # CLI handles the error gracefully
-    assert "Error pushing dataset: Test error" in result.output

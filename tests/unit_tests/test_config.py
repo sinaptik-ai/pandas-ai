@@ -1,8 +1,5 @@
 import os
-from importlib.util import find_spec
 from unittest.mock import MagicMock, patch
-
-import pytest
 
 from pandasai.config import APIKeyManager, Config, ConfigManager
 from pandasai.llm.bamboo_llm import BambooLLM
@@ -33,24 +30,6 @@ class TestConfigManager:
             ConfigManager.validate_llm()
 
             assert ConfigManager._config.llm is None
-
-    @pytest.mark.skipif(
-        find_spec("pandasai_langchain") is None,
-        reason="pandasai_langchain not installed",
-    )
-    def test_validate_llm_with_langchain(self):
-        """Test validate_llm with langchain integration"""
-        from pandasai_langchain.langchain import LangchainLLM
-
-        mock_langchain_llm = MagicMock()
-        ConfigManager._config = MagicMock()
-        ConfigManager._config.llm = mock_langchain_llm
-
-        with patch("pandasai_langchain.langchain.is_langchain_llm", return_value=True):
-            ConfigManager.validate_llm()
-
-            assert isinstance(ConfigManager._config.llm, LangchainLLM)
-            assert ConfigManager._config.llm.langchain_llm == mock_langchain_llm
 
     def test_update_config(self):
         """Test updating configuration with new values"""

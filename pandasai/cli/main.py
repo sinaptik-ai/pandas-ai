@@ -137,25 +137,10 @@ def pull(dataset_path):
     try:
         click.echo(f"🔄 Pulling dataset from: {dataset_path}")
         dataset_loader = DatasetLoader.create_loader_from_path(dataset_path)
-        df = dataset_loader.load()
-        df.pull()
+        dataset_loader.load()
         click.echo(f"\n✨ Dataset successfully pulled from path: {dataset_path}")
     except Exception as e:
         click.echo(f"❌ Error pulling dataset: {str(e)}")
-
-
-@cli.command()
-@click.argument("dataset_path")
-def push(dataset_path):
-    """📤 Push a dataset to a remote source"""
-    try:
-        click.echo(f"🔄 Pushing dataset to: {dataset_path}")
-        dataset_loader = DatasetLoader.create_loader_from_path(dataset_path)
-        df = dataset_loader.load()
-        df.push()
-        click.echo(f"\n✨ Dataset successfully pushed to path: {dataset_path}")
-    except Exception as e:
-        click.echo(f"❌ Error pushing dataset: {str(e)}")
 
 
 if __name__ == "__main__":

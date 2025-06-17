@@ -16,31 +16,6 @@ You can find the full documentation for PandasAI [here](https://pandas-ai.readth
 
 You can either decide to use PandasAI in your Jupyter notebooks, Streamlit apps, or use the client and server architecture from the repo.
 
-## ☁️ Using the platform
-
-The library can be used alongside our powerful data platform, making end-to-end conversational data analytics possible with as little as a few lines of code.
-
-Load your data, save them as a dataframe, and push them to the platform
-
-```python
-import pandasai as pai
-
-pai.api_key.set("your-pai-api-key")
-
-file = pai.read_csv("./filepath.csv")
-
-dataset = pai.create(path="your-organization/dataset-name",
-    df=file,
-    name="dataset-name",
-    description="dataset-description")
-
-dataset.push()
-```
-
-Your team can now access and query this data using natural language through the platform.
-
-![PandasAI](assets/demo.gif)
-
 ## 📚 Using the library
 
 ### Python Requirements
