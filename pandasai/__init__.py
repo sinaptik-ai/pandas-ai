@@ -5,7 +5,7 @@ PandasAI is a wrapper around a LLM to make dataframes conversational
 
 import os
 from io import BytesIO
-from typing import List, Optional, Union
+from typing import Hashable, List, Optional, Union
 from zipfile import ZipFile
 
 import pandas as pd
@@ -318,24 +318,14 @@ def read_csv(filepath: Union[str, BytesIO]) -> DataFrame:
 
 
 def read_excel(
-    filepath: Union[str, BytesIO], sheet_name: Optional[Union[str, int]] = None
-) -> Union[DataFrame, dict[Union[str, int], DataFrame]]:
-    try:
-        data = pd.read_excel(filepath, sheet_name=sheet_name)
-    except ValueError:
-        data = pd.read_excel(filepath, sheet_name=None)
+    filepath: Union[str, BytesIO],
+    sheet_name: Union[str, int, list[Union[str, int]], None] = 0,
+) -> dict[Hashable, DataFrame] | DataFrame:
+    data = pd.read_excel(filepath, sheet_name=sheet_name)
 
     if isinstance(data, pd.DataFrame):
         table = get_table_name_from_path(filepath)
         return DataFrame(data, _table_name=table)
-
-    if sheet_name and sheet_name in data:
-        return DataFrame(
-            data[sheet_name],
-            _table_name=sanitize_sql_table_name_lowercase(
-                f"{get_table_name_from_path(filepath)}_{sheet_name}"
-            ),
-        )
 
     return {
         k: DataFrame(

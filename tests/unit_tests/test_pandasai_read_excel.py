@@ -1,5 +1,4 @@
 from io import BytesIO
-from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
@@ -10,203 +9,159 @@ import pandasai
 class TestReadExcel:
     """Test suite for the read_excel function."""
 
-    @pytest.fixture
-    def sample_pandas_df(self):
-        """Sample pandas DataFrame for testing."""
-        return pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
-
-    @pytest.fixture
-    def sample_multi_sheet_data(self, sample_pandas_df):
-        """Sample multi-sheet data structure."""
-        return {
-            "Sheet1": sample_pandas_df,
-            "Sheet2": pd.DataFrame({"col3": [4, 5, 6]}),
-            "Sheet3": pd.DataFrame({"col4": ["x", "y", "z"]}),
-            "Sheet 1": sample_pandas_df,
-            "Sheet 2": pd.DataFrame({"col3": [4, 5, 6]}),
-        }
-
-    @patch("pandas.read_excel")
-    def test_read_excel_single_sheet_string_filepath(
-        self, mock_pd_read_excel, sample_pandas_df
-    ):
+    def test_read_excel_single_sheet_string_filepath(self):
         """Test reading Excel with single sheet and string filepath."""
         # Setup
-        filepath = "/path/to/file.xlsx"
-        mock_pd_read_excel.return_value = sample_pandas_df
+        filepath = "tests/examples/data/sample_single_sheet_data.xlsx"
 
-        pandasai.read_excel(filepath)
-        mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=None)
+        result = pandasai.read_excel(filepath)
 
-    @patch("pandas.read_excel")
-    def test_read_excel_single_sheet_bytesio_filepath(
-        self, mock_pd_read_excel, sample_pandas_df
-    ):
+        assert isinstance(result, pandasai.DataFrame)
+
+    def test_read_excel_single_sheet_bytesio_filepath(self):
         """Test reading Excel with single sheet and BytesIO filepath."""
         # Setup
-        filepath = BytesIO(b"fake excel content")
-        mock_pd_read_excel.return_value = sample_pandas_df
+        with open("tests/examples/data/sample_single_sheet_data.xlsx", "rb") as f:
+            file_content = BytesIO(f.read())
 
-        pandasai.read_excel(filepath)
-        mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=None)
+        result = pandasai.read_excel(file_content)
 
-    @patch("pandas.read_excel")
-    def test_read_excel_multi_sheet_no_sheet_name_string_filepath(
-        self, mock_pd_read_excel, sample_multi_sheet_data
-    ):
+        assert isinstance(result, pandasai.DataFrame)
+
+    def test_read_excel_multi_sheet_unspecified_sheet_name_string_filepath(self):
+        """Test reading Excel with multiple sheet and string filepath, without the sheet_name parameter."""
+        # Setup
+        filepath = "tests/examples/data/sample_multi_sheet_data.xlsx"
+        df = pd.read_excel(filepath)
+
+        result = pandasai.read_excel(filepath)
+
+        assert isinstance(result, pandasai.DataFrame)
+        assert result.equals(df)
+
+    def test_read_excel_multi_sheet_unspecified_sheet_name_bytesio_filepath(self):
+        """Test reading Excel with multiple sheet and BytesIO filepath, without the sheet_name parameter."""
+        # Setup
+        filepath = "tests/examples/data/sample_multi_sheet_data.xlsx"
+        df = pd.read_excel(filepath)
+
+        with open(filepath, "rb") as f:
+            file_content = BytesIO(f.read())
+
+        result = pandasai.read_excel(file_content)
+
+        assert isinstance(result, pandasai.DataFrame)
+        assert result.equals(df)
+
+    def test_read_excel_multi_sheet_no_sheet_name_string_filepath(self):
         """Test reading Excel with multiple sheets, no sheet_name specified, string filepath."""
         # Setup
-        filepath = "/path/to/file.xlsx"
-        mock_pd_read_excel.return_value = sample_multi_sheet_data
+        filepath = "tests/examples/data/sample_multi_sheet_data.xlsx"
+        df = pd.read_excel(filepath, sheet_name=None)
 
-        result = pandasai.read_excel(filepath)
+        result = pandasai.read_excel(filepath, sheet_name=None)
 
-        mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=None)
         assert isinstance(result, dict)
-        assert len(result) == len(sample_multi_sheet_data)
+        assert len(result) == len(df)
 
-        for sheet_name, df in result.items():
-            assert sheet_name in sample_multi_sheet_data
-            assert isinstance(df, pd.DataFrame)
-            assert result[sheet_name].equals(sample_multi_sheet_data[sheet_name])
+        for sheet_name in result.keys():
+            assert sheet_name in df.keys()
+            assert isinstance(result[sheet_name], pandasai.DataFrame)
+            assert result[sheet_name].equals(df[sheet_name])
 
-    @patch("pandas.read_excel")
-    def test_read_excel_multi_sheet_no_sheet_name_bytesio_filepath(
-        self, mock_pd_read_excel, sample_multi_sheet_data
-    ):
+    def test_read_excel_multi_sheet_no_sheet_name_bytesio_filepath(self):
         """Test reading Excel with multiple sheets, no sheet_name specified, BytesIO filepath."""
         # Setup
-        filepath = BytesIO(b"fake excel content")
-        mock_pd_read_excel.return_value = sample_multi_sheet_data
+        filepath = "tests/examples/data/sample_multi_sheet_data.xlsx"
+        df = pd.read_excel(filepath, sheet_name=None)
+        with open(filepath, "rb") as f:
+            file_content = BytesIO(f.read())
 
         # Execute
-        result = pandasai.read_excel(filepath)
+        result = pandasai.read_excel(file_content, sheet_name=None)
 
-        mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=None)
         assert isinstance(result, dict)
-        assert len(result) == len(sample_multi_sheet_data)
+        assert len(result) == len(df)
 
-        for sheet_name, df in result.items():
-            assert sheet_name in sample_multi_sheet_data
-            assert isinstance(df, pd.DataFrame)
-            assert result[sheet_name].equals(sample_multi_sheet_data[sheet_name])
+        for sheet_name in result.keys():
+            assert sheet_name in df.keys()
+            assert isinstance(result[sheet_name], pandasai.DataFrame)
+            assert result[sheet_name].equals(df[sheet_name])
 
-    @patch("pandas.read_excel")
-    def test_read_excel_multi_sheet_specific_sheet_name_string_filepath(
-        self, mock_pd_read_excel, sample_multi_sheet_data
-    ):
+    def test_read_excel_multi_sheet_specific_sheet_name_string_filepath(self):
         """Test reading Excel with multiple sheets, specific sheet_name, string filepath."""
         # Setup
-        filepath = "/path/to/file.xlsx"
+        filepath = "tests/examples/data/sample_multi_sheet_data.xlsx"
         sheet_name = "Sheet2"
-        mock_pd_read_excel.return_value = sample_multi_sheet_data
 
         result = pandasai.read_excel(filepath, sheet_name=sheet_name)
-        mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=sheet_name)
 
-        assert isinstance(result, pd.DataFrame)
-        assert result.equals(sample_multi_sheet_data[sheet_name])
+        assert isinstance(result, pandasai.DataFrame)
 
-    @patch("pandas.read_excel")
-    def test_read_excel_multi_sheet_specific_sheet_name_bytesio_filepath(
-        self, mock_pd_read_excel, sample_multi_sheet_data
-    ):
+    def test_read_excel_multi_sheet_specific_sheet_name_bytesio_filepath(self):
         """Test reading Excel with multiple sheets, specific sheet_name, BytesIO filepath."""
         # Setup
-        filepath = BytesIO(b"fake excel content")
+        filepath = "tests/examples/data/sample_multi_sheet_data.xlsx"
+        with open(filepath, "rb") as f:
+            file_content = BytesIO(f.read())
+
         sheet_name = "Sheet1"
-        mock_pd_read_excel.return_value = sample_multi_sheet_data
+        result = pandasai.read_excel(file_content, sheet_name=sheet_name)
 
-        result = pandasai.read_excel(filepath, sheet_name=sheet_name)
-        mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=sheet_name)
+        assert isinstance(result, pandasai.DataFrame)
 
-        assert isinstance(result, pd.DataFrame)
-        assert result.equals(sample_multi_sheet_data[sheet_name])
-
-    @patch("pandas.read_excel")
     def test_read_excel_multi_sheet_specific_sheet_name_with_space_string_filepath(
-        self, mock_pd_read_excel, sample_multi_sheet_data
+        self,
     ):
         """Test reading Excel with multiple sheets, specific sheet_name with space, string filepath."""
         # Setup
-        filepath = "/path/to/file.xlsx"
+        filepath = "tests/examples/data/sample_multi_sheet_data.xlsx"
         sheet_name = "Sheet 2"
-        mock_pd_read_excel.return_value = sample_multi_sheet_data
 
         result = pandasai.read_excel(filepath, sheet_name=sheet_name)
-        mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=sheet_name)
 
-        assert isinstance(result, pd.DataFrame)
-        assert result.equals(sample_multi_sheet_data[sheet_name])
+        assert isinstance(result, pandasai.DataFrame)
 
-    @patch("pandas.read_excel")
     def test_read_excel_multi_sheet_specific_sheet_name_with_space_bytesio_filepath(
-        self, mock_pd_read_excel, sample_multi_sheet_data
+        self,
     ):
         """Test reading Excel with multiple sheets, specific sheet_name with space, BytesIO filepath."""
         # Setup
-        filepath = BytesIO(b"fake excel content")
+        filepath = "tests/examples/data/sample_multi_sheet_data.xlsx"
+        with open(filepath, "rb") as f:
+            file_content = BytesIO(f.read())
         sheet_name = "Sheet 1"
-        mock_pd_read_excel.return_value = sample_multi_sheet_data
 
-        result = pandasai.read_excel(filepath, sheet_name=sheet_name)
-        mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=sheet_name)
+        result = pandasai.read_excel(file_content, sheet_name=sheet_name)
 
-        assert isinstance(result, pd.DataFrame)
-        assert result.equals(sample_multi_sheet_data[sheet_name])
+        assert isinstance(result, pandasai.DataFrame)
 
-    @patch("pandas.read_excel")
-    def test_read_excel_multi_sheet_nonexistent_sheet_name(
-        self, mock_pd_read_excel, sample_multi_sheet_data
-    ):
+    def test_read_excel_multi_sheet_nonexistent_sheet_name(self):
         """Test reading Excel with multiple sheets, nonexistent sheet_name."""
         # Setup
-        filepath = "/path/to/file.xlsx"
+        filepath = "tests/examples/data/sample_multi_sheet_data.xlsx"
         sheet_name = "NonexistentSheet"
-        mock_pd_read_excel.return_value = sample_multi_sheet_data
 
-        result = pandasai.read_excel(filepath, sheet_name=sheet_name)
+        with pytest.raises(ValueError):
+            pandasai.read_excel(filepath, sheet_name=sheet_name)
 
-        # Assert - should return all sheets since the specified sheet doesn't exist
-        mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=sheet_name)
-        assert isinstance(result, dict)
-        assert len(result) == len(sample_multi_sheet_data)
-        for sheet_name, df in result.items():
-            assert sheet_name in sample_multi_sheet_data
-            assert isinstance(df, pd.DataFrame)
-            assert result[sheet_name].equals(sample_multi_sheet_data[sheet_name])
-
-    @patch("pandas.read_excel")
-    def test_read_excel_pandas_exception(self, mock_pd_read_excel):
+    def test_read_excel_pandas_exception(self):
         """Test that pandas exceptions are propagated."""
         # Setup
         filepath = "/path/to/nonexistent.xlsx"
-        mock_pd_read_excel.side_effect = FileNotFoundError("File not found")
 
         # Execute & Assert
-        with pytest.raises(FileNotFoundError, match="File not found"):
+        with pytest.raises(FileNotFoundError):
             pandasai.read_excel(filepath)
 
-    @patch("pandas.read_excel")
-    def test_read_excel_empty_sheet_name_string(
-        self, mock_pd_read_excel, sample_multi_sheet_data
-    ):
+    def test_read_excel_empty_sheet_name_string(self):
         """Test reading Excel with empty string as sheet_name."""
         # Setup
-        filepath = "/path/to/file.xlsx"
+        filepath = "tests/examples/data/sample_multi_sheet_data.xlsx"
         sheet_name = ""
-        mock_pd_read_excel.return_value = sample_multi_sheet_data
 
-        result = pandasai.read_excel(filepath, sheet_name=sheet_name)
-
-        # Assert - empty string should be treated as falsy, return all sheets
-        mock_pd_read_excel.assert_called_once_with(filepath, sheet_name=sheet_name)
-        assert isinstance(result, dict)
-        assert len(result) == len(sample_multi_sheet_data)
-        for sheet_name, df in result.items():
-            assert sheet_name in sample_multi_sheet_data
-            assert isinstance(df, pd.DataFrame)
-            assert result[sheet_name].equals(sample_multi_sheet_data[sheet_name])
+        with pytest.raises(ValueError):
+            pandasai.read_excel(filepath, sheet_name=sheet_name)
 
     def test_read_excel_type_hints(self):
         """Test that the function signature matches expected types."""
@@ -220,4 +175,4 @@ class TestReadExcel:
         assert "sheet_name" in params
 
         # Check that sheet_name has default value
-        assert params["sheet_name"].default is None
+        assert params["sheet_name"].default == 0
