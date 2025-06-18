@@ -85,7 +85,7 @@ class Agent:
         Start a new chat interaction with the assistant on Dataframe.
         """
         if self._state.config.llm is None:
-            raise ValueError("No LLM provided. Please provide a LLM to the agent.")
+            raise ValueError("No LLM provided. Please provide an LLM to the agent.")
 
         self.start_new_conversation()
         return self._process_query(query, output_type)
