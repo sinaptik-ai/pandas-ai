@@ -6,7 +6,7 @@ import pandas as pd
 from pandasai.dataframe.virtual_dataframe import VirtualDataFrame
 from pandasai.query_builders import ViewQueryBuilder
 
-from .. import LOCAL_SOURCE_TYPES
+from ..constants import LOCAL_SOURCE_TYPES
 from ..exceptions import MaliciousQueryError
 from ..helpers.sql_sanitizer import is_sql_query_safe
 from ..query_builders.base_query_builder import BaseQueryBuilder

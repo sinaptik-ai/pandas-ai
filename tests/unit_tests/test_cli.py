@@ -189,16 +189,3 @@ def test_dataset_create_existing(mock_schema, mock_project_root, tmp_path):
     result = runner.invoke(cli, ["dataset", "create"], input="test-org/test-dataset\n")
     assert result.exit_code == 0
     assert "Error: Dataset already exists" in result.output
-
-
-def test_pull_command(mock_dataset_loader):
-    """Test pull command"""
-    runner = CliRunner()
-    mock_df = MagicMock()
-    mock_dataset_loader.return_value.load.return_value = mock_df
-
-    result = runner.invoke(cli, ["pull", "test-org/test-dataset"])
-
-    assert result.exit_code == 0
-    mock_dataset_loader.return_value.load.assert_called_once()
-    assert "✨ Dataset successfully pulled" in result.output

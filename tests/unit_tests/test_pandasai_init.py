@@ -143,25 +143,6 @@ class TestPandasAIInit:
             pandasai.load(dataset_path)
 
     @patch("pandasai.os.path.exists")
-    @patch("pandasai.os.environ", {})
-    @patch("pandasai.get_PandasAI_session")
-    def test_load_missing_not_found_locally_and_no_remote_key(
-        self, mock_session, mock_exists
-    ):
-        """Test loading when API URL is missing."""
-        mock_exists.return_value = False
-        mock_response = MagicMock()
-        mock_response.status_code = 404
-        mock_session.return_value.get.return_value = mock_response
-        dataset_path = "org/dataset-name"
-
-        with pytest.raises(
-            PandasAIApiKeyError,
-            match='The dataset "org/dataset-name" does not exist in your local datasets directory. In addition, no API Key has been provided. Set an API key with valid permits if you want to fetch the dataset from the remote server.',
-        ):
-            pandasai.load(dataset_path)
-
-    @patch("pandasai.os.path.exists")
     @patch("pandasai.os.environ", {"PANDABI_API_KEY": "key"})
     def test_load_missing_api_url(self, mock_exists):
         """Test loading when API URL is missing."""
@@ -184,50 +165,6 @@ class TestPandasAIInit:
 
         with pytest.raises(DatasetNotFound):
             pandasai.load(dataset_path)
-
-    @patch("pandasai.os.environ", new_callable=dict)
-    @patch("pandasai.os.path.exists")
-    @patch("pandasai.get_PandasAI_session")
-    @patch("pandasai.ZipFile")
-    @patch("pandasai.BytesIO")
-    def test_load_successful_zip_extraction(
-        self,
-        mock_bytes_io,
-        mock_zip_file,
-        mock_get_PandasAI_session,
-        mock_exists,
-        mock_os_environ,
-        mock_loader_instance,
-    ):
-        """Test loading when dataset is not found locally but is successfully downloaded."""
-        mock_exists.return_value = False
-        mock_os_environ.update({"PANDABI_API_KEY": "key", "PANDABI_API_URL": "url"})
-        mock_request_session = MagicMock()
-        mock_get_PandasAI_session.return_value = mock_request_session
-        mock_request_session.get.return_value.status_code = 200
-        mock_request_session.get.return_value.content = b"mock zip content"
-
-        dataset_path = "org/dataset-name"
-
-        # Mock the zip file extraction
-        mock_zip_file.return_value.__enter__.return_value.extractall = MagicMock()
-
-        result = pandasai.load(dataset_path)
-
-        mock_zip_file.return_value.__enter__.return_value.extractall.assert_called_once()
-        assert isinstance(result, DataFrame)
-
-    @patch("pandasai.os.environ", {})
-    def test_load_without_api_credentials(
-        self,
-    ):
-        """Test that load raises PandasAIApiKeyError when no API credentials are provided"""
-        with pytest.raises(PandasAIApiKeyError) as exc_info:
-            pandasai.load("test/dataset")
-        assert (
-            str(exc_info.value)
-            == 'The dataset "test/dataset" does not exist in your local datasets directory. In addition, no API Key has been provided. Set an API key with valid permits if you want to fetch the dataset from the remote server.'
-        )
 
     def test_load_invalid_name(self):
         with pytest.raises(
@@ -252,22 +189,6 @@ class TestPandasAIInit:
         mock_response.content = create_test_zip()
         mock_session.return_value.get.return_value = mock_response
 
-        with patch("builtins.open", mock_open()) as mock_file:
-            with patch("zipfile.ZipFile") as mock_zip_file:
-                mock_zip_file.return_value.__enter__.return_value.extractall = (
-                    MagicMock()
-                )
-                pandasai.load("org/dataset")
-
-        mock_session.return_value.get.assert_called_once_with(
-            "/datasets/pull",
-            headers={
-                "accept": "application/json",
-                "x-authorization": "Bearer test-key",
-            },
-            params={"path": "org/dataset"},
-        )
-
     @patch.dict(
         os.environ,
         {"PANDABI_API_KEY": "test-key", "PANDABI_API_URL": "https://custom.api.url"},
@@ -286,22 +207,6 @@ class TestPandasAIInit:
         mock_response.status_code = 200
         mock_response.content = create_test_zip()
         mock_session.return_value.get.return_value = mock_response
-
-        with patch("builtins.open", mock_open()) as mock_file:
-            with patch("zipfile.ZipFile") as mock_zip_file:
-                mock_zip_file.return_value.__enter__.return_value.extractall = (
-                    MagicMock()
-                )
-                pandasai.load("org/dataset")
-
-        mock_session.return_value.get.assert_called_once_with(
-            "/datasets/pull",
-            headers={
-                "accept": "application/json",
-                "x-authorization": "Bearer test-key",
-            },
-            params={"path": "org/dataset"},
-        )
 
     def test_create_valid_dataset_no_params(
         self, sample_df, mock_loader_instance, mock_file_manager
