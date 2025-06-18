@@ -9,20 +9,35 @@ description: "Set up Large Language Model in PandasAI"
 </Note>
 
 PandasAI supports multiple LLMs.
-To make the library lightweight, the default LLM is BambooLLM, developed by PandasAI team themselves.
-To use other LLMs, you need to install the corresponding llm extension.
-Once a LLM extension is installed, you can configure it simply using [`pai.config.set()`](/v3/overview-nl#configure-the-nl-layer).
+You need to install the corresponding LLM extension.
+Once an LLM extension is installed, you can configure it using [`pai.config.set()`](/v3/overview-nl#configure-the-nl-layer).
 Then, every time you use the [`.chat()`](/v3/chat-and-output) method, it will use the configured LLM.
 
-## BambooLLM
+## LiteLLM
 
-BambooLLM is the default LLM for PandasAI, fine-tuned for data analysis.
-You can get your free API key by signing up at [app.pandabi.ai](https://app.pandabi.ai).
+LiteLLM provides a unified interface to multiple LLM providers including OpenAI, Anthropic, Google, and others.
+
+Install the pandasai-litellm extension:
+
+```bash
+pip install pandasai-litellm
+```
+
+Then configure it in your code:
 
 ```python
 import pandasai as pai
+from pandasai_litellm.litellm import LiteLLM
 
-pai.api_key.set("api-key")
+# For OpenAI models
+llm = LiteLLM(model="gpt-4.1-mini", api_key="YOUR_OPENAI_API_KEY")
+
+# For other providers, change the model name and provide appropriate credentials
+# llm = LiteLLM(model="anthropic/claude-3-opus-20240229", api_key="YOUR_ANTHROPIC_API_KEY")
+
+pai.config.set({
+    "llm": llm
+})
 ```
 
 ## OpenAI models
@@ -106,7 +121,7 @@ os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 os.environ["ANTHROPIC_API_KEY"] = "your-anthropic-api-key"
 
 # Example with OpenAI
-llm = LiteLLM(model="gpt-3.5-turbo")
+llm = LiteLLM(model="gpt-4.1-mini")
 
 # Example with Anthropic
 llm = LiteLLM(model="claude-2")
@@ -117,7 +132,7 @@ pai.config.set({"llm": llm})
 
 LiteLLM supports a wide range of models from various providers, including but not limited to:
 
-- OpenAI (gpt-3.5-turbo, gpt-4, etc.)
+- OpenAI (gpt-4.1-mini, gpt-4, etc.)
 - Anthropic (claude-2, claude-instant-1, etc.)
 - Google (gemini-pro, palm2, etc.)
 - Azure OpenAI

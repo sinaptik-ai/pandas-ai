@@ -29,9 +29,13 @@ Example:
 
 ```python
 import pandasai as pai
+from pandasai_litellm.litellm import LiteLLM
+
+# Initialize LiteLLM with your OpenAI model
+llm = LiteLLM(model="gpt-4.1-mini", api_key="YOUR_OPENAI_API_KEY")
 
 pai.config.set({
-   "llm": "openai",
+   "llm": llm,
    "save_logs": True,
    "verbose": False,
    "max_retries": 3

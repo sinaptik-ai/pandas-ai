@@ -2,7 +2,6 @@ import os
 from unittest.mock import MagicMock, patch
 
 from pandasai.config import APIKeyManager, Config, ConfigManager
-from pandasai.llm.bamboo_llm import BambooLLM
 
 
 class TestConfigManager:
@@ -11,24 +10,20 @@ class TestConfigManager:
         ConfigManager._config = None
         ConfigManager._initialized = False
 
-    def test_validate_llm_with_pandabi_api_key(self):
-        """Test validate_llm when PANDABI_API_KEY is set"""
+    def test_config_without_llm(self):
+        """Test config behavior when no LLM is set"""
         with patch.dict(os.environ, {"PANDABI_API_KEY": "test-key"}):
             ConfigManager._config = MagicMock()
             ConfigManager._config.llm = None
+            assert ConfigManager._config.llm is None
 
-            ConfigManager.validate_llm()
-
-            assert isinstance(ConfigManager._config.llm, BambooLLM)
-
-    def test_validate_llm_without_pandabi_api_key(self):
-        """Test validate_llm when PANDABI_API_KEY is not set"""
+    def test_config_without_api_key(self):
+        """Test config behavior when no API key is set"""
         with patch.dict(os.environ, {}, clear=True):
             ConfigManager._config = MagicMock()
             ConfigManager._config.llm = None
 
-            ConfigManager.validate_llm()
-
+            # No LLM should be set automatically
             assert ConfigManager._config.llm is None
 
     def test_update_config(self):

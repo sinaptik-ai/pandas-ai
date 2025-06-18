@@ -32,22 +32,42 @@ pip install "pandasai>=3.0.0b2"
 
 ## Quick setup
 
-In order to use PandasAI, you need a large language model (LLM). While you can use any LLM, for the purpose of this guide, we are using BambooLLM.
-You can get your free API key signing up at [app.pandabi.ai](https://app.pandabi.ai), which allows you to both use the data platform and get BambooLLM credits.
+In order to use PandasAI, you need a large language model (LLM). You can use any LLM, but for this guide we'll use OpenAI through the LiteLLM extension.
 
-First, import PandasAI and set up your API key:
+First, install the required extension:
+
+```bash
+pip install pandasai-litellm
+```
+
+Then, import PandasAI and configure the LLM:
 
 ```python
 import pandasai as pai
+from pandasai_litellm.litellm import LiteLLM
 
-# Get your API key from https://app.pandabi.ai
-pai.api_key.set("YOUR_PANDABI_API_KEY")
+# Initialize LiteLLM with your OpenAI model
+llm = LiteLLM(model="gpt-4.1-mini", api_key="YOUR_OPENAI_API_KEY")
+
+# Configure PandasAI to use this LLM
+pai.config.set({
+    "llm": llm
+})
 ```
 
 ## Chat with your data
 
 ```python
 import pandasai as pai
+from pandasai_litellm.litellm import LiteLLM
+
+# Initialize LiteLLM with your OpenAI model
+llm = LiteLLM(model="gpt-4.1-mini", api_key="YOUR_OPENAI_API_KEY")
+
+# Configure PandasAI to use this LLM
+pai.config.set({
+    "llm": llm
+})
 
 # Load your data
 df = pai.read_csv("data/companies.csv")

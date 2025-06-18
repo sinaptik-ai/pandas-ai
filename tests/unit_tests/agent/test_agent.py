@@ -31,10 +31,10 @@ class TestAgent:
         return Agent(sample_df, config, vectorstore=MagicMock())
 
     @pytest.fixture(autouse=True)
-    def mock_bamboo_llm(self):
-        with patch("pandasai.llm.bamboo_llm.BambooLLM") as mock:
-            mock.return_value = Mock(type="bamboo")
-            yield mock
+    def mock_llm(self):
+        # Generic LLM mock for testing
+        mock = Mock(type="generic_llm")
+        yield mock
 
     def test_constructor(self, sample_df, config):
         agent_1 = Agent(sample_df, config)
@@ -326,13 +326,10 @@ class TestAgent:
         assert agent._state._get_llm(llm) == llm
 
     def test_load_llm_none(self, agent: Agent, llm):
-        mock_llm = FakeLLM()
-        with patch("pandasai.agent.state.BambooLLM", return_value=mock_llm), patch.dict(
-            os.environ, {"PANDABI_API_KEY": "test_key"}
-        ):
+        with patch.dict(os.environ, {"PANDABI_API_KEY": "test_key"}):
             config = agent._state._get_config({})
             assert isinstance(config, Config)
-            assert config.llm == mock_llm
+            assert config.llm is None
 
     def test_get_config_none(self, agent: Agent):
         """Test that _get_config returns global config when input is None"""
@@ -352,14 +349,11 @@ class TestAgent:
         assert config.llm == mock_llm
 
     def test_get_config_dict_with_api_key(self, agent: Agent):
-        """Test that _get_config adds BambooLLM when API key is present"""
-        mock_llm = FakeLLM()
-        with patch.dict(os.environ, {"PANDABI_API_KEY": "test_key"}), patch(
-            "pandasai.agent.state.BambooLLM", return_value=mock_llm
-        ):
+        """Test that _get_config with API key no longer initializes an LLM automatically"""
+        with patch.dict(os.environ, {"PANDABI_API_KEY": "test_key"}):
             config = agent._state._get_config({})
             assert isinstance(config, Config)
-            assert config.llm == mock_llm
+            assert config.llm is None
 
     def test_get_config_config(self, agent: Agent):
         """Test that _get_config returns Config object unchanged"""
