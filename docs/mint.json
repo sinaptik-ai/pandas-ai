@@ -15,15 +15,7 @@
         "to": "#55D799"
       }
     },
-    "versions": [
-        {
-          "name": "v3",
-          "default": true
-        },
-        {
-          "name": "v2"
-        }
-    ],
+    "versions": ["v3", "v2"],
     "topbarLinks": [
       {
         "name": "GitHub",
@@ -54,7 +46,7 @@
     "navigation": [
       {
         "group": "Overview",
-        "pages": ["v3/introduction", "v3/getting-started", "v3/cli", "v3/privacy-security"],
+        "pages": ["v3/introduction", "v3/getting-started", "v3/privacy-security"],
         "version": "v3"
       },
       {
