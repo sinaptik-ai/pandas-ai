@@ -10,7 +10,6 @@ from pandasai.data_loader.semantic_layer_schema import Column, SemanticLayerSche
 from pandasai.dataframe.base import DataFrame
 from pandasai.exceptions import DatasetNotFound, InvalidConfigError, PandasAIApiKeyError
 from pandasai.helpers.filemanager import DefaultFileManager
-from pandasai.llm.bamboo_llm import BambooLLM
 
 
 def create_test_zip():
@@ -655,7 +654,8 @@ class TestPandasAIInit:
 
             mock_execute_code.return_value = {"type": "number", "value": 42}
 
-            assert isinstance(pandasai.config.get().llm, BambooLLM)
+            # LLM is no longer automatically initialized
+            assert pandasai.config.get().llm is None
 
             pandasai.config.set({"llm": llm})
 
