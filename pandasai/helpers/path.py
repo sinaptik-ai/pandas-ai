@@ -1,5 +1,9 @@
 import os
 import re
+from io import BytesIO
+from typing import Union
+
+from ..helpers.sql_sanitizer import sanitize_file_name
 
 
 def find_project_root(filename=None):
@@ -87,3 +91,11 @@ def get_validated_dataset_path(path: str):
         )
 
     return org_name, dataset_name
+
+
+def get_table_name_from_path(filepath: Union[str, BytesIO]) -> str:
+    return (
+        f"table_{sanitize_file_name(filepath)}"
+        if isinstance(filepath, str)
+        else "table_from_bytes"
+    )
