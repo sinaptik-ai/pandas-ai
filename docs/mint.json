@@ -15,7 +15,15 @@
         "to": "#55D799"
       }
     },
-    "versions": ["v3", "v2"],
+    "versions": [
+        {
+          "name": "v3",
+          "default": true
+        },
+        {
+          "name": "v2"
+        }
+    ],
     "topbarLinks": [
       {
         "name": "GitHub",
