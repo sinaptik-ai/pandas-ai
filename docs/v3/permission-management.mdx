@@ -7,12 +7,12 @@ description: 'Manage access control and permissions'
 Release v3 is currently in beta. This documentation reflects the features and functionality in progress and may change before the final release.
 </Note>
 
-The [data platform](/v3/ai-dashboards) allows you to control how your AI dashboards and dataframes are shared and accessed. 
-You can choose between four levels of access:
+The [data platform](/v3/ai-dashboards) allows you to control access to your AI dashboards and dataframes. 
+You can choose between different levels of access:
 - Private: for your own use
-- Public: for sharing with the community
-- Password-protected: for controlled sharing
-- Organization: for team collaboration
+- Public: available to anyone with a PandasAI account
+- Password-protected: requires a password to access
+- Organization: for use within your organization
 
 ![Permission Management](../assets/permissions.png)
 
@@ -25,7 +25,7 @@ Private dataframes are accessible only by their owner. When asking questions to 
 Public dataframes are accessible by anyone with a PandasAI account. They are indexed on the web for discovery. When users ask questions, they consume their own query quota.
 
 ## Password-Protected Dataframes
-Password-protected dataframes are accessible only by users with the correct password. When users ask questions, the dataframe owner consumes their query quota.
+Password-protected dataframes require a password to access. When accessing these dataframes, the owner's query quota is consumed.
 
 ## Organization Dataframes
-Organization dataframes are accessible by team members based on their permissions. Members can have read-only or write access. Permissions are handled in-platform by the organization owner and admins.
+Organization dataframes are available within your organization based on assigned permissions. Users can have read-only or write access as determined by the organization owner and administrators.

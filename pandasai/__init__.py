@@ -6,32 +6,26 @@ PandasAI is a wrapper around a LLM to make dataframes conversational
 import os
 from io import BytesIO
 from typing import Hashable, List, Optional, Union
-from zipfile import ZipFile
 
 import pandas as pd
 
 from pandasai.config import APIKeyManager, ConfigManager
-from pandasai.constants import DEFAULT_API_URL
 from pandasai.data_loader.semantic_layer_schema import (
     Column,
     Relation,
     SemanticLayerSchema,
     Source,
     Transformation,
-    TransformationParams,
 )
-from pandasai.exceptions import DatasetNotFound, InvalidConfigError, PandasAIApiKeyError
+from pandasai.exceptions import DatasetNotFound, InvalidConfigError
 from pandasai.helpers.path import (
     find_project_root,
     get_validated_dataset_path,
     transform_dash_to_underscore,
 )
-from pandasai.helpers.session import get_PandasAI_session
-from pandasai.query_builders import SqlQueryBuilder
 from pandasai.sandbox.sandbox import Sandbox
 
 from .agent import Agent
-from .constants import LOCAL_SOURCE_TYPES, SQL_SOURCE_TYPES
 from .data_loader.loader import DatasetLoader
 from .data_loader.semantic_layer_schema import (
     Column,
@@ -276,26 +270,7 @@ def load(dataset_path: str) -> DataFrame:
     local_dataset_exists = os.path.exists(dataset_full_path)
 
     if not local_dataset_exists:
-        api_key = os.environ.get("PANDABI_API_KEY", None)
-        api_url = os.environ.get("PANDABI_API_URL", DEFAULT_API_URL)
-
-        if not api_url or not api_key:
-            raise PandasAIApiKeyError(
-                f'The dataset "{dataset_path}" does not exist in your local datasets directory. In addition, no API Key has been provided. Set an API key with valid permits if you want to fetch the dataset from the remote server.'
-            )
-
-        request_session = get_PandasAI_session()
-
-        headers = {"accept": "application/json", "x-authorization": f"Bearer {api_key}"}
-
-        file_data = request_session.get(
-            "/datasets/pull", headers=headers, params={"path": dataset_path}
-        )
-        if file_data.status_code != 200:
-            raise DatasetNotFound("Dataset not found!")
-
-        with ZipFile(BytesIO(file_data.content)) as zip_file:
-            zip_file.extractall(dataset_full_path)
+        raise DatasetNotFound("Dataset not found!")
 
     loader = DatasetLoader.create_loader_from_path(dataset_path)
     df = loader.load()

@@ -16,31 +16,6 @@ You can find the full documentation for PandasAI [here](https://pandas-ai.readth
 
 You can either decide to use PandasAI in your Jupyter notebooks, Streamlit apps, or use the client and server architecture from the repo.
 
-## ☁️ Using the platform
-
-The library can be used alongside our powerful data platform, making end-to-end conversational data analytics possible with as little as a few lines of code.
-
-Load your data, save them as a dataframe, and push them to the platform
-
-```python
-import pandasai as pai
-
-pai.api_key.set("your-pai-api-key")
-
-file = pai.read_csv("./filepath.csv")
-
-dataset = pai.create(path="your-organization/dataset-name",
-    df=file,
-    name="dataset-name",
-    description="dataset-description")
-
-dataset.push()
-```
-
-Your team can now access and query this data using natural language through the platform.
-
-![PandasAI](assets/demo.gif)
-
 ## 📚 Using the library
 
 ### Python Requirements
@@ -69,16 +44,19 @@ poetry add "pandasai>=3.0.0b2"
 
 ```python
 import pandasai as pai
+from pandasai_openai.openai import OpenAI
+
+llm = OpenAI("OPEN_AI_API_KEY")
+
+pai.config.set({
+    "llm": llm
+})
 
 # Sample DataFrame
 df = pai.DataFrame({
     "country": ["United States", "United Kingdom", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "Japan", "China"],
     "revenue": [5000, 3200, 2900, 4100, 2300, 2100, 2500, 2600, 4500, 7000]
 })
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://app.pandabi.ai (you can also configure it in your .env file)
-pai.api_key.set("your-pai-api-key")
 
 df.chat('Which are the top 5 countries by sales?')
 ```
@@ -119,6 +97,7 @@ You can also pass in multiple dataframes to PandasAI and ask questions relating 
 
 ```python
 import pandasai as pai
+from pandasai_openai.openai import OpenAI
 
 employees_data = {
     'EmployeeID': [1, 2, 3, 4, 5],
@@ -131,12 +110,15 @@ salaries_data = {
     'Salary': [5000, 6000, 4500, 7000, 5500]
 }
 
+llm = OpenAI("OPEN_AI_API_KEY")
+
+pai.config.set({
+    "llm": llm
+})
+
 employees_df = pai.DataFrame(employees_data)
 salaries_df = pai.DataFrame(salaries_data)
 
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://app.pandabi.ai (you can also configure it in your .env file)
-pai.api_key.set("your-pai-api-key")
 
 pai.chat("Who gets paid the most?", employees_df, salaries_df)
 ```
@@ -160,6 +142,7 @@ pip install "pandasai-docker"
 ```python
 import pandasai as pai
 from pandasai_docker import DockerSandbox
+from pandasai_openai.openai import OpenAI
 
 # Initialize the sandbox
 sandbox = DockerSandbox()
@@ -176,12 +159,14 @@ salaries_data = {
     'Salary': [5000, 6000, 4500, 7000, 5500]
 }
 
+llm = OpenAI("OPEN_AI_API_KEY")
+
+pai.config.set({
+    "llm": llm
+})
+
 employees_df = pai.DataFrame(employees_data)
 salaries_df = pai.DataFrame(salaries_data)
-
-# By default, unless you choose a different LLM, it will use BambooLLM.
-# You can get your free API key signing up at https://app.pandabi.ai (you can also configure it in your .env file)
-pai.api_key.set("your-pai-api-key")
 
 pai.chat("Who gets paid the most?", employees_df, salaries_df, sandbox=sandbox)
 
