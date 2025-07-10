@@ -84,6 +84,9 @@ class Agent:
         """
         Start a new chat interaction with the assistant on Dataframe.
         """
+        if self._state.config.llm is None:
+            raise ValueError("No LLM provided. Please provide an LLM to the agent.")
+
         self.start_new_conversation()
         return self._process_query(query, output_type)
 
@@ -186,7 +189,7 @@ class Agent:
             try:
                 result = self.execute_code(code)
                 return self._response_parser.parse(result, code)
-            except CodeExecutionError as e:
+            except Exception as e:
                 attempts += 1
                 if attempts > max_retries:
                     self._state.logger.log(f"Max retries reached. Error: {e}")
@@ -195,6 +198,7 @@ class Agent:
                     f"Retrying execution ({attempts}/{max_retries})..."
                 )
                 code = self._regenerate_code_after_error(code, e)
+
         return None
 
     def train(

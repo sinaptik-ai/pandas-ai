@@ -31,18 +31,12 @@ class ConfigManager:
     def set(cls, config_dict: Dict[str, Any]) -> None:
         """Set the global configuration."""
         cls._config = Config.from_dict(config_dict)
-        cls.validate_llm()
 
     @classmethod
     def get(cls) -> Config:
         """Get the global configuration."""
         if cls._config is None:
             cls._config = Config()
-
-        if cls._config.llm is None and os.environ.get("PANDABI_API_KEY"):
-            from pandasai.llm.bamboo_llm import BambooLLM
-
-            cls._config.llm = BambooLLM()
 
         return cls._config
 
@@ -52,17 +46,6 @@ class ConfigManager:
         current_config = cls._config.model_dump()
         current_config.update(config_dict)
         cls._config = Config.from_dict(current_config)
-
-    @classmethod
-    def validate_llm(cls):
-        """
-        Initializes a default LLM if not provided.
-        """
-        if cls._config.llm is None and os.environ.get("PANDABI_API_KEY"):
-            from pandasai.llm.bamboo_llm import BambooLLM
-
-            cls._config.llm = BambooLLM()
-            return
 
 
 class APIKeyManager:

@@ -133,20 +133,3 @@ result = {{'type': 'dataframe', 'value': df}}"""
 
     result = dataset.chat("Give me all the dataset")
     compare_sorted_dataframe(result.value.head(), expected_df, "min_user_id")
-
-
-def test_local_view_grouped_push(
-    local_view_grouped_dataset_slug, mock_pandasai_push, capsys
-):
-    dataset = pai.load(local_view_grouped_dataset_slug)
-    dataset.push()
-    captured = capsys.readouterr()
-    assert "Your dataset was successfully pushed to the remote server!" in captured.out
-    assert (
-        "https://app.pandabi.ai/datasets/integration-test-organization" in captured.out
-    )
-
-
-def test_local_view_grouped_pull(local_view_grouped_dataset_slug, mock_dataset_pull):
-    dataset = pai.load(local_view_grouped_dataset_slug)
-    dataset.pull()

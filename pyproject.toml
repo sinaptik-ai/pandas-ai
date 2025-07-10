@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pandasai"
-version = "3.0.0-beta.17"
+version = "3.0.0-beta.18"
 description = "Chat with your database (SQL, CSV, pandas, mongodb, noSQL, etc). PandasAI makes data analysis conversational using LLMs (GPT 3.5 / 4, Anthropic, VertexAI) and RAG."
 authors = ["Gabriele Venturi"]
 license = "MIT"
@@ -24,6 +24,7 @@ pillow = "^10.1.0"
 requests = "^2.31.0"
 jinja2 = "^3.1.3"
 numpy = "^1.17"
+openpyxl = "^3.1.5"
 seaborn = "^0.12.2"
 sqlglot = "^25.0.3" 
 pyarrow = "^14.0.1"

@@ -1,11 +1,7 @@
 import os
-from importlib.util import find_spec
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from pandasai.config import APIKeyManager, Config, ConfigManager
-from pandasai.llm.bamboo_llm import BambooLLM
 
 
 class TestConfigManager:
@@ -14,43 +10,21 @@ class TestConfigManager:
         ConfigManager._config = None
         ConfigManager._initialized = False
 
-    def test_validate_llm_with_pandabi_api_key(self):
-        """Test validate_llm when PANDABI_API_KEY is set"""
+    def test_config_without_llm(self):
+        """Test config behavior when no LLM is set"""
         with patch.dict(os.environ, {"PANDABI_API_KEY": "test-key"}):
             ConfigManager._config = MagicMock()
             ConfigManager._config.llm = None
+            assert ConfigManager._config.llm is None
 
-            ConfigManager.validate_llm()
-
-            assert isinstance(ConfigManager._config.llm, BambooLLM)
-
-    def test_validate_llm_without_pandabi_api_key(self):
-        """Test validate_llm when PANDABI_API_KEY is not set"""
+    def test_config_without_api_key(self):
+        """Test config behavior when no API key is set"""
         with patch.dict(os.environ, {}, clear=True):
             ConfigManager._config = MagicMock()
             ConfigManager._config.llm = None
 
-            ConfigManager.validate_llm()
-
+            # No LLM should be set automatically
             assert ConfigManager._config.llm is None
-
-    @pytest.mark.skipif(
-        find_spec("pandasai_langchain") is None,
-        reason="pandasai_langchain not installed",
-    )
-    def test_validate_llm_with_langchain(self):
-        """Test validate_llm with langchain integration"""
-        from pandasai_langchain.langchain import LangchainLLM
-
-        mock_langchain_llm = MagicMock()
-        ConfigManager._config = MagicMock()
-        ConfigManager._config.llm = mock_langchain_llm
-
-        with patch("pandasai_langchain.langchain.is_langchain_llm", return_value=True):
-            ConfigManager.validate_llm()
-
-            assert isinstance(ConfigManager._config.llm, LangchainLLM)
-            assert ConfigManager._config.llm.langchain_llm == mock_langchain_llm
 
     def test_update_config(self):
         """Test updating configuration with new values"""

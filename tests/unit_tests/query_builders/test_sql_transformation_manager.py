@@ -2,7 +2,6 @@ import pydantic_core
 import pytest
 import sqlglot
 
-from pandasai import SqlQueryBuilder
 from pandasai.data_loader.semantic_layer_schema import (
     Column,
     SemanticLayerSchema,
@@ -11,6 +10,7 @@ from pandasai.data_loader.semantic_layer_schema import (
     Transformation,
     TransformationParams,
 )
+from pandasai.query_builders.sql_query_builder import SqlQueryBuilder
 from pandasai.query_builders.sql_transformation_manager import SQLTransformationManager
 
 

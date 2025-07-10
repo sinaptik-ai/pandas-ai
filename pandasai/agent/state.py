@@ -12,7 +12,6 @@ from pandasai.exceptions import InvalidConfigError
 from pandasai.helpers.folder import Folder
 from pandasai.helpers.logger import Logger
 from pandasai.helpers.memory import Memory
-from pandasai.llm.bamboo_llm import BambooLLM
 from pandasai.vectorstores.vectorstore import VectorStore
 
 if TYPE_CHECKING:
@@ -75,15 +74,13 @@ class AgentState:
             return ConfigManager.get()
 
         if isinstance(config, dict):
-            if not config.get("llm") and os.environ.get("PANDABI_API_KEY"):
-                config["llm"] = BambooLLM()
             return Config(**config)
 
         return config
 
     def _get_llm(self, llm: Optional[LLM] = None) -> LLM:
         """Load and configure the LLM."""
-        return llm or BambooLLM()
+        return llm
 
     def assign_prompt_id(self):
         """Assign a new prompt ID."""

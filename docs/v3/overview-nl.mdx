@@ -1,10 +1,11 @@
 ---
-title: 'NL Layer'
-description: 'Understanding the AI and natural language processing capabilities of PandasAI'
+title: "NL Layer"
+description: "Understanding the AI and natural language processing capabilities of PandasAI"
 ---
 
 <Note title="Beta Notice">
-Release v3 is currently in beta. This documentation reflects the features and functionality in progress and may change before the final release.
+  Release v3 is currently in beta. This documentation reflects the features and
+  functionality in progress and may change before the final release.
 </Note>
 
 ## How does PandasAI NL Layer work?
@@ -14,12 +15,6 @@ When you use the [`.chat`](/v3/chat-and-output) method on a dataframe, PandasAI 
 It then instructs the LLM to generate the most relevant code, whether Python or SQL. The code is then executed locally.
 There are different output formats supported by PandasAI, which can be found [here](/v3/chat-and-output#available-output-formats).
 
-The NL Layer is also one of the core components of our [Data Platform](/v3/ai-dashboards), which allows you to turn raw data into collaborative AI dashboards with in-built conversational agents with a single line of code.
-```python
-df.load("organization/dataset-name")
-df.push()
-```
-
 ## Configure the NL Layer
 
 PandasAI allows you to configure the NL Layer with the `config.set()` method.
@@ -28,9 +23,13 @@ Example:
 
 ```python
 import pandasai as pai
+from pandasai_litellm.litellm import LiteLLM
+
+# Initialize LiteLLM with your OpenAI model
+llm = LiteLLM(model="gpt-4.1-mini", api_key="YOUR_OPENAI_API_KEY")
 
 pai.config.set({
-   "llm": "openai",
+   "llm": llm,
    "save_logs": True,
    "verbose": False,
    "max_retries": 3
@@ -40,19 +39,23 @@ pai.config.set({
 ### Parameters
 
 #### llm
+
 - **Description**: The LLM to use. You can pass an instance of an LLM or the name of an LLM. See [supported LLMs](/v3/large-language-models) for setup instructions and configuration options.
 
 #### save_logs
+
 - **Type**: `bool`
 - **Default**: `True`
 - **Description**: Whether to save the logs of the LLM. You will find the logs in the `pandasai.log` file in the root of your project.
 
 #### verbose
+
 - **Type**: `bool`
 - **Default**: `False`
 - **Description**: Whether to print the logs in the console as PandasAI is executed.
 
 #### max_retries
+
 - **Type**: `int`
 - **Default**: `3`
 - **Description**: The maximum number of retries to use when using the error correction framework. You can use this setting to override the default number of retries.
