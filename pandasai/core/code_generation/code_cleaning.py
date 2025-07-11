@@ -55,7 +55,8 @@ class CodeCleaner:
         Clean the SQL query by trimming semicolons and validating table names.
         """
         sql_query = sql_query.rstrip(";")
-        table_names = SQLParser.extract_table_names(sql_query)
+        dialect = self.context.dfs[0].get_dialect()
+        table_names = SQLParser.extract_table_names(sql_query, dialect)
         allowed_table_names = {
             df.schema.name: df.schema.name for df in self.context.dfs
         } | {f'"{df.schema.name}"': df.schema.name for df in self.context.dfs}

@@ -71,6 +71,7 @@ class TestCodeCleaner(unittest.TestCase):
         mock_dataframe.schema = MagicMock()
         mock_dataframe.schema.name = "my_table"
         self.cleaner.context.dfs = [mock_dataframe]
+        mock_dataframe.get_dialect = MagicMock(return_value="duckdb")
         result = self.cleaner._clean_sql_query(sql_query)
         self.assertEqual(result, "SELECT * FROM my_table")
 
@@ -84,6 +85,7 @@ class TestCodeCleaner(unittest.TestCase):
         self.cleaner.context.dfs = [mock_dataframe]
         mock_dataframe.schema = MagicMock()
         mock_dataframe.schema.name = "my_table"
+        mock_dataframe.get_dialect = MagicMock(return_value="duckdb")
         updated_node = self.cleaner._validate_and_make_table_name_case_sensitive(node)
         self.assertEqual(updated_node.value.value, "SELECT * FROM my_table")
 

@@ -132,6 +132,15 @@ class DataFrame(pd.DataFrame):
     def columns_count(self) -> int:
         return len(self.columns)
 
+    def get_dialect(self):
+        source = self.schema.source or None
+        if source:
+            dialect = "duckdb" if source.type in LOCAL_SOURCE_TYPES else source.type
+        else:
+            dialect = "postgres"
+
+        return dialect
+
     def serialize_dataframe(self) -> str:
         """
         Serialize DataFrame to string representation.
@@ -139,13 +148,7 @@ class DataFrame(pd.DataFrame):
         Returns:
             str: Serialized string representation of the DataFrame
         """
-        source = self.schema.source or None
-
-        if source:
-            dialect = "duckdb" if source.type in LOCAL_SOURCE_TYPES else source.type
-        else:
-            dialect = "postgres"
-
+        dialect = self.get_dialect()
         return DataframeSerializer.serialize(self, dialect)
 
     def get_head(self):
