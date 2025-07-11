@@ -85,7 +85,10 @@ class Agent:
         Start a new chat interaction with the assistant on Dataframe.
         """
         if self._state.config.llm is None:
-            raise ValueError("No LLM provided. Please provide an LLM to the agent.")
+            raise ValueError(
+                "PandasAI API key does not include LLM credits. Please configure an OpenAI or LiteLLM key. "
+                "Learn more at: https://docs.pandas-ai.com/v3/large-language-models#how-to-set-up-any-llm%3F"
+            )
 
         self.start_new_conversation()
         return self._process_query(query, output_type)
