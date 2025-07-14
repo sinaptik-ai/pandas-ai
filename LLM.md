@@ -18,484 +18,436 @@ pip install pandasai
 - **Constructor:** `Agent(dfs, config=None, memory_size=10, vectorstore=None, description=None, sandbox=None)`
   - `dfs`: Union[DataFrame, VirtualDataFrame] or List of them
   - `config`: Optional[Union[Config, dict]] (deprecated)
-  - `memory_size`: Optional[int] = 10
-  - `vectorstore`: Optional[VectorStore]
-  - `description`: str
-  - `sandbox`: Sandbox
-- **Methods:**
-  - `chat(query: str, output_type: Optional[str] = None) -> Any` # Start new chat interaction
-  - `follow_up(query: str, output_type: Optional[str] = None) -> Any` # Continue existing chat
-  - `generate_code(query: Union[UserQuery, str]) -> str` # Generate code for query
-  - `execute_code(code: str) -> dict` # Execute generated code
-  - `train(queries: Optional[List[str]] = None, codes: Optional[List[str]] = None, docs: Optional[List[str]] = None) -> None` # Train the agent
-  - `clear_memory() -> None` # Clear conversation memory
-  - `add_message(message, is_user=False) -> None` # Add message to memory
-  - `start_new_conversation() -> None` # Start new conversation
-- **Properties:**
-  - `last_generated_code` # Last generated code
-  - `last_code_executed` # Last executed code  
-  - `last_prompt_used` # Last prompt used
+  - `memory_size`: int = 10 (conversation memory)
+  - `vectorstore`: Optional[VectorStore] for RAG
+  - `description`: Optional[str] agent description
+  - `sandbox`: Optional[Sandbox] for secure code execution
 
-### SmartDataframe (DEPRECATED - Use Agent instead)
+- **Methods:**
+  - `chat(query: str, output_type: str = "string") -> Any`: Main interaction method
+  - `train(qa: List[Dict[str, str]]) -> None`: Train with Q&A pairs
+  - `add_skills(skills: List[Skill]) -> None`: Add custom skills
+  - `clear_memory() -> None`: Clear conversation history
+  - `explain() -> str`: Get explanation of last response
+  - `last_code_generated -> str`: Get last generated code
+  - `last_code_executed -> str`: Get last executed code
+  - `last_result -> Any`: Get last execution result
+  - `last_error -> str`: Get last error message
+
+### DataFrame (Enhanced pandas DataFrame)
+- **Import:** `from pandasai import DataFrame`
+- **Constructor:** `DataFrame(data, config=None, name=None, description=None)`
+  - `data`: pandas.DataFrame, dict, or file path
+  - `config`: Optional[Config] configuration
+  - `name`: Optional[str] dataframe name
+  - `description`: Optional[str] dataframe description
+
+- **Methods:**
+  - `chat(query: str, output_type: str = "string") -> Any`: Query the dataframe
+  - `head(n: int = 5) -> DataFrame`: Get first n rows
+  - `tail(n: int = 5) -> DataFrame`: Get last n rows
+  - `info() -> str`: Get dataframe info
+  - `describe() -> DataFrame`: Get statistical summary
+  - `shape -> Tuple[int, int]`: Get dimensions
+  - `columns -> List[str]`: Get column names
+  - `dtypes -> Dict[str, str]`: Get column data types
+
+### SmartDataframe (Legacy - use DataFrame instead)
 - **Import:** `from pandasai import SmartDataframe`
-- **Constructor:** `SmartDataframe(df, name=None, description=None, custom_head=None, config=None)`
-- **Methods:**
-  - `chat(query: str, output_type: Optional[str] = None) -> Any` # Run query on dataframe
+- **Note:** Deprecated in favor of DataFrame class
 
-### SmartDatalake (DEPRECATED - Use Agent instead)
-- **Import:** `from pandasai import SmartDatalake`
-- **Constructor:** `SmartDatalake(dfs, config=None)`
-- **Methods:**
-  - `chat(query: str, output_type: Optional[str] = None) -> Any` # Run query on datalake
-  - `clear_memory() -> None` # Clear memory
+### Config (Configuration Management)
+- **Import:** `from pandasai import Config`
+- **Constructor:** `Config(**kwargs)`
 
-### Global Functions
-- `chat(query: str, *dataframes: DataFrame, sandbox: Optional[Sandbox] = None) -> Any` # Global chat function
-- `follow_up(query: str) -> Any` # Global follow-up function
-- `create(path: str, df: Optional[DataFrame] = None, description: Optional[str] = None, columns: Optional[List[dict]] = None, source: Optional[dict] = None, relations: Optional[List[dict]] = None, view: bool = False, group_by: Optional[List[str]] = None, transformations: Optional[List[dict]] = None) -> Union[DataFrame, VirtualDataFrame]` # Create dataset
+#### Key Configuration Options:
+- **LLM Settings:**
+  - `llm`: LLM instance (required)
+  - `max_retries`: int = 3
+  - `temperature`: float = 0.0
 
-### Global Variables
-- `config` # ConfigManager instance
-- `api_key` # APIKeyManager instance
+- **Output Settings:**
+  - `save_logs`: bool = True
+  - `verbose`: bool = False
+  - `response_parser`: ResponseParser instance
+  - `output_type`: str = "string"
 
+- **Security Settings:**
+  - `enable_cache`: bool = True
+  - `use_error_correction_framework`: bool = True
+  - `custom_whitelisted_dependencies`: List[str] = []
 
-## Configuration and Data Loading
+- **File Paths:**
+  - `save_charts_path`: str = "exports/charts"
+  - `save_logs_path`: str = "logs"
 
-### Config
-- **Import:** `from pandasai.config import Config`
-- **Constructor:** `Config(save_logs=True, verbose=False, max_retries=3, llm=None, file_manager=DefaultFileManager())`
-- **Methods:** 
-  - `from_dict(config: Dict[str, Any]) -> Config` # Create Config from dictionary
+### VirtualDataFrame (Database Connections)
+- **Import:** `from pandasai import VirtualDataFrame`
+- **Constructor:** `VirtualDataFrame(connector, name=None, description=None)`
+  - `connector`: Database connector instance
+  - `name`: Optional[str] table/view name
+  - `description`: Optional[str] description
 
-### ConfigManager
-- **Import:** `from pandasai.config import ConfigManager`
-- **Constructor:** Singleton class (no direct instantiation)
-- **Methods:**
-  - `set(config_dict: Dict[str, Any]) -> None` # Set the global configuration
-  - `get() -> Config` # Get the global configuration
-  - `update(config_dict: Dict[str, Any]) -> None` # Update existing configuration with new values
+### Connectors (Database Integration)
 
-### APIKeyManager
-- **Import:** `from pandasai.config import APIKeyManager`
-- **Constructor:** Singleton class (no direct instantiation)
-- **Methods:**
-  - `set(api_key: str) -> None` # Set API key
-  - `get() -> Optional[str]` # Get API key
+#### SQL Connectors:
+```python
+from pandasai.connectors import MySQLConnector, PostgreSQLConnector, SQLiteConnector
 
-### DatasetLoader
-- **Import:** `from pandasai.data_loader.loader import DatasetLoader`
-- **Constructor:** `DatasetLoader(schema: SemanticLayerSchema, dataset_path: str)`
-- **Methods:**
-  - `create_loader_from_schema(schema: SemanticLayerSchema, dataset_path: str) -> DatasetLoader` # Factory method to create appropriate loader
-  - `create_loader_from_path(dataset_path: str) -> DatasetLoader` # Factory method from path
-  - `execute_query(query: str, params: Optional[list] = None)` # Execute query (abstract)
-  - `load() -> DataFrame` # Load data into DataFrame
+# MySQL
+mysql_conn = MySQLConnector(
+    host="localhost",
+    port=3306,
+    database="mydb",
+    username="user",
+    password="pass",
+    table="mytable"
+)
 
-### LocalDatasetLoader
-- **Import:** `from pandasai.data_loader.local_loader import LocalDatasetLoader`
-- **Constructor:** `LocalDatasetLoader(schema: SemanticLayerSchema, dataset_path: str)`
-- **Methods:**
-  - `register_table() -> None` # Register table in DuckDB
-  - `load() -> DataFrame` # Load local data into DataFrame
-  - `execute_query(query: str, params: Optional[list] = None) -> pd.DataFrame` # Execute query on local data
+# PostgreSQL
+postgres_conn = PostgreSQLConnector(
+    host="localhost",
+    port=5432,
+    database="mydb",
+    username="user",
+    password="pass",
+    table="mytable"
+)
 
-### SQLDatasetLoader
-- **Import:** `from pandasai.data_loader.sql_loader import SQLDatasetLoader`
-- **Constructor:** `SQLDatasetLoader(schema: SemanticLayerSchema, dataset_path: str)`
-- **Methods:**
-  - `load() -> VirtualDataFrame` # Load SQL data into VirtualDataFrame
-  - `execute_query(query: str, params: Optional[list] = None) -> pd.DataFrame` # Execute SQL query
-  - `load_head() -> pd.DataFrame` # Load head of data
-  - `get_row_count() -> int` # Get total row count
+# SQLite
+sqlite_conn = SQLiteConnector(
+    database="path/to/db.sqlite",
+    table="mytable"
+)
+```
 
-### DataFrame Classes
-- **Import:** `from pandasai.dataframe import DataFrame`
-- **Constructor:** `DataFrame(data=None, index=None, columns=None, dtype=None, copy=None, schema=None, path=None)`
-- **Methods:**
-  - `chat(prompt: str, sandbox: Optional[Sandbox] = None) -> BaseResponse` # Interact with DataFrame using natural language
-  - `follow_up(query: str, output_type: Optional[str] = None)` # Follow up on previous query
-  - `rows_count() -> int` # Get number of rows
-  - `columns_count() -> int` # Get number of columns
-  - `serialize_dataframe() -> str` # Serialize DataFrame to string
-  - `get_head()` # Get head of DataFrame
-  - `get_default_schema(dataframe: DataFrame) -> SemanticLayerSchema` # Get default schema
+#### NoSQL Connectors:
+```python
+from pandasai.connectors import MongoDBConnector
 
-### VirtualDataFrame
-- **Import:** `from pandasai.dataframe.virtual_dataframe import VirtualDataFrame`
-- **Constructor:** `VirtualDataFrame(*args, data_loader=None, **kwargs)`
-- **Methods:**
-  - `head()` # Get head of virtual data
-  - `execute_sql_query(query: str) -> pd.DataFrame` # Execute SQL query on virtual data
-- **Properties:**
-  - `rows_count -> int` # Get total row count
-  - `query_builder` # Get query builder instance
+mongo_conn = MongoDBConnector(
+    host="localhost",
+    port=27017,
+    database="mydb",
+    collection="mycollection"
+)
+```
 
+### LLM Integration
 
-## LLM and Query Processing
+#### OpenAI:
+```python
+from pandasai.llm import OpenAI
+llm = OpenAI(api_token="your-api-key", model="gpt-4")
+```
 
-### LLM Base
-- **Import:** `from pandasai.llm import LLM`
-- **Constructor:** `LLM(api_key: Optional[str] = None, **kwargs: Any)`
-- **Methods:**
-  - `is_pandasai_llm() -> bool` # Return True if the LLM is from pandasAI
-  - `type() -> str` # Return type of LLM
-  - `call(instruction: BasePrompt, context: AgentState = None) -> str` # Execute the LLM with given prompt
-  - `generate_code(instruction: BasePrompt, context: AgentState) -> str` # Generate the code based on the instruction and the given prompt
-  - `get_system_prompt(memory: Memory) -> Any` # Generate system prompt with agent info and previous conversations
-  - `get_messages(memory: Memory) -> Any` # Return formatted messages
-  - `prepend_system_prompt(prompt: BasePrompt, memory: Memory)` # Append system prompt to the chat prompt
+#### Anthropic:
+```python
+from pandasai.llm import Claude
+llm = Claude(api_token="your-api-key")
+```
 
-### Fake LLM (for testing)
-- **Import:** `from pandasai.llm.fake import FakeLLM`
-- **Constructor:** `FakeLLM(output: Optional[str] = None, type: str = "fake")`
-- **Methods:**
-  - `call(instruction: BasePrompt, context: AgentState = None) -> str` # Execute the LLM with given prompt
+#### Google:
+```python
+from pandasai.llm import GooglePalm, GoogleVertexAI
+llm = GooglePalm(api_key="your-api-key")
+llm = GoogleVertexAI(project_id="your-project")
+```
 
-### Query Builders
-- **Import:** `from pandasai.query_builders import SqlQueryBuilder, ViewQueryBuilder, LocalQueryBuilder`
+#### Azure OpenAI:
+```python
+from pandasai.llm import AzureOpenAI
+llm = AzureOpenAI(
+    api_token="your-api-key",
+    azure_endpoint="your-endpoint",
+    api_version="2023-05-15"
+)
+```
 
-#### Base Query Builder
-- **Constructor:** `BaseQueryBuilder(schema: SemanticLayerSchema)`
-- **Methods:**
-  - `validate_query_builder()` # Validate the generated SQL query
-  - `build_query() -> str` # Build the main SQL query
-  - `get_head_query(n=5)` # Get query to fetch first n rows
-  - `get_row_count()` # Get query to count total rows
-  - `check_compatible_sources(sources: List[Source]) -> bool` # Check if sources are compatible
+#### Local/Open Source:
+```python
+from pandasai.llm import HuggingFaceLLM, Ollama
+llm = HuggingFaceLLM(model_name="microsoft/DialoGPT-medium")
+llm = Ollama(model="llama2")
+```
 
-#### SQL Query Builder
-- **Constructor:** `SqlQueryBuilder(schema: SemanticLayerSchema)`
-- Inherits all methods from BaseQueryBuilder
+### Skills (Custom Functions)
+```python
+from pandasai.skills import skill
 
-#### View Query Builder
-- **Constructor:** `ViewQueryBuilder(schema: SemanticLayerSchema, schema_dependencies_dict: Dict[str, DatasetLoader])`
-- **Methods:**
-  - `normalize_view_column_name(name: str) -> str` # Normalize view column name
-  - `normalize_view_column_alias(name: str) -> str` # Normalize view column alias
-  - Inherits all methods from BaseQueryBuilder
+@skill
+def calculate_profit_margin(df):
+    """Calculate profit margin percentage"""
+    return (df['profit'] / df['revenue']) * 100
 
-#### Local Query Builder
-- **Constructor:** `LocalQueryBuilder(schema: SemanticLayerSchema, dataset_path: str)`
-- Inherits all methods from BaseQueryBuilder
+agent.add_skills([calculate_profit_margin])
+```
 
-### Response Types
-- **Import:** `from pandasai.core.response import BaseResponse, DataFrameResponse, ChartResponse, StringResponse, NumberResponse, ErrorResponse`
+### Memory Management
+```python
+from pandasai.memory import Memory
 
-#### Base Response
-- **Constructor:** `BaseResponse(value: Any = None, type: str = None, last_code_executed: str = None, error: str = None)`
-- **Methods:**
-  - `__str__() -> str` # Return the string representation of the response
-  - `__repr__() -> str` # Return a detailed string representation for debugging
-  - `to_dict() -> dict` # Return a dictionary representation
-  - `to_json() -> str` # Return a JSON representation
+# Custom memory size
+agent = Agent(df, memory_size=20)
 
-#### DataFrame Response
-- **Constructor:** `DataFrameResponse(value: Any = None, last_code_executed: str = None)`
-- **Methods:**
-  - `format_value(value)` # Format value as DataFrame
-  - Inherits all methods from BaseResponse
+# Clear memory
+agent.clear_memory()
+```
 
-#### Chart Response
-- **Constructor:** `ChartResponse(value: Any, last_code_executed: str)`
-- **Methods:**
-  - `_get_image() -> Image.Image` # Get PIL Image from chart data
-  - Inherits all methods from BaseResponse
+### Sandbox (Secure Execution)
+```python
+from pandasai.sandbox import CodeExecutionSandbox
 
-#### String Response
-- **Constructor:** `StringResponse(value: Any = None, last_code_executed: str = None)`
-- Inherits all methods from BaseResponse
-
-#### Number Response
-- **Constructor:** `NumberResponse(value: Any = None, last_code_executed: str = None)`
-- Inherits all methods from BaseResponse
-
-#### Error Response
-- **Constructor:** `ErrorResponse(value: Any = None, last_code_executed: str = None)`
-- Inherits all methods from BaseResponse
-
-### Vector Stores
-- **Import:** `from pandasai.vectorstores import VectorStore`
-
-#### Vector Store (Abstract Base)
-- **Methods:**
-  - `add_question_answer(queries: Iterable[str], codes: Iterable[str], ids: Optional[Iterable[str]] = None, metadatas: Optional[List[dict]] = None) -> List[str]` # Add question and answer(code) to the training set
-  - `add_docs(docs: Iterable[str], ids: Optional[Iterable[str]] = None, metadatas: Optional[List[dict]] = None) -> List[str]` # Add docs to the training set
-  - `update_question_answer(ids: Iterable[str], queries: Iterable[str], codes: Iterable[str])` # Update question and answer pairs
-  - `update_docs(ids: Iterable[str], docs: Iterable[str])` # Update documents
-  - `delete_question_and_answers(ids: Optional[List[str]] = None) -> Optional[bool]` # Delete question and answers by ID
-  - `delete_docs(ids: Optional[List[str]] = None) -> Optional[bool]` # Delete documents by ID
-  - `delete_collection(collection_name: str) -> Optional[bool]` # Delete the collection
-  - `get_relevant_question_answers(question: str, k: int = 1) -> List[dict]` # Returns relevant question answers based on search
-  - `get_relevant_docs(question: str, k: int = 1) -> List[dict]` # Returns relevant documents based search
-  - `get_relevant_question_answers_by_id(ids: Iterable[str]) -> List[dict]` # Returns relevant question answers based on ids
-  - `get_relevant_docs_by_id(ids: Iterable[str]) -> List[dict]` # Returns relevant documents based on ids
-  - `get_relevant_qa_documents(question: str, k: int = 1) -> List[str]` # Returns relevant question answers documents only
-  - `get_relevant_docs_documents(question: str, k: int = 1) -> List[str]` # Returns relevant question answers documents only
-
-
-## Utilities and Exceptions
-
-### Exceptions
-- **Import:** `from pandasai.exceptions import ExceptionName`
-- `InvalidRequestError`: Raised when the request is not successful
-- `APIKeyNotFoundError`: Raised when the API key is not defined/declared
-- `LLMNotFoundError`: Raised when the LLM is not provided
-- `NoCodeFoundError`: Raised when no code is found in the response
-- `NoResultFoundError`: Raised when no result is found
-- `MethodNotImplementedError`: Raised when a method is not implemented
-- `UnsupportedModelError`: Raised when the model is not supported
-- `MissingModelError`: Raised when the model is missing
-- `BadImportError`: Raised when there's a bad import
-- `TemplateFileNotFoundError`: Raised when template file is not found
-- `UnSupportedLogicUnit`: Raised for unsupported logic units
-- `InvalidWorkspacePathError`: Raised when workspace path is invalid
-- `InvalidConfigError`: Raised when configuration is invalid
-- `MaliciousQueryError`: Raised when query is malicious
-- `InvalidLLMOutputType`: Raised when LLM output type is invalid
-- `InvalidOutputValueMismatch`: Raised when output value doesn't match
-- `ExecuteSQLQueryNotUsed`: Raised when SQL query execution is not used
-- `PipelineConcatenationError`: Raised during pipeline concatenation errors
-- `MissingVectorStoreError`: Raised when vector store is missing
-- `PandasAIApiKeyError`: Raised for PandasAI API key errors
-- `PandasAIApiCallError`: Raised for PandasAI API call errors
-- `PandasConnectorTableNotFound`: Raised when connector table is not found
-- `InvalidTrainJson`: Raised when training JSON is invalid
-- `InvalidSchemaJson`: Raised when schema JSON is invalid
-- `LazyLoadError`: Raised when trying to access data that hasn't been loaded in lazy load mode
-- `InvalidDataSourceType`: Raised error with invalid data source provided
-- `MaliciousCodeGenerated`: Raised when malicious code is generated
-- `DatasetNotFound`: Raised when dataset is not found
-- `CodeExecutionError`: Raised during code execution errors
-- `VirtualizationError`: Raised when there is an error with DataFrame virtualization
-- `UnsupportedTransformation`: Raised when a transformation is not supported
-
-### Helper Functions
-
-#### DataframeSerializer
-- **Import:** `from pandasai.helpers.dataframe_serializer import DataframeSerializer`
-- `serialize(df, dialect="postgres") -> str` # Convert df to CSV-like format wrapped in table tags
-- `_truncate_dataframe(df) -> DataFrame` # Truncate dataframe for serialization
-
-#### Environment
-- **Import:** `from pandasai.helpers.env import load_dotenv`
-- `load_dotenv() -> None` # Load .env file from project root folder
-
-#### File Management
-- **Import:** `from pandasai.helpers.filemanager import FileManager, DefaultFileManager`
-- `FileManager.load(file_path) -> str` # Abstract method to read file content
-- `FileManager.load_binary(file_path) -> bytes` # Abstract method to read file as bytes
-- `FileManager.write(file_path, content) -> None` # Abstract method to write file content
-- `FileManager.exists(file_path) -> bool` # Abstract method to check if file exists
-- `DefaultFileManager.load(file_path) -> str` # Read file content from local filesystem
-- `DefaultFileManager.write(file_path, content) -> None` # Write content to local file
-
-#### Logging
-- **Import:** `from pandasai.helpers.logger import Logger`
-- `Logger.__init__(save_logs=True, verbose=False)` # Initialize logger
-- `Logger.log(message, level=logging.INFO)` # Log a message with specified level
-- `Logger.logs() -> List[str]` # Get all logged messages
-
-#### Memory
-- **Import:** `from pandasai.helpers.memory import Memory`
-- `Memory.add(message, is_user)` # Add message to conversation memory
-- `Memory.count() -> int` # Get count of messages in memory
-- `Memory.all() -> list` # Get all messages from memory
-- `Memory.get_conversation(limit=None) -> str` # Get formatted conversation string
-- `Memory.clear()` # Clear all messages from memory
-
-#### Path Utilities
-- **Import:** `from pandasai.helpers.path import *`
-- `find_project_root(filename=None)` # Find the root directory of the project
-- `find_closest(filename)` # Find closest file in directory hierarchy
-- `validate_name_format(value)` # Validate name format
-- `get_table_name_from_path(filepath) -> str` # Extract table name from file path
-
-#### Session Management
-- **Import:** `from pandasai.helpers.session import Session, get_PandasAI_session`
-- `Session.get(path=None, **kwargs)` # Make GET request
-- `Session.post(path=None, **kwargs)` # Make POST request
-- `get_PandasAI_session() -> Session` # Get PandasAI session instance
-
-#### SQL Sanitization
-- **Import:** `from pandasai.helpers.sql_sanitizer import *`
-- `sanitize_view_column_name(relation_name) -> str` # Sanitize column names for SQL views
-- `sanitize_sql_table_name(table_name) -> str` # Sanitize SQL table names
-- `is_sql_query_safe(query, dialect="postgres") -> bool` # Check if SQL query is safe
-- `is_sql_query(query) -> bool` # Check if string is a SQL query
-
-#### JSON Encoding
-- **Import:** `from pandasai.helpers.json_encoder import convert_numpy_types`
-- `convert_numpy_types(obj)` # Convert numpy types to JSON serializable types
-
-#### Folder Management
-- **Import:** `from pandasai.helpers.folder import Folder`
-- `Folder.create(path, config=FolderConfig())` # Create folder with configuration
-
-#### Telemetry
-- **Import:** `from pandasai.helpers.telemetry import scarf_analytics`
-- `scarf_analytics()` # Send analytics data
-
-### Sandbox Functions
-- **Import:** `from pandasai.sandbox.sandbox import Sandbox`
-- `Sandbox.start()` # Start the sandbox environment
-- `Sandbox.stop()` # Stop the sandbox environment
-- `Sandbox.execute(code, environment) -> dict` # Execute code in sandbox
-- `Sandbox.transfer_file(csv_data, filename="file.csv")` # Transfer file to sandbox
-
-### Constants
-- **Import:** `from pandasai.constants import CONSTANT_NAME`
-- `DEFAULT_API_URL`: "https://api.pandabi.ai"
-- `DEFAULT_CHART_DIRECTORY`: "exports/charts"
-- `DEFAULT_FILE_PERMISSIONS`: 0o755
-- `SUPPORTED_SOURCE_CONNECTORS`: Dictionary mapping connector types to packages
-- `LOCAL_SOURCE_TYPES`: ["csv", "parquet"]
-- `REMOTE_SOURCE_TYPES`: ["mysql", "postgres", "cockroachdb", "data", "yahoo_finance", "bigquery", "snowflake", "databricks", "oracle"]
-- `SQL_SOURCE_TYPES`: ["mysql", "postgres", "cockroachdb", "oracle"]
-- `VALID_COLUMN_TYPES`: ["string", "integer", "float", "datetime", "boolean"]
-- `VALID_TRANSFORMATION_TYPES`: List of supported transformation operations
-
-
-## Semantic Layer Schema
-
-### Schema Components
-- **Import:** `from pandasai.data_loader.semantic_layer_schema import Column, Relation, SemanticLayerSchema, Source, Transformation`
-
-#### Column
-- **Constructor:** `Column(name: str, type: str, description: Optional[str] = None, alias: Optional[str] = None)`
-- **Properties:**
-  - `name`: Column name
-  - `type`: Column data type (string, integer, float, datetime, boolean)
-  - `description`: Optional description
-  - `alias`: Optional alias
-
-#### Source
-- **Constructor:** `Source(name: str, type: str, path: str, columns: List[Column])`
-- **Properties:**
-  - `name`: Source name
-  - `type`: Source type (csv, parquet, mysql, postgres, etc.)
-  - `path`: Path to data source
-  - `columns`: List of Column objects
-
-#### Relation
-- **Constructor:** `Relation(source: str, target: str, type: str, on: List[str])`
-- **Properties:**
-  - `source`: Source table name
-  - `target`: Target table name
-  - `type`: Relation type (one-to-one, one-to-many, many-to-many)
-  - `on`: List of column names for join
-
-#### Transformation
-- **Constructor:** `Transformation(name: str, type: str, params: dict)`
-- **Properties:**
-  - `name`: Transformation name
-  - `type`: Transformation type
-  - `params`: Transformation parameters
-
-#### SemanticLayerSchema
-- **Constructor:** `SemanticLayerSchema(sources: List[Source], relations: Optional[List[Relation]] = None, transformations: Optional[List[Transformation]] = None)`
-- **Properties:**
-  - `sources`: List of Source objects
-  - `relations`: Optional list of Relation objects
-  - `transformations`: Optional list of Transformation objects
+sandbox = CodeExecutionSandbox()
+agent = Agent(df, sandbox=sandbox)
+```
 
 ## Usage Examples
 
-### Basic Usage with Agent
+### Basic Usage:
 ```python
-import pandas as pd
-from pandasai import Agent
+import pandasai as pai
+from pandasai.llm import OpenAI
 
-# Create dataframe
-df = pd.read_csv("data.csv")
+# Configure LLM
+llm = OpenAI(api_token="your-api-key")
+pai.config.set({"llm": llm})
 
-# Initialize agent
-agent = Agent(df)
+# Create DataFrame
+df = pai.DataFrame({
+    "country": ["USA", "UK", "France"],
+    "revenue": [5000, 3200, 2900]
+})
 
-# Chat with your data
-result = agent.chat("What is the average sales by region?")
-print(result)
-
-# Follow up questions
-follow_up = agent.follow_up("Show me a chart of this data")
+# Query the data
+result = df.chat("What is the total revenue?")
+print(result)  # "The total revenue is 11100"
 ```
 
-### Configuration
+### Multiple DataFrames:
 ```python
-from pandasai import Agent
-from pandasai.config import Config
+employees = pai.DataFrame({
+    'id': [1, 2, 3],
+    'name': ['John', 'Jane', 'Bob'],
+    'department': ['IT', 'HR', 'Sales']
+})
 
-# Configure with custom settings
-config = Config(
-    save_logs=True,
-    verbose=True,
-    max_retries=5
+salaries = pai.DataFrame({
+    'id': [1, 2, 3],
+    'salary': [70000, 65000, 60000]
+})
+
+agent = pai.Agent([employees, salaries])
+result = agent.chat("Who has the highest salary?")
+```
+
+### Database Integration:
+```python
+from pandasai.connectors import PostgreSQLConnector
+
+connector = PostgreSQLConnector(
+    host="localhost",
+    database="sales_db",
+    username="user",
+    password="pass",
+    table="transactions"
 )
 
-agent = Agent(df, config=config)
+df = pai.VirtualDataFrame(connector)
+result = df.chat("Show me sales trends by month")
 ```
 
-### Using with Multiple DataFrames
+### Custom Configuration:
 ```python
-from pandasai import Agent
+config = pai.Config(
+    llm=OpenAI(api_token="your-key"),
+    save_logs=True,
+    verbose=True,
+    max_retries=5,
+    temperature=0.1
+)
 
-# Multiple dataframes
-df1 = pd.read_csv("sales.csv")
-df2 = pd.read_csv("customers.csv")
-
-agent = Agent([df1, df2])
-result = agent.chat("Join sales and customer data to show top customers")
+df = pai.DataFrame(data, config=config)
 ```
 
-### Training the Agent
+### Chart Generation:
 ```python
-# Train with custom examples
-queries = ["Show me sales trends", "What are the top products?"]
-codes = ["df.groupby('date').sum()", "df.groupby('product').sum().sort_values(ascending=False)"]
-
-agent.train(queries=queries, codes=codes)
+result = df.chat(
+    "Create a bar chart showing revenue by country",
+    output_type="plot"
+)
+# Returns matplotlib figure object
 ```
 
-### Using Vector Store for RAG
+### Training the Agent:
 ```python
-from pandasai.vectorstores import VectorStore
+training_data = [
+    {"question": "What is our best product?", "answer": "Product A with 45% market share"},
+    {"question": "Who is our top customer?", "answer": "Customer X with $2M revenue"}
+]
 
-# Initialize with vector store for enhanced context
-vectorstore = VectorStore()  # Configure your preferred vector store
-agent = Agent(df, vectorstore=vectorstore)
+agent.train(training_data)
 ```
 
-### Error Handling
-```python
-from pandasai.exceptions import PandasAIApiKeyError, NoCodeFoundError
+## Error Handling
 
+### Common Exceptions:
+- `LLMNotFoundError`: No LLM configured
+- `DataFrameNotFoundError`: Invalid dataframe reference
+- `InvalidConfigError`: Invalid configuration
+- `ExecutionError`: Code execution failed
+- `ParsingError`: Response parsing failed
+
+### Error Handling Example:
+```python
 try:
-    result = agent.chat("Analyze the data")
-except PandasAIApiKeyError:
-    print("API key not found or invalid")
-except NoCodeFoundError:
-    print("No code generated for the query")
+    result = df.chat("Complex query here")
+except Exception as e:
+    print(f"Error: {e}")
+    print(f"Last error: {agent.last_error}")
+    print(f"Last code: {agent.last_code_generated}")
 ```
 
-## Migration from v2 to v3
+## Best Practices
 
-### Old (v2) vs New (v3)
+### 1. LLM Configuration:
 ```python
-# OLD - SmartDataframe (deprecated)
-from pandasai import SmartDataframe
-sdf = SmartDataframe(df)
-result = sdf.chat("What is the sum of sales?")
-
-# NEW - Agent (recommended)
-from pandasai import Agent
-agent = Agent(df)
-result = agent.chat("What is the sum of sales?")
+# Use appropriate temperature
+config = pai.Config(
+    llm=OpenAI(api_token="key", temperature=0.0),  # Deterministic
+    max_retries=3
+)
 ```
 
-### Key Changes
-- `SmartDataframe` and `SmartDatalake` are deprecated, use `Agent` instead
-- Improved memory management with configurable `memory_size`
-- Enhanced training capabilities with `train()` method
-- Better error handling and response types
-- Vector store integration for RAG capabilities
-- Sandbox execution for secure code running
+### 2. Data Preparation:
+```python
+# Clean column names
+df.columns = df.columns.str.lower().str.replace(' ', '_')
 
+# Add descriptions
+df = pai.DataFrame(data, description="Sales data from 2023")
+```
+
+### 3. Query Optimization:
+```python
+# Be specific in queries
+result = df.chat("Show me the top 5 products by revenue in Q4 2023")
+
+# Use output_type for charts
+chart = df.chat("Create a line chart of monthly sales", output_type="plot")
+```
+
+### 4. Memory Management:
+```python
+# Clear memory for new contexts
+agent.clear_memory()
+
+# Use appropriate memory size
+agent = pai.Agent(df, memory_size=15)
+```
+
+### 5. Security:
+```python
+# Use sandbox for untrusted environments
+from pandasai.sandbox import CodeExecutionSandbox
+sandbox = CodeExecutionSandbox()
+agent = pai.Agent(df, sandbox=sandbox)
+```
+
+## Advanced Features
+
+### Custom Response Parser:
+```python
+from pandasai.response_parser import ResponseParser
+
+class CustomParser(ResponseParser):
+    def parse(self, response):
+        # Custom parsing logic
+        return processed_response
+
+config = pai.Config(response_parser=CustomParser())
+```
+
+### Vector Store Integration:
+```python
+from pandasai.vectorstore import ChromaVectorStore
+
+vectorstore = ChromaVectorStore()
+agent = pai.Agent(df, vectorstore=vectorstore)
+```
+
+### Middleware:
+```python
+from pandasai.middleware import Middleware
+
+class LoggingMiddleware(Middleware):
+    def before_chat(self, query):
+        print(f"Processing: {query}")
+    
+    def after_chat(self, response):
+        print(f"Response: {response}")
+
+agent.add_middleware(LoggingMiddleware())
+```
+
+## Troubleshooting
+
+### Common Issues:
+
+1. **LLM Not Found:**
+   ```python
+   # Ensure LLM is configured
+   pai.config.set({"llm": OpenAI(api_token="your-key")})
+   ```
+
+2. **Memory Issues:**
+   ```python
+   # Clear memory if responses become inconsistent
+   agent.clear_memory()
+   ```
+
+3. **Code Execution Errors:**
+   ```python
+   # Check last generated code
+   print(agent.last_code_generated)
+   print(agent.last_error)
+   ```
+
+4. **Database Connection:**
+   ```python
+   # Test connection separately
+   connector.test_connection()
+   ```
+
+### Debug Mode:
+```python
+config = pai.Config(
+    verbose=True,
+    save_logs=True,
+    save_logs_path="debug_logs"
+)
+```
+
+## Migration Guide
+
+### From v2 to v3:
+```python
+# Old (v2)
+from pandasai import SmartDataframe
+sdf = SmartDataframe(df, config=config)
+
+# New (v3)
+from pandasai import DataFrame
+df = DataFrame(df, config=config)
+```
+
+### Configuration Changes:
+```python
+# Old
+config = {"llm": llm, "verbose": True}
+
+# New
+config = Config(llm=llm, verbose=True)
+```
+
+This documentation covers the complete PandasAI v3 API. For the latest updates, visit the [official documentation](https://docs.getpanda.ai/).
