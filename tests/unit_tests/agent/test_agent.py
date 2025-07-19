@@ -542,3 +542,25 @@ class TestAgent:
         # Verify the error was logged
         mock_logger.log.assert_called_once()
         assert "Processing failed with error" in mock_logger.log.call_args[0][0]
+
+    def test_last_code_generated_retrieval(self, agent: Agent):
+        """Test that last_code_generated is correctly retrieved in get_chat_prompt_for_sql."""
+        # Set last_code_generated
+        test_code = "print('Test code')"
+        agent._state.last_code_generated = test_code
+
+        # 使用 get_chat_prompt_for_sql 获取提示
+        from pandasai.core.prompts import get_chat_prompt_for_sql
+
+        prompt = get_chat_prompt_for_sql(agent._state)
+
+        # 验证提示中使用了正确的 last_code_generated
+        assert prompt.props["last_code_generated"] == test_code
+
+        # 验证不是从 intermediate_values 中获取的
+        agent._state.add("last_code_generated", "Wrong code")
+        prompt = get_chat_prompt_for_sql(agent._state)
+
+        # 应该仍然使用 last_code_generated 属性，而不是 intermediate_values 中的值
+        assert prompt.props["last_code_generated"] == test_code
+        assert prompt.props["last_code_generated"] != "Wrong code"

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 def get_chat_prompt_for_sql(context: AgentState) -> BasePrompt:
     return GeneratePythonCodeWithSQLPrompt(
         context=context,
-        last_code_generated=context.get("last_code_generated"),
+        last_code_generated=context.last_code_generated,
         output_type=context.output_type,
     )
 
