@@ -35,7 +35,12 @@ class CodeGenerator:
             self._context.last_code_generated = code
             self._context.logger.log(f"Code Generated:\n{code}")
 
-            return self.validate_and_clean_code(code)
+            # Validate and clean the code
+            cleaned_code = self.validate_and_clean_code(code)
+            # Update last_code_generated with the cleaned code
+            self._context.last_code_generated = cleaned_code
+
+            return cleaned_code
 
         except Exception as e:
             error_message = f"An error occurred during code generation: {e}"
