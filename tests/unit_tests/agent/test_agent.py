@@ -545,7 +545,7 @@ class TestAgent:
 
     def test_last_code_generated_retrieval(self, agent: Agent):
         """Test that last_code_generated is correctly retrieved in get_chat_prompt_for_sql."""
-        # 设置 last_code_generated
+        # Set last_code_generated
         test_code = "print('Test code')"
         agent._state.last_code_generated = test_code
 

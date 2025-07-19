@@ -32,12 +32,13 @@ class CodeGenerator:
 
             # Generate the code
             code = self._context.config.llm.generate_code(prompt, self._context)
+            # Store the original generated code (for logging purposes)
             self._context.last_code_generated = code
             self._context.logger.log(f"Code Generated:\n{code}")
 
             # Validate and clean the code
             cleaned_code = self.validate_and_clean_code(code)
-            # Update last_code_generated with the cleaned code
+            # Update with the final cleaned code (for subsequent processing and multi-turn conversations)
             self._context.last_code_generated = cleaned_code
 
             return cleaned_code
