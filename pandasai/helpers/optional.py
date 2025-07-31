@@ -54,24 +54,37 @@ def get_environment(additional_deps: List[dict]) -> dict:
 
     Returns (dict): A dictionary of environment variables
     """
-    return {
+    env = {
         "pd": pd,
         "plt": plt,
         "np": np,
-        **{
-            lib["alias"]: (
-                getattr(import_dependency(lib["module"]), lib["name"])
-                if hasattr(import_dependency(lib["module"]), lib["name"])
-                else import_dependency(lib["module"])
-            )
-            for lib in additional_deps
-        },
-        "__builtins__": {
-            **{builtin: __builtins__[builtin] for builtin in WHITELISTED_BUILTINS},
-            "__build_class__": __build_class__,
-            "__name__": "__main__",
-        },
     }
+
+    for lib in additional_deps:
+        module_name = lib["module"]
+        symbol_name = lib["name"]
+        alias = lib["alias"]
+
+        module = import_dependency(module_name)
+
+        # If symbol exists in the module, import it
+        if hasattr(module, symbol_name):
+            env[alias] = getattr(module, symbol_name)
+        # Else, fallback to importing the full module and aliasing it
+        else:
+            full_module_name = f"{module_name}.{symbol_name}"
+            try:
+                env[alias] = import_dependency(full_module_name)
+            except ImportError:
+                env[alias] = module  # fallback to parent module
+
+    env["__builtins__"] = {
+        **{builtin: __builtins__[builtin] for builtin in WHITELISTED_BUILTINS},
+        "__build_class__": __build_class__,
+        "__name__": "__main__",
+    }
+
+    return env
 
 
 def import_dependency(
