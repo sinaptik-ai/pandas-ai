@@ -16,21 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
-
-      - name: Install Poetry 1.7.1
-        run: pip install poetry==1.7.1
-
       - uses: JRubics/poetry-publish@v1.16
         name: Build and publish to PyPI
         with:
           pypi_token: ${{ secrets.PYPI_TOKEN }}
-          ignore_dev_requirements: "yes"
           repository_url: https://upload.pypi.org/legacy/
           repository_name: pandasai
+          poetry_install_options: "--without dev"
