@@ -48,7 +48,7 @@ class LiteLLM(LLM):
             str: The type of the model."""
         return f"litellm"
 
-    def call(self, instruction: BasePrompt, _: AgentState = None) -> str:
+    def call(self, instruction: BasePrompt, context: AgentState = None) -> str:
         """Generates a completion response based on the provided instruction.
 
         This method converts the given instruction into a user prompt string and
@@ -57,17 +57,18 @@ class LiteLLM(LLM):
 
         Args:
             instruction (BasePrompt): The instruction to convert into a prompt.
-            _ (AgentState, optional): An optional state of the agent. Defaults to None.
+            context (AgentState, optional): An optional state of the agent. Defaults to None.
 
         Returns:
             str: The content of the model's response to the user prompt."""
 
-        user_prompt = instruction.to_string()
+        memory = context.memory if context else None
+        self.last_prompt = self.prepend_system_prompt(instruction.to_string(), memory)
 
         return (
             completion(
                 model=self.model,
-                messages=[{"content": user_prompt, "role": "user"}],
+                messages=[{"content": self.last_prompt, "role": "user"}],
                 **self.params,
             )
             .choices[0]

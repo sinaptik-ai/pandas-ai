@@ -18,7 +18,6 @@ class CodeGenerator:
         Generates code using a given LLM and performs validation and cleaning steps.
 
         Args:
-            context (PipelineContext): The pipeline context containing dataframes and logger.
             prompt (BasePrompt): The prompt to guide code generation.
 
         Returns:

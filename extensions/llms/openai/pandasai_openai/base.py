@@ -115,6 +115,7 @@ class BaseOpenAI(LLM):
 
         Args:
             prompt (str): A string representation of the prompt.
+            memory (Memory): Memory object containing conversation history.
 
         Returns:
             str: LLM response.
@@ -139,6 +140,7 @@ class BaseOpenAI(LLM):
 
         Args:
             value (str): Prompt
+            memory (Memory): Memory object containing conversation history.
 
         Returns:
             str: LLM response.
