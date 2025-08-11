@@ -4,7 +4,8 @@ description: "Learn how to work with views in PandasAI"
 ---
 
 <Note title="Beta Notice">
-PandasAI 3.0 is currently in beta. This documentation reflects the latest features and functionality, which may evolve before the final release.
+  PandasAI 3.0 is currently in beta. This documentation reflects the latest
+  features and functionality, which may evolve before the final release.
 </Note>
 
 ## What are views?
@@ -68,21 +69,21 @@ view_relations = [
 # Select relevant columns for the sales analytics view
 view_columns = [
     # Order details
-    "orders.id",
-    "orders.order_date",
-    "orders.total_amount",
-    "orders.status",
-    
+    {"name": "orders.id", "type": "integer"},
+    {"name": "orders.order_date", "type": "date"},
+    {"name": "orders.total_amount", "type": "float"},
+    {"name": "orders.status", "type": "string"},
+
     # Product information
-    "products.name",
-    "products.category",
-    "products.unit_price",
-    "products.stock_level",
-    
+    {"name": "products.name", "type": "string"},
+    {"name": "products.category", "type": "string"},
+    {"name": "products.unit_price", "type": "float"},
+    {"name": "products.stock_level", "type": "integer"},
+
     # Customer information
-    "customers.segment",
-    "customers.country",
-    "customers.join_date"
+    {"name": "customers.segment", "type": "string"},
+    {"name": "customers.country", "type": "string"},
+    {"name": "customers.join_date", "type": "date"},
 ]
 
 # Create a comprehensive sales analytics view
@@ -125,16 +126,19 @@ relations:
 #### Constraints
 
 1. **Mutual Exclusivity**:
+
    - A schema cannot define both `table` and `view` simultaneously.
    - If `view` is `true`, then the schema represents a view.
 
 2. **Column Format**:
+
    - For views:
      - All columns must follow the format `[table].[column]`.
      - `from` and `to` fields in `relations` must follow the `[table].[column]` format.
      - Example: `loans.payment_amount`, `heart.condition`.
 
 3. **Relationships for Views**:
+
    - Each table referenced in `columns` must have at least one relationship defined in `relations`.
    - Relationships must specify `from` and `to` attributes in the `[table].[column]` format.
    - Relations define how different tables in your view are connected.
