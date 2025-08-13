@@ -270,7 +270,7 @@ class Agent:
             self._state.assign_prompt_id()
 
             # Generate code
-            code = self.generate_code_with_retries(query)
+            code = self.generate_code_with_retries(str(query))
 
             # Execute code with retries
             result = self.execute_with_retries(code)
@@ -296,7 +296,7 @@ class Agent:
 
         return self._code_generator.generate_code(prompt)
 
-    def _handle_exception(self, code: str) -> str:
+    def _handle_exception(self, code: str) -> ErrorResponse:
         """Handle exceptions and return an error message."""
         error_message = traceback.format_exc()
         self._state.logger.log(f"Processing failed with error: {error_message}")
