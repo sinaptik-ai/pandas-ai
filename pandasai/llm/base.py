@@ -119,11 +119,11 @@ class LLM:
 
         return code
 
-    def prepend_system_prompt(self, prompt: BasePrompt, memory: Memory):
+    def prepend_system_prompt(self, prompt: str, memory: Memory) -> str | Any:
         """
         Append system prompt to the chat prompt, useful when model doesn't have messages for chat history
         Args:
-            prompt (BasePrompt): prompt for chat method
+            prompt (str): prompt for chat method
             memory (Memory): user conversation history
         """
         return self.get_system_prompt(memory) + prompt if memory else prompt
@@ -164,6 +164,7 @@ class LLM:
 
         Args:
             instruction (BasePrompt): Prompt with instruction for LLM.
+            context (AgentState): Context to pass.
 
         Returns:
             str: A string of Python code.
