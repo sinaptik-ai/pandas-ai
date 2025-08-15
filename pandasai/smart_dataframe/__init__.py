@@ -14,6 +14,11 @@ from ..helpers.logger import Logger
 
 
 class SmartDataframe:
+    """
+    A wrapper class for pandas DataFrame that integrates with PandasAI features.
+    Provides additional metadata and configuration options, and will be deprecated in favor of df.chat().
+    """
+
     _table_name: str
     _table_description: str
     _custom_head: str = None
@@ -27,6 +32,16 @@ class SmartDataframe:
         custom_head: pd.DataFrame = None,
         config: Config = None,
     ):
+        """
+        Initialize a SmartDataframe instance.
+
+        Args:
+            df (pd.DataFrame): The pandas DataFrame to wrap.
+            name (str, optional): Name of the table.
+            description (str, optional): Description of the table.
+            custom_head (pd.DataFrame, optional): Custom head DataFrame for display.
+            config (Config, optional): PandasAI configuration object.
+        """
         warnings.warn(
             "\n"
             + "*" * 80
