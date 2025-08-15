@@ -40,7 +40,7 @@ class SQLTransformationManager:
         transformed_expr = expr
         import logging
 
-        logger = logging.getLogger("SQLTransformationManager")
+        logger = logging.getLogger(__name__)
         for transformation in transformations:
             method_name = f"_{transformation.type}"
             if hasattr(SQLTransformationManager, method_name):
