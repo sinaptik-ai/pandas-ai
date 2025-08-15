@@ -38,12 +38,16 @@ class SQLTransformationManager:
             return expr
 
         transformed_expr = expr
+        import logging
+
+        logger = logging.getLogger("SQLTransformationManager")
         for transformation in transformations:
             method_name = f"_{transformation.type}"
             if hasattr(SQLTransformationManager, method_name):
                 method = getattr(SQLTransformationManager, method_name)
                 transformed_expr = method(transformed_expr, transformation.params)
             else:
+                logger.error(f"Unsupported transformation type: {method_name}")
                 raise ValueError(f"Unsupported transformation type: {method_name}")
 
         return transformed_expr
