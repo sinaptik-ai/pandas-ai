@@ -10,7 +10,7 @@ readme = "README.md"
 python = ">=3.9,<3.12"
 pandasai = ">=3.0.0b4"
 yfinance = "^0.2.35"
-pyarrow = "^14.0.1"
+pyarrow = ">=14.0.1,<19.0.0"
 
 [tool.poetry.group.test]
 optional = true

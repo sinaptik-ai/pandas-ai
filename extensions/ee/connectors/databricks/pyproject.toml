@@ -14,7 +14,7 @@ license = "Proprietary"
 python = ">=3.9,<3.12"
 pandasai = ">=3.0.0b4"
 pandasai-sql = "^0.1.0"
-pyarrow = "^14.0.1"
+pyarrow = ">=14.0.1,<19.0.0"
 databricks-sql-connector = {extras = ["sqlalchemy"], version = "^3.6.0"}
 
 [tool.poetry.group.test]
