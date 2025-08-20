@@ -137,9 +137,12 @@ class CodeCleaner:
             tuple: Cleaned code as a string and a list of additional dependencies.
         """
         code = self._replace_output_filenames_with_temp_chart(code)
+        code = self._replace_output_filenames_with_temp_json_chart(code)
 
-        # If plt.show is in the code, remove that line
-        code = re.sub(r"plt.show\(\)", "", code)
+        code = self._remove_make_dirs(code)
+
+        # If plt.show or fig.show is in the code, remove that line
+        code = re.sub(r"[a-z].show\(\)", "", code)
 
         tree = ast.parse(code)
         new_body = []
@@ -167,3 +170,31 @@ class CodeCleaner:
             lambda m: f"{m.group(1)}{chart_path}{m.group(1)}",
             code,
         )
+
+    def _replace_output_filenames_with_temp_json_chart(self, code: str) -> str:
+        """
+        Replace output file names with "temp_chart.json" (in case of usage of plotly).
+        """
+        _id = uuid.uuid4()
+        chart_path = os.path.join(DEFAULT_CHART_DIRECTORY, f"temp_chart_{_id}.json")
+        chart_path = chart_path.replace("\\", "\\\\")
+        return re.sub(
+            r"""(['"])([^'"]*\.json)\1""",
+            lambda m: f"{m.group(1)}{chart_path}{m.group(1)}",
+            code,
+        )
+
+    def _remove_make_dirs(self, code: str) -> str:
+        """
+        Remove any directory creation commands from the code.
+        """
+        # Remove lines that create directories, except for the default chart directory DEFAULT_CHART_DIRECTORY
+        code_lines = code.splitlines()
+        cleaned_lines = []
+        for line in code_lines:
+            if DEFAULT_CHART_DIRECTORY not in line and (
+                "os.makedirs(" in line or "os.mkdir(" in line
+            ):
+                continue
+            cleaned_lines.append(line)
+        return "\n".join(cleaned_lines)

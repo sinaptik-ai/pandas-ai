@@ -18,6 +18,7 @@ class TestEnvironmentFunctions(unittest.TestCase):
         self.assertIn("pd", env)
         self.assertIn("plt", env)
         self.assertIn("np", env)
+        self.assertIn("px", env)
 
     @patch("pandasai.core.code_execution.environment.import_dependency")
     def test_get_environment_without_secure_mode(self, mock_import_dependency):
@@ -28,6 +29,7 @@ class TestEnvironmentFunctions(unittest.TestCase):
         self.assertIn("pd", env)
         self.assertIn("plt", env)
         self.assertIn("np", env)
+        self.assertIn("px", env)
         self.assertIsInstance(env["pd"], MagicMock)
 
     @patch("pandasai.core.code_execution.environment.importlib.import_module")
