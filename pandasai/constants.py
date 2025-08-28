@@ -24,6 +24,7 @@ SUPPORTED_SOURCE_CONNECTORS = {
     "mysql": "pandasai_sql",
     "postgres": "pandasai_sql",
     "cockroachdb": "pandasai_sql",
+    "sqlserver": "pandasai_sql",
     "yahoo_finance": "pandasai_yfinance",
     "bigquery": "pandasai_bigquery",
     "snowflake": "pandasai_snowflake",
@@ -36,6 +37,7 @@ REMOTE_SOURCE_TYPES = [
     "mysql",
     "postgres",
     "cockroachdb",
+    "sqlserver",
     "data",
     "yahoo_finance",
     "bigquery",
@@ -43,7 +45,7 @@ REMOTE_SOURCE_TYPES = [
     "databricks",
     "oracle",
 ]
-SQL_SOURCE_TYPES = ["mysql", "postgres", "cockroachdb", "oracle"]
+SQL_SOURCE_TYPES = ["mysql", "postgres", "cockroachdb", "sqlserver", "oracle"]
 VALID_COLUMN_TYPES = ["string", "integer", "float", "datetime", "boolean"]
 
 VALID_TRANSFORMATION_TYPES = [
