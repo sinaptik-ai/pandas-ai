@@ -229,11 +229,11 @@ class TestCodeCleaner(unittest.TestCase):
     def test_do_not_remove_make_default_chart_dir(self):
         handler = self.cleaner
 
-        code = f"os.makedirs({DEFAULT_CHART_DIRECTORY}')\nplt.show()\nfig.show()"
+        code = f"os.makedirs('{DEFAULT_CHART_DIRECTORY}')\nplt.show()\nfig.show()"
         result = handler._remove_make_dirs(code)
         self.assertEqual(result, code, f"Expected '{code}', but got '{result}'")
 
-        code = f"os.mkdir({DEFAULT_CHART_DIRECTORY}')\nplt.show()\nfig.show()"
+        code = f"os.mkdir('{DEFAULT_CHART_DIRECTORY}')\nplt.show()\nfig.show()"
         result = handler._remove_make_dirs(code)
         self.assertEqual(result, code, f"Expected '{code}', but got '{result}'")
 

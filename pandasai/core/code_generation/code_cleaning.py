@@ -2,13 +2,11 @@ import ast
 import os.path
 import re
 import uuid
-from pathlib import Path
 
 import astor
 
 from pandasai.agent.state import AgentState
 from pandasai.constants import DEFAULT_CHART_DIRECTORY
-from pandasai.core.code_execution.code_executor import CodeExecutor
 from pandasai.query_builders.sql_parser import SQLParser
 
 from ...exceptions import MaliciousQueryError
@@ -142,7 +140,7 @@ class CodeCleaner:
         code = self._remove_make_dirs(code)
 
         # If plt.show or fig.show is in the code, remove that line
-        code = re.sub(r"[a-z].show\(\)", "", code)
+        code = re.sub(r"\b(?:plt|fig)\.show\(\)", "", code)
 
         tree = ast.parse(code)
         new_body = []

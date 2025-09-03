@@ -81,6 +81,9 @@ class ResponseParser:
                     "Invalid output: Expected a plot save path str but received an incompatible type."
                 )
 
+            if isinstance(result["value"], dict):
+                return True
+
             path_to_plot_pattern = r"^(\/[\w.-]+)+(/[\w.-]+)*$|^[^\s/]+(/[\w.-]+)*$"
             if not bool(re.match(path_to_plot_pattern, result["value"])):
                 raise InvalidOutputValueMismatch(
