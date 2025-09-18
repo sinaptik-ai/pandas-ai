@@ -3,6 +3,7 @@ from pandasai.helpers.sql_sanitizer import (
     is_sql_query_safe,
     sanitize_file_name,
     sanitize_view_column_name,
+    sanitize_sql_table_name_lowercase,
 )
 
 
@@ -23,9 +24,19 @@ class TestSqlSanitizer:
         expected = "a" * 64
         assert sanitize_file_name(filepath) == expected
 
+    def test_sanitize_table_name_lowercase(self):
+        table_name = "My-Table.Name"
+        expected = "my_table_name"
+        assert sanitize_sql_table_name_lowercase(table_name) == expected
+
     def test_sanitize_relation_name_valid(self):
         relation = "dataset-name.column"
         expected = '"dataset_name"."column"'
+        assert sanitize_view_column_name(relation) == expected
+
+    def test_sanitize_relation_name_three_part(self):
+        relation = "schema-name.dataset-name.column-name"
+        expected = '"schema_name"."dataset_name"."column_name"'
         assert sanitize_view_column_name(relation) == expected
 
     def test_safe_select_query(self):
