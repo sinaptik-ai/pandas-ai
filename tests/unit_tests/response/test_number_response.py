@@ -9,7 +9,7 @@ def test_number_response_initialization():
 
 
 def test_number_response_minimal():
-    response = NumberResponse(0)  # Zero instead of None
+    response = NumberResponse(0)
     assert response.type == "number"
     assert response.value == 0
     assert response.last_code_executed is None
@@ -25,7 +25,7 @@ def test_number_response_with_float():
 def test_number_response_with_string_number():
     response = NumberResponse("123", "test_code")
     assert response.type == "number"
-    assert response.value == "123"  # Value remains as string
+    assert response.value == "123"
 
 
 def test_number_response_string_formatting():

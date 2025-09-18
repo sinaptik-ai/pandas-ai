@@ -15,13 +15,10 @@ def sample_dataframes():
 
 
 def test_dfs_property(sample_dataframes):
-    # Create a mock agent with context
     mock_agent = Mock()
     mock_agent.context.dfs = sample_dataframes
 
-    # Create SmartDatalake instance
     smart_datalake = SmartDatalake(sample_dataframes)
-    smart_datalake._agent = mock_agent  # Inject mock agent
+    smart_datalake._agent = mock_agent
 
-    # Test that dfs property returns the correct dataframes
     assert smart_datalake.dfs == sample_dataframes

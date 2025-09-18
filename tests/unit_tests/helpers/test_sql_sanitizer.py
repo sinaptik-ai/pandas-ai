@@ -73,35 +73,35 @@ class TestSqlSanitizer:
 
     def test_safe_select_with_comment(self):
         query = "SELECT * FROM users WHERE username = 'admin' -- comment"
-        assert not is_sql_query_safe(query)  # Blocked by comment detection
+        assert not is_sql_query_safe(query)
 
     def test_safe_select_with_inline_comment(self):
         query = "SELECT * FROM users /* inline comment */ WHERE username = 'admin';"
-        assert not is_sql_query_safe(query)  # Blocked by comment detection
+        assert not is_sql_query_safe(query)
 
     def test_unsafe_query_with_subquery(self):
         query = "SELECT * FROM users WHERE id IN (SELECT user_id FROM orders);"
-        assert is_sql_query_safe(query)  # No dangerous keyword in main or subquery
+        assert is_sql_query_safe(query)
 
     def test_unsafe_query_with_subquery_insert(self):
         query = (
             "SELECT * FROM users WHERE id IN (INSERT INTO orders (user_id) VALUES (1));"
         )
-        assert not is_sql_query_safe(query)  # Subquery contains INSERT, blocked
+        assert not is_sql_query_safe(query)
 
     def test_invalid_sql(self):
         query = "INVALID SQL QUERY"
-        assert not is_sql_query_safe(query)  # Invalid query should return False
+        assert not is_sql_query_safe(query)
 
     def test_safe_query_with_multiple_keywords(self):
         query = "SELECT name FROM users WHERE username = 'admin' AND age > 30;"
-        assert is_sql_query_safe(query)  # Safe query with no dangerous keyword
+        assert is_sql_query_safe(query)
 
     def test_safe_query_with_subquery(self):
         query = "SELECT name FROM users WHERE username IN (SELECT username FROM users WHERE age > 30);"
         assert is_sql_query_safe(
             query
-        )  # Safe query with subquery, no dangerous keyword
+        )
 
     def test_safe_query_with_query_params(self):
         query = "SELECT * FROM (SELECT * FROM heart_data) AS filtered_data LIMIT %s OFFSET %s"
@@ -133,7 +133,7 @@ class TestSqlSanitizer:
         assert not is_sql_query(" ")
         assert not is_sql_query("1234567890")
         assert not is_sql_query("#$%^&*()")
-        assert not is_sql_query("JOIN the party")  # Not SQL context
+        assert not is_sql_query("JOIN the party")
 
     def test_mixed_input(self):
         """Test with mixed input containing SQL keywords in non-SQL contexts."""
