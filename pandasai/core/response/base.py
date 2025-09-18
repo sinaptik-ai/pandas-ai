@@ -41,6 +41,10 @@ class BaseResponse:
         """Return a detailed string representation for debugging."""
         return f"{self.__class__.__name__}(type={self.type!r}, value={self.value!r})"
 
+    def __format__(self, fmt):
+        """Return formatted string representation of the value."""
+        return self.value.__format__(fmt)
+
     def to_dict(self) -> dict:
         """Return a dictionary representation."""
         return self.__dict__
