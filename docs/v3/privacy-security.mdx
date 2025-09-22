@@ -39,8 +39,15 @@ Here's how to enable the sandbox for your PandasAI chat:
 ```python
 import pandasai as pai
 from pandasai_docker import DockerSandbox
+from pandasai_litellm.litellm import LiteLLM
 
-pai.api_key.set("YOUR_API_KEY")
+# Initialize LiteLLM with your OpenAI model
+llm = LiteLLM(model="gpt-4.1-mini", api_key="YOUR_OPENAI_API_KEY")
+
+# Configure PandasAI to use this LLM
+pai.config.set({
+    "llm": llm
+})
 
 # initialize the sandbox
 sandbox = DockerSandbox()
