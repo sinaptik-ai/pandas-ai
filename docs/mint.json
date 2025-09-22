@@ -68,11 +68,6 @@
         "version": "v3"
       },
       {
-        "group": "Data Platform",
-        "pages": ["v3/ai-dashboards", "v3/permission-management"],
-        "version": "v3"
-      },
-      {
         "group": "Advanced Usage",
         "pages": ["v3/agent"],
         "version": "v3"
