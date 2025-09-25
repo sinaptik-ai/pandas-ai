@@ -53,7 +53,7 @@ make format
 
 ### Spell check
 
-We usee `codespell` to check the spelling of our code. You can run codespell by running the following command:
+We use `codespell` to check the spelling of our code. You can run codespell by running the following command:
 
 ```bash
 make spell_fix
