@@ -150,14 +150,6 @@ class CodeCleaner:
         # If plt.show is in the code, remove that line
         code = re.sub(r"plt.show\(\)", "", code)
 
-        code = """
-import pandas as pd
-def print_dataframe(df: pd.DataFrame):
-    print(df)
-
-print(print_dataframe(pd.DataFrame({"a": [1, 2, 3]})))
-"""
-
         tree = ast.parse(code)
         new_body = []
 
@@ -165,7 +157,7 @@ print(print_dataframe(pd.DataFrame({"a": [1, 2, 3]})))
             if self._check_direct_sql_func_def_exists(node):
                 continue
 
-            # check if skill function definition exists skip it
+            # check if skill function definition exists and skip it
             if self._check_if_skill_func_def_exists(node):
                 continue
 
