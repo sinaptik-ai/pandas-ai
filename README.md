@@ -12,15 +12,14 @@ PandasAI is a Python platform that makes it easy to ask questions to your data i
 
 # 🔧 Getting started
 
-You can find the full documentation for PandasAI [here](https://pandas-ai.readthedocs.io/en/latest/).
+You can find the full documentation for PandasAI [here](https://docs.pandas-ai.com/).
 
-You can either decide to use PandasAI in your Jupyter notebooks, Streamlit apps, or use the client and server architecture from the repo.
 
 ## 📚 Using the library
 
 ### Python Requirements
 
-Python version `3.8+ <3.12`
+Python version `3.8+ <=3.11`
 
 ### 📦 Installation
 
@@ -44,25 +43,21 @@ poetry add "pandasai>=3.0.0b2"
 
 ```python
 import pandasai as pai
-from pandasai_openai.openai import OpenAI
+from pandasai_litellm.litellm import LiteLLM
 
-llm = OpenAI("OPEN_AI_API_KEY")
+# Initialize LiteLLM with your OpenAI model
+llm = LiteLLM(model="gpt-4.1-mini", api_key="YOUR_OPENAI_API_KEY")
 
+# Configure PandasAI to use this LLM
 pai.config.set({
     "llm": llm
 })
 
-# Sample DataFrame
-df = pai.DataFrame({
-    "country": ["United States", "United Kingdom", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "Japan", "China"],
-    "revenue": [5000, 3200, 2900, 4100, 2300, 2100, 2500, 2600, 4500, 7000]
-})
+# Load your data
+df = pai.read_csv("data/companies.csv")
 
-df.chat('Which are the top 5 countries by sales?')
-```
-
-```
-China, United States, Japan, Germany, Australia
+response = df.chat("What is the average revenue by region?")
+print(response)
 ```
 
 ---
@@ -97,7 +92,15 @@ You can also pass in multiple dataframes to PandasAI and ask questions relating 
 
 ```python
 import pandasai as pai
-from pandasai_openai.openai import OpenAI
+from pandasai_litellm.litellm import LiteLLM
+
+# Initialize LiteLLM with your OpenAI model
+llm = LiteLLM(model="gpt-4.1-mini", api_key="YOUR_OPENAI_API_KEY")
+
+# Configure PandasAI to use this LLM
+pai.config.set({
+    "llm": llm
+})
 
 employees_data = {
     'EmployeeID': [1, 2, 3, 4, 5],
@@ -109,12 +112,6 @@ salaries_data = {
     'EmployeeID': [1, 2, 3, 4, 5],
     'Salary': [5000, 6000, 4500, 7000, 5500]
 }
-
-llm = OpenAI("OPEN_AI_API_KEY")
-
-pai.config.set({
-    "llm": llm
-})
 
 employees_df = pai.DataFrame(employees_data)
 salaries_df = pai.DataFrame(salaries_data)
@@ -142,7 +139,15 @@ pip install "pandasai-docker"
 ```python
 import pandasai as pai
 from pandasai_docker import DockerSandbox
-from pandasai_openai.openai import OpenAI
+from pandasai_litellm.litellm import LiteLLM
+
+# Initialize LiteLLM with your OpenAI model
+llm = LiteLLM(model="gpt-4.1-mini", api_key="YOUR_OPENAI_API_KEY")
+
+# Configure PandasAI to use this LLM
+pai.config.set({
+    "llm": llm
+})
 
 # Initialize the sandbox
 sandbox = DockerSandbox()
@@ -158,12 +163,6 @@ salaries_data = {
     'EmployeeID': [1, 2, 3, 4, 5],
     'Salary': [5000, 6000, 4500, 7000, 5500]
 }
-
-llm = OpenAI("OPEN_AI_API_KEY")
-
-pai.config.set({
-    "llm": llm
-})
 
 employees_df = pai.DataFrame(employees_data)
 salaries_df = pai.DataFrame(salaries_data)
@@ -184,14 +183,14 @@ You can find more examples in the [examples](examples) directory.
 
 PandasAI is available under the MIT expat license, except for the `pandasai/ee` directory of this repository, which has its [license here](https://github.com/sinaptik-ai/pandas-ai/blob/main/ee/LICENSE).
 
-If you are interested in managed PandasAI Cloud or self-hosted Enterprise Offering, [contact us](https://getpanda.ai/pricing).
+If you are interested in managed PandasAI Cloud or self-hosted Enterprise Offering, [contact us](https://pandas-ai.com).
 
 ## Resources
 
 > **Beta Notice**  
 > Release v3 is currently in beta. The following documentation and examples reflect the features and functionality in progress and may change before the final release.
 
-- [Docs](https://pandas-ai.readthedocs.io/en/latest/) for comprehensive documentation
+- [Docs](https://docs.pandas-ai.com/) for comprehensive documentation
 - [Examples](examples) for example notebooks
 - [Discord](https://discord.gg/KYKj9F2FRH) for discussion with the community and PandasAI team
 

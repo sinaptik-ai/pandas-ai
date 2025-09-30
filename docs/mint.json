@@ -3,7 +3,7 @@
     "logo": {
       "light": "/logo/logo.png",
       "dark": "/logo/logo.png",
-      "href": "https://getpanda.ai"
+      "href": "https://pandas-ai.com"
     },
     "favicon": "/favicon.svg",
     "colors": {
@@ -65,11 +65,6 @@
       {
         "group": "Natural Language",
         "pages": ["v3/overview-nl", "v3/large-language-models", "v3/chat-and-output"],
-        "version": "v3"
-      },
-      {
-        "group": "Data Platform",
-        "pages": ["v3/ai-dashboards", "v3/permission-management"],
         "version": "v3"
       },
       {

@@ -7,7 +7,7 @@ readme = "README.md"
 license = "MIT"
 
 [tool.poetry.urls]
-"Documentation" = "https://docs.getpanda.ai/v3/privacy-security"
+"Documentation" = "https://docs.pandas-ai.com/v3/privacy-security"
 "Repository" = "https://github.com/sinaptik-ai/pandas-ai"
 
 
