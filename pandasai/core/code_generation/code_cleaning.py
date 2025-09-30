@@ -166,8 +166,6 @@ class CodeCleaner:
             new_body.append(node)
 
         new_tree = ast.Module(body=new_body)
-        new_code = astor.to_source(new_tree, pretty_source=lambda x: "".join(x)).strip()
-        print("new_code", new_code)
         return astor.to_source(new_tree, pretty_source=lambda x: "".join(x)).strip()
 
     def _replace_output_filenames_with_temp_chart(self, code: str) -> str:
