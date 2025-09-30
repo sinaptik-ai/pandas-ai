@@ -117,6 +117,8 @@ class Agent:
 
         code_executor = CodeExecutor(self._state.config)
         code_executor.add_to_env("execute_sql_query", self._execute_sql_query)
+        for skill in self._state.skills:
+            code_executor.add_to_env(skill.name, skill.func)
 
         if self._sandbox:
             return self._sandbox.execute(code, code_executor.environment)

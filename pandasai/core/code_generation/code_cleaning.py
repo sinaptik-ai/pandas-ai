@@ -30,6 +30,15 @@ class CodeCleaner:
         """
         return isinstance(node, ast.FunctionDef) and node.name == "execute_sql_query"
 
+    def _check_if_skill_func_def_exists(self, node: ast.AST) -> bool:
+        """
+        Check if the node defines a direct SQL execution function.
+        """
+        for skill in self.context.skills:
+            if isinstance(node, ast.FunctionDef) and node.name == skill.name:
+                return True
+        return False
+
     def _replace_table_names(
         self, sql_query: str, table_names: list, allowed_table_names: dict
     ) -> str:
@@ -141,6 +150,14 @@ class CodeCleaner:
         # If plt.show is in the code, remove that line
         code = re.sub(r"plt.show\(\)", "", code)
 
+        code = """
+import pandas as pd
+def print_dataframe(df: pd.DataFrame):
+    print(df)
+
+print(print_dataframe(pd.DataFrame({"a": [1, 2, 3]})))
+"""
+
         tree = ast.parse(code)
         new_body = []
 
@@ -148,11 +165,17 @@ class CodeCleaner:
             if self._check_direct_sql_func_def_exists(node):
                 continue
 
+            # check if skill function definition exists skip it
+            if self._check_if_skill_func_def_exists(node):
+                continue
+
             node = self._validate_and_make_table_name_case_sensitive(node)
 
             new_body.append(node)
 
         new_tree = ast.Module(body=new_body)
+        new_code = astor.to_source(new_tree, pretty_source=lambda x: "".join(x)).strip()
+        print("new_code", new_code)
         return astor.to_source(new_tree, pretty_source=lambda x: "".join(x)).strip()
 
     def _replace_output_filenames_with_temp_chart(self, code: str) -> str:

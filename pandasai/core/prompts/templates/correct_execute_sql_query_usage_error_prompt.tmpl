@@ -1,5 +1,7 @@
 {% for df in context.dfs %}{% include 'shared/dataframe.tmpl' with context %}{% endfor %}
 
+{% include 'shared/sql_functions.tmpl' with context %}
+
 The user asked the following question:
 {{context.memory.get_conversation()}}
 
