@@ -8,86 +8,11 @@ description: "Add few-shot learning to your PandasAI agent"
   functionality in progress and may change before the final release.
 </Note>
 
-You can train PandasAI to understand your data better and to improve its performance. Training is as easy as calling the `train` method on the `Agent`.
+It is possible also to use PandasAI with a few-shot learning agent, thanks to the "train with local vector store" enterprise feature (requiring an enterprise license). The agent can also be used in a sandbox. This guide shows you both how to train the agent and how to use it in a sandbox.
 
-## Prerequisites
+## Training the Agent with local Vector stores
 
-Before you start training PandasAI, you need to set your PandasAI API key.
-You can generate your API key by signing up at [https://app.pandabi.ai](https://app.pandabi.ai).
-
-```python
-import pandasai as pai
-
-pai.api_key.set("your-pai-api-key")
-```
-
-It is important that you set the API key, or it will fail with the following error: `No vector store provided. Please provide a vector store to train the agent`.
-
-## Instructions training
-
-Instructions training is used to teach PandasAI how you expect it to respond to certain queries. You can provide generic instructions about how you expect the model to approach certain types of queries, and PandasAI will use these instructions to generate responses to similar queries.
-
-For example, you might want the LLM to be aware that your company's fiscal year starts in April, or about specific ways you want to handle missing data. Or you might want to teach it about specific business rules or data analysis best practices that are specific to your organization.
-
-To train PandasAI with instructions, you can use the `train` method on the `Agent`, as it follows:
-
-The training uses by default the `BambooVectorStore` to store the training data, and it's accessible with the API key.
-
-As an alternative, if you want to use a local vector store (enterprise only for production use cases), you can use the `ChromaDB`, `Qdrant` or `Pinecone` vector stores (see examples below).
-
-```python
-import pandasai as pai
-from pandasai import Agent
-
-pai.api_key.set("your-pai-api-key")
-
-agent = Agent("data.csv")
-agent.train(docs="The fiscal year starts in April")
-
-response = agent.chat("What is the total sales for the fiscal year?")
-print(response)
-# The model will use the information provided in the training to generate a response
-```
-
-Your training data is persisted, so you only need to train the model once.
-
-## Q/A training
-
-Q/A training is used to teach PandasAI the desired process to answer specific questions, enhancing the model's performance and determinism. One of the biggest challenges with LLMs is that they are not deterministic, meaning that the same question can produce different answers at different times. Q/A training can help to mitigate this issue.
-
-To train PandasAI with Q/A, you can use the `train` method on the `Agent`, as it follows:
-
-```python
-from pandasai import Agent
-
-agent = Agent("data.csv")
-
-# Train the model
-query = "What is the total sales for the current fiscal year?"
-# The following code is passed as a string to the response variable
-response = '\n'.join([
-    'import pandas as pd',
-    '',
-    'df = dfs[0]',
-    '',
-    '# Calculate the total sales for the current fiscal year',
-    'total_sales = df[df[\'date\'] >= pd.to_datetime(\'today\').replace(month=4, day=1)][\'sales\'].sum()',
-    'result = { "type": "number", "value": total_sales }'
-])
-
-agent.train(queries=[query], codes=[response])
-
-response = agent.chat("What is the total sales for the last fiscal year?")
-print(response)
-
-# The model will use the information provided in the training to generate a response
-```
-
-Also in this case, your training data is persisted, so you only need to train the model once.
-
-## Training with local Vector stores
-
-If you want to train the model with a local vector store, you can use the local `ChromaDB`, `Qdrant` or `Pinecone` vector stores. Here's how to do it:
+If you want to train the agent with a local vector store, you can use the local `ChromaDB`, `Qdrant` or `Pinecone` vector stores. Here's how to do it:
 An enterprise license is required for using the vector stores locally, ([check it out](https://github.com/Sinaptik-AI/pandas-ai/blob/master/pandasai/ee/LICENSE)).
 If you plan to use it in production, [contact us](https://pandas-ai.com/pricing).
 
@@ -134,7 +59,7 @@ print(response)
 # The model will use the information provided in the training to generate a response
 ```
 
-## Using the Sandbox Environment
+## Using the Agent in a Sandbox Environment
 
 To enhance security and protect against malicious code through prompt injection, PandasAI provides a sandbox environment for code execution. The sandbox runs your code in an isolated Docker container, ensuring that potentially harmful operations are contained.
 
@@ -188,25 +113,6 @@ sandbox = DockerSandbox(
   when you need to ensure that code execution is isolated from your main system.
 </Note>
 
-## Troubleshooting
-
-In some cases, you might get an error like this: `No vector store provided. Please provide a vector store to train the agent`. It means no API key has been generated to use the `BambooVectorStore`.
-
-Here's how to fix it:
-
-First of all, you'll need to generated an API key (check the prerequisites paragraph above).
-Once you have generated the API key, you have 2 options:
-
-1. Override the env variable (`os.environ["PANDABI_API_KEY"] = "YOUR_PANDABI_API_KEY"`)
-2. Instantiate the vector store and pass the API key:
-
-```python
-# Instantiate the vector store with the API keys
-vector_store = BambooVectorStor(api_key="YOUR_PANDABI_API_KEY")
-
-# Instantiate the agent with the custom vector store
-agent = Agent(connector, config={...} vectorstore=vector_store)
-```
 
 ## Custom Head
 
@@ -243,46 +149,3 @@ smart_df = pai.SmartDataframe(df, config={
 ```
 
 The agent will use your custom head instead of the default first 5 rows of the dataframe when analyzing and responding to queries.
-
-### Using Sandbox
-
-To use the sandbox environment, you first need to install the required package and have Docker running on your system:
-
-```bash
-pip install pandasai-docker
-```
-
-<Note title="Sandbox Requirements">
-  Make sure you have Docker running on your system before using the sandbox
-  environment.
-</Note>
-
-Here's how to enable the sandbox for your PandasAI agent:
-
-```python
-from pandasai import Agent
-from pandasai_docker import DockerSandbox
-
-# Initialize and start the sandbox
-sandbox = DockerSandbox()
-sandbox.start()
-
-# Create an agent with the sandbox enabled
-agent = Agent("data.csv", sandbox=sandbox)
-
-# The code will now run in an isolated Docker container
-response = agent.chat("What is the total sales for each country?")
-
-# Don't forget to stop the sandbox when done
-sandbox.stop()
-```
-
-You can also customize the sandbox environment:
-
-```python
-# Custom sandbox configuration
-sandbox = DockerSandbox(
-    "custom-sandbox-name",
-    "/path/to/custom/Dockerfile"
-)
-```

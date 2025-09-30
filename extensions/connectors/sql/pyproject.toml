@@ -13,11 +13,13 @@ sqlalchemy = "^2.0.0"
 psycopg2-binary = { version = "^2.9.10", optional = true }
 pymysql = { version = "^1.1.1", optional = true }
 cockroachdb = { version = "^0.3.5", optional = true }
+pymssql = { version = "^2.3.7", optional = true }
 
 [tool.poetry.extras]
 postgres = ["psycopg2-binary"]
 mysql = ["pymysql"]
 cockroach = ["cockroachdb"]
+sqlserver = ["pymssql"]
 
 [tool.poetry.group.test]
 optional = true

@@ -49,7 +49,7 @@ response = df.chat("Which product has the highest sales?")
 
 ## How to work with SQL in PandasAI?
 
-PandasAI provides a sql extension for you to work with SQL, PostgreSQL, MySQL, and CockroachDB databases.
+PandasAI provides a sql extension for you to work with SQL, PostgreSQL, MySQL, CockroachDB, and Microsoft SQL Server databases.
 To make the library lightweight and easy to use, the basic installation of the library does not include this extension.
 It can be easily installed using pip with the specific database you want to use:
 
@@ -57,11 +57,13 @@ It can be easily installed using pip with the specific database you want to use:
 pip install pandasai-sql[postgres]
 pip install pandasai-sql[mysql]
 pip install pandasai-sql[cockroachdb]
+pip install pandasai-sql[sqlserver]
 ```
 
 Once you have installed the extension, you can use the [semantic data layer](/v3/semantic-layer#for-sql-databases-using-the-create-method) and perform [data transformations](/docs/v3/transformations).
 
 ```python
+# MySQL example
 sql_table = pai.create(
     path="example/mysql-dataset",
     description="Heart disease dataset from MySQL database",
@@ -91,11 +93,37 @@ sql_table = pai.create(
         ]
     }
 )
+
+# SQL Server example
+sql_server_table = pai.create(
+    path="example/sqlserver-dataset",
+    description="Sales data from SQL Server database",
+    source={
+        "type": "sqlserver",
+        "connection": {
+            "host": "sqlserver.example.com",
+            "port": 1433,
+            "user": "${SQLSERVER_USER}",
+            "password": "${SQLSERVER_PASSWORD}",
+            "database": "sales_data"
+        },
+        "table": "transactions",
+        "columns": [
+            {"name": "transaction_id", "type": "string", "description": "Unique identifier for each transaction"},
+            {"name": "customer_id", "type": "string", "description": "Customer identifier"},
+            {"name": "transaction_date", "type": "datetime", "description": "Date and time of transaction"},
+            {"name": "product_category", "type": "string", "description": "Product category"},
+            {"name": "quantity", "type": "integer", "description": "Number of items sold"},
+            {"name": "unit_price", "type": "float", "description": "Price per unit"},
+            {"name": "total_amount", "type": "float", "description": "Total transaction amount"}
+        ]
+    }
+)
 ```
 
 ## How to work with Enterprise Cloud Data in PandasAI?
 
-PandasAI provides Enterprise Edition extensions for connecting to cloud data. These extensions require an Enterprise License or [Data Platform](/v3/ai-dashboards) team plan.
+PandasAI provides Enterprise Edition extensions for connecting to cloud data. These extensions require an Enterprise License.
 Once you have installed a enterprise cloud data extension, you can use it to connect to your cloud data.
 
 ### Snowflake extension (ee)
@@ -455,8 +483,8 @@ limit: 100000
 </tr>
 <tr>
   <td style={{ border: '1px solid #ccc', padding: '8px 16px' }}>pandasai_sql</td>
-  <td style={{ border: '1px solid #ccc', padding: '8px 16px' }}><code>poetry add pandasai-sql[postgres]</code></td>
-  <td style={{ border: '1px solid #ccc', padding: '8px 16px' }}><code>pip install pandasai-sql[postgres]</code></td>
+  <td style={{ border: '1px solid #ccc', padding: '8px 16px' }}><code>poetry add pandasai-sql[postgres|mysql|cockroachdb|sqlserver]</code></td>
+  <td style={{ border: '1px solid #ccc', padding: '8px 16px' }}><code>pip install pandasai-sql[postgres|mysql|cockroachdb|sqlserver]</code></td>
   <td style={{ border: '1px solid #ccc', padding: '8px 16px' }}>No</td>
 </tr>
 <tr>
