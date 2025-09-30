@@ -47,7 +47,7 @@ class TestSharedTemplate:
 
         # Should only contain execute_sql_query
         assert "execute_sql_query" in rendered
-        assert "def execute_sql_query(sql_query: str) -> pd.Dataframe" in rendered
+        assert "def execute_sql_query(sql_query: str) -> pd.DataFrame" in rendered
         assert "This method connects to the database" in rendered
 
         # Should not contain any custom skills
@@ -81,7 +81,7 @@ class TestSharedTemplate:
 
         # Should contain execute_sql_query
         assert "execute_sql_query" in rendered
-        assert "def execute_sql_query(sql_query: str) -> pd.Dataframe" in rendered
+        assert "def execute_sql_query(sql_query: str) -> pd.DataFrame" in rendered
 
         # Should contain custom skills
         assert "def hello_world():" in rendered

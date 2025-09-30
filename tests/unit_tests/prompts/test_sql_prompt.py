@@ -73,7 +73,7 @@ class TestGeneratePythonCodeWithSQLPrompt:
 
 The following functions have already been provided. Please use them as needed and do not redefine them.
 <function>
-def execute_sql_query(sql_query: str) -> pd.Dataframe
+def execute_sql_query(sql_query: str) -> pd.DataFrame
     """This method connects to the database, executes the sql query and returns the dataframe"""
 </function>
 
