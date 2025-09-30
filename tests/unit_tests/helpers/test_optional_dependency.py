@@ -32,3 +32,4 @@ def test_env_for_necessary_deps():
     assert "pd" in env
     assert "plt" in env
     assert "np" in env
+    assert "px" in env

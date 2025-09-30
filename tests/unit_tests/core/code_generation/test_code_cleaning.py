@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from pandasai.agent.state import AgentState
+from pandasai.constants import DEFAULT_CHART_DIRECTORY
 from pandasai.core.code_generation.code_cleaning import CodeCleaner
 from pandasai.dataframe.base import DataFrame
 from pandasai.exceptions import MaliciousQueryError
@@ -106,6 +107,23 @@ class TestCodeCleaner(unittest.TestCase):
         )
         self.assertRegex(code, expected_pattern)
 
+    def test_replace_output_filenames_with_temp_json_chart(self):
+        handler = self.cleaner
+        handler.context = MagicMock()
+        handler.context.config.save_charts = True
+        handler.context.logger = MagicMock()  # Mock logger
+        handler.context.last_prompt_id = 123
+        handler.context.config.save_charts_path = "/custom/path"
+
+        code = 'some text "hello.json" more text'
+
+        code = handler._replace_output_filenames_with_temp_json_chart(code)
+
+        expected_pattern = re.compile(
+            r'some text "exports[/\\]+charts[/\\]+temp_chart_.*\.json" more text'
+        )
+        self.assertRegex(code, expected_pattern)
+
     def test_replace_output_filenames_with_temp_chart_windows_paths(self):
         handler = self.cleaner
         handler.context = MagicMock()
@@ -158,6 +176,18 @@ class TestCodeCleaner(unittest.TestCase):
             result, expected_code, f"Expected '{expected_code}', but got '{result}'"
         )
 
+    def test_replace_output_filenames_with_temp_json_chart_empty_code(self):
+        handler = self.cleaner
+
+        code = ""
+        expected_code = ""  # It should remain empty, as no substitution is made
+
+        result = handler._replace_output_filenames_with_temp_json_chart(code)
+
+        self.assertEqual(
+            result, expected_code, f"Expected '{expected_code}', but got '{result}'"
+        )
+
     def test_replace_output_filenames_with_temp_chart_no_png(self):
         handler = self.cleaner
 
@@ -169,6 +199,43 @@ class TestCodeCleaner(unittest.TestCase):
         self.assertEqual(
             result, expected_code, f"Expected '{expected_code}', but got '{result}'"
         )
+
+    def test_replace_output_filenames_with_temp_json_chart_no_json(self):
+        handler = self.cleaner
+
+        code = "some text without json"
+
+        result = handler._replace_output_filenames_with_temp_json_chart(code)
+
+        self.assertEqual(result, code, f"Expected '{code}', but got '{result}'")
+
+    def test_remove_make_dirs(self):
+        handler = self.cleaner
+
+        code = "os.makedirs('/some/path')\nplt.show()\nfig.show()"
+        expected_code = "plt.show()\nfig.show()"  # Should remove the os.makedirs line
+        result = handler._remove_make_dirs(code)
+        self.assertEqual(
+            result, expected_code, f"Expected '{expected_code}', but got '{result}'"
+        )
+
+        code = "os.mkdir('/some/path')\nplt.show()\nfig.show()"
+        expected_code = "plt.show()\nfig.show()"  # Should remove the os.mkdir line
+        result = handler._remove_make_dirs(code)
+        self.assertEqual(
+            result, expected_code, f"Expected '{expected_code}', but got '{result}'"
+        )
+
+    def test_do_not_remove_make_default_chart_dir(self):
+        handler = self.cleaner
+
+        code = f"os.makedirs('{DEFAULT_CHART_DIRECTORY}')\nplt.show()\nfig.show()"
+        result = handler._remove_make_dirs(code)
+        self.assertEqual(result, code, f"Expected '{code}', but got '{result}'")
+
+        code = f"os.mkdir('{DEFAULT_CHART_DIRECTORY}')\nplt.show()\nfig.show()"
+        result = handler._remove_make_dirs(code)
+        self.assertEqual(result, code, f"Expected '{code}', but got '{result}'")
 
 
 if __name__ == "__main__":
