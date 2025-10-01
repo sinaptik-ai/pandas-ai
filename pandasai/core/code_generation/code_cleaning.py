@@ -32,7 +32,7 @@ class CodeCleaner:
 
     def _check_if_skill_func_def_exists(self, node: ast.AST) -> bool:
         """
-        Check if the node defines a direct SQL execution function.
+        Check if the node defines a skill function.
         """
         for skill in self.context.skills:
             if isinstance(node, ast.FunctionDef) and node.name == skill.name:

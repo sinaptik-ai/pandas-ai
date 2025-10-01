@@ -143,4 +143,4 @@ class SkillsManager:
         Returns:
             str: String representation of all skills
         """
-        return "".join(str(skill) for skill in cls._skills)
+        return "\n".join(str(skill) for skill in cls._skills)

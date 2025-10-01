@@ -27,7 +27,7 @@ class Skill(BaseModel):
             description: The description of the skill.
                 Defaults to the function docstring.
             name: The name of the function. Mandatory when `func` is a lambda.
-                Defaults to the functions name.
+                Defaults to the function's name.
             **kwargs: additional params
         """
 
@@ -84,7 +84,7 @@ def skill(*args: Union[str, Callable]) -> Callable:
         .. code-block:: python
 
             @skill
-            def compute_flight_prices(offers: pd.Dataframe) -> List[float]:
+            def compute_flight_prices(offers: pd.DataFrame) -> List[float]:
                 \"\"\"Computes the flight prices\"\"\"
                 return
 
