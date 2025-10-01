@@ -84,7 +84,7 @@ def skill(*args: Union[str, Callable]) -> Callable:
         .. code-block:: python
 
             @skill
-            def compute_flight_prices(offers: pd.Dataframe) -> List[float]:
+            def compute_flight_prices(offers: pd.DataFrame) -> List[float]:
                 \"\"\"Computes the flight prices\"\"\"
                 return
 
