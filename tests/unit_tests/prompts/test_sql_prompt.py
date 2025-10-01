@@ -95,7 +95,10 @@ import pandas as pd
 
 
 
-At the end, declare "result" variable as a dictionary of type and value.
+At the end, declare "result" variable as a dictionary of type and value in the following format:
+
+{output_type_template}
+
 
 
 Generate python code and return full updated code:

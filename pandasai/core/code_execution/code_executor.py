@@ -39,7 +39,9 @@ class CodeExecutor:
 
         # Get the result
         if "result" not in self._environment:
-            raise NoResultFoundError("No result returned")
+            raise NoResultFoundError(
+                "No result was returned from the code execution. Please return the result in dictionary format, for example: result = {'type': ..., 'value': ...}"
+            )
 
         return self._environment.get("result", None)
 
