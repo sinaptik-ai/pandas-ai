@@ -36,3 +36,17 @@ def test_error_response_with_non_string_value():
     assert response.value == 123
     assert response.last_code_executed == "test_code"
     assert response.error == "error message"
+
+
+def test_error_response_format_alignment():
+    """Test __format__ with string formatting on error message"""
+    response = ErrorResponse("Error!", "test_code", "error message")
+    assert f"{response:>10}" == "    Error!"
+    assert f"{response:<10}" == "Error!    "
+
+
+def test_error_response_format_with_fstring():
+    """Test __format__ in f-string context"""
+    response = ErrorResponse("Failed", "test_code", "error message")
+    result = f"Status: {response:>10}"
+    assert result == "Status:     Failed"
