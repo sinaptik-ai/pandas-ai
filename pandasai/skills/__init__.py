@@ -27,7 +27,7 @@ class Skill(BaseModel):
             description: The description of the skill.
                 Defaults to the function docstring.
             name: The name of the function. Mandatory when `func` is a lambda.
-                Defaults to the functions name.
+                Defaults to the function's name.
             **kwargs: additional params
         """
 
