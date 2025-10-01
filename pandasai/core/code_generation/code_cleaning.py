@@ -30,6 +30,15 @@ class CodeCleaner:
         """
         return isinstance(node, ast.FunctionDef) and node.name == "execute_sql_query"
 
+    def _check_if_skill_func_def_exists(self, node: ast.AST) -> bool:
+        """
+        Check if the node defines a skill function.
+        """
+        for skill in self.context.skills:
+            if isinstance(node, ast.FunctionDef) and node.name == skill.name:
+                return True
+        return False
+
     def _replace_table_names(
         self, sql_query: str, table_names: list, allowed_table_names: dict
     ) -> str:
@@ -146,6 +155,10 @@ class CodeCleaner:
 
         for node in tree.body:
             if self._check_direct_sql_func_def_exists(node):
+                continue
+
+            # check if skill function definition exists and skip it
+            if self._check_if_skill_func_def_exists(node):
                 continue
 
             node = self._validate_and_make_table_name_case_sensitive(node)

@@ -1,0 +1,174 @@
+---
+title: "Skills"
+description: "Learn how to create and use custom skills to extend PandasAI's capabilities"
+---
+
+Skills allow you to add custom functions that the agent can use, expanding its capabilities beyond standard data analysis. These custom functions are automatically registered and available to the agent, enabling a wide range of user-defined operations.
+
+## Key Features
+
+- **Automatic Registration**: Skills are automatically registered when decorated with `@skill`
+- **Global Access**: Skills are available globally via `pai.skill()`
+- **SQL Integration**: Skills are automatically included in SQL prompts and error correction
+- **Type Safety**: Full support for type hints and parameter validation
+- **Documentation**: Skills use function docstrings to provide context to the LLM
+
+## Quick Start
+
+Here's a complete example showing how to use skills with the Agent:
+
+```python
+import pandas as pd
+import pandasai as pai
+from pandasai import Agent
+from pandasai_litellm.litellm import LiteLLM
+
+# Add your model
+llm = LiteLLM(model="ollama/llama3", api_base="http://localhost:11434/api/generate")
+
+pai.config.set({"llm": llm})
+
+# Sample employee data
+employees_data = {
+    "EmployeeID": [1, 2, 3, 4, 5],
+    "Name": ["John", "Emma", "Liam", "Olivia", "William"],
+    "Department": ["HR", "Sales", "IT", "Marketing", "Finance"],
+    "Salary": [50000, 60000, 70000, 55000, 65000],
+    "Performance": [85, 92, 78, 88, 95]
+}
+
+salaries_data = {
+    "EmployeeID": [1, 2, 3, 4, 5],
+    "Bonus": [7500, 9000, 7000, 5500, 9750]
+}
+
+employees_df = pai.DataFrame(employees_data)
+salaries_df = pai.DataFrame(salaries_data)
+
+# Define custom skills
+@pai.skill()
+def calculate_bonus(salary: float, performance: float) -> float:
+    """
+    Calculates employee bonus based on salary and performance score.
+
+    Args:
+        salary (float): Employee's base salary
+        performance (float): Performance score (0-100)
+
+    Returns:
+        float: Calculated bonus amount
+    """
+    if performance >= 90:
+        return salary * 0.15  # 15% bonus for excellent performance
+    elif performance >= 70:
+        return salary * 0.10  # 10% bonus for good performance
+    else:
+        return salary * 0.05  # 5% bonus for average performance
+
+@pai.skill()
+def plot_salaries(names: list[str], salaries: list[float]):
+    """
+    Creates a bar chart showing employee salaries.
+
+    Args:
+        names (list[str]): List of employee names
+        salaries (list[float]): List of corresponding salaries
+    """
+    import matplotlib.pyplot as plt
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(names, salaries)
+    plt.xlabel("Employee Name")
+    plt.ylabel("Salary ($)")
+    plt.title("Employee Salaries")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+@pai.skill()
+def format_currency(amount: float) -> str:
+    """
+    Formats a number as currency.
+
+    Args:
+        amount (float): The amount to format
+
+    Returns:
+        str: Formatted currency string
+    """
+    return f"${amount:,.2f}"
+
+# Create an agent with the dataframes
+agent = Agent([employees_df, salaries_df], memory_size=10)
+
+# Chat with the agent - skills are automatically available
+response1 = agent.chat("Calculate bonuses for all employees and show the results")
+print("Response 1:", response1)
+
+response2 = agent.chat("Show me the total bonus amount formatted as currency")
+print("Response 2:", response2)
+
+# The agent can use multiple skills in one conversation
+response3 = agent.chat("Calculate bonuses, format them as currency, and create a chart")
+print("Response 3:", response3)
+```
+
+### Key Benefits of Using Skills with Agent
+
+1. **Automatic Registration**: Skills are automatically available to the agent - no need to manually add them
+2. **Global Access**: Skills defined anywhere in your code are available to all agents
+3. **Memory Integration**: The agent can remember and reuse skills across conversations
+4. **Multi-Skill Operations**: The agent can combine multiple skills in a single request
+
+### Example: Skills in Action
+
+```python
+# Skills are automatically registered when defined
+@pai.skill()
+def get_employee_stats(employee_id: int) -> dict:
+    """
+    Gets comprehensive statistics for an employee.
+
+    Args:
+        employee_id (int): The employee ID
+
+    Returns:
+        dict: Employee statistics including salary, bonus, and performance
+    """
+    # Your logic to fetch employee data
+    return {
+        "id": employee_id,
+        "salary": 60000,
+        "bonus": 9000,
+        "performance": 92
+    }
+
+# Create agent
+agent = Agent([employees_df], memory_size=10)
+
+# The agent can now use this skill automatically
+response = agent.chat("Get statistics for employee ID 1 and calculate their total compensation")
+# The agent will use both get_employee_stats() and calculate_bonus() skills
+```
+
+## Creating Skills
+
+### Basic Skill Definition
+
+```python
+import pandasai as pai
+
+@pai.skill()
+def my_custom_function(param1: str, param2: int) -> str:
+    """
+    A custom function that demonstrates skill creation.
+
+    Args:
+        param1 (str): First parameter description
+        param2 (int): Second parameter description
+
+    Returns:
+        str: Result description
+    """
+    return f"Processed {param1} with value {param2}"
+```

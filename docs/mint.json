@@ -69,7 +69,7 @@
       },
       {
         "group": "Advanced Usage",
-        "pages": ["v3/agent"],
+        "pages": ["v3/agent", "v3/skills"],
         "version": "v3"
       },
       {
