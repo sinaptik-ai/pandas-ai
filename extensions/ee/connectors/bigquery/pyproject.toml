@@ -7,7 +7,7 @@ readme = "README.md"
 license = "Proprietary"
 
 [tool.poetry.urls]
-"Documentation" = "https://docs.getpanda.ai/v3/data-ingestion"
+"Documentation" = "https://docs.pandas-ai.com/v3/data-ingestion"
 "Repository" = "https://github.com/sinaptik-ai/pandas-ai"
 
 [tool.poetry.dependencies]

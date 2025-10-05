@@ -9,7 +9,7 @@ from typing import Hashable, List, Optional, Union
 
 import pandas as pd
 
-from pandasai.config import APIKeyManager, ConfigManager
+from pandasai.config import APIKeyManager, ConfigManager, SkillsManager
 from pandasai.data_loader.semantic_layer_schema import (
     Column,
     Relation,
@@ -24,6 +24,7 @@ from pandasai.helpers.path import (
     transform_dash_to_underscore,
 )
 from pandasai.sandbox.sandbox import Sandbox
+from pandasai.skills import skill
 
 from .agent import Agent
 from .data_loader.loader import DatasetLoader
@@ -210,6 +211,8 @@ config = ConfigManager()
 
 api_key = APIKeyManager()
 
+skills = SkillsManager()
+
 
 def chat(query: str, *dataframes: DataFrame, sandbox: Optional[Sandbox] = None):
     """
@@ -321,6 +324,7 @@ __all__ = [
     "chat",
     "follow_up",
     "load",
+    "skill",
     # Deprecated
     "SmartDataframe",
     "SmartDatalake",

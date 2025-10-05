@@ -4,13 +4,10 @@
 {% endfor %}
 </tables>
 
-You are already provided with the following functions that you can call:
-<function>
-def execute_sql_query(sql_query: str) -> pd.Dataframe
-    """This method connects to the database, executes the sql query and returns the dataframe"""
-</function>
+{% include 'shared/sql_functions.tmpl' with context %}
 
-{% if last_code_generated != "" and context.memory.count() > 0 %}
+{% if last_code_generated and context.memory.count() > 0 %}
+Last code generated:
 {{ last_code_generated }}
 {% else %}
 Update this initial code:
@@ -26,7 +23,8 @@ import pandas as pd
 {% include 'shared/vectordb_docs.tmpl' with context %}
 {{ context.memory.get_last_message() }}
 
-At the end, declare "result" variable as a dictionary of type and value.
+At the end, declare "result" variable as a dictionary of type and value in the following format:
+{% include 'shared/output_type_template.tmpl' with context %}
 
 
 Generate python code and return full updated code:

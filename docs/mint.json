@@ -3,7 +3,7 @@
     "logo": {
       "light": "/logo/logo.png",
       "dark": "/logo/logo.png",
-      "href": "https://getpanda.ai"
+      "href": "https://pandas-ai.com"
     },
     "favicon": "/favicon.svg",
     "colors": {
@@ -68,13 +68,8 @@
         "version": "v3"
       },
       {
-        "group": "Data Platform",
-        "pages": ["v3/ai-dashboards", "v3/permission-management"],
-        "version": "v3"
-      },
-      {
         "group": "Advanced Usage",
-        "pages": ["v3/agent"],
+        "pages": ["v3/agent", "v3/skills"],
         "version": "v3"
       },
       {

@@ -48,3 +48,6 @@ class BaseResponse:
     def to_json(self) -> str:
         """Return a JSON representation."""
         return json.dumps(self.to_dict(), cls=CustomJsonEncoder)
+
+    def __format__(self, fmt):
+        return self.value.__format__(fmt)

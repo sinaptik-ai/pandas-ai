@@ -75,11 +75,12 @@ class TestGeneratePythonCodeWithSQLPrompt:
 
 </tables>
 
-You are already provided with the following functions that you can call:
+The following functions have already been provided. Please use them as needed and do not redefine them.
 <function>
-def execute_sql_query(sql_query: str) -> pd.Dataframe
+def execute_sql_query(sql_query: str) -> pd.DataFrame
     """This method connects to the database, executes the sql query and returns the dataframe"""
 </function>
+
 
 
 Update this initial code:
@@ -98,7 +99,10 @@ import pandas as pd
 
 
 
-At the end, declare "result" variable as a dictionary of type and value.
+At the end, declare "result" variable as a dictionary of type and value in the following format:
+
+{output_type_template}
+
 
 
 Generate python code and return full updated code:

@@ -5,7 +5,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
-from pandasai.config import Config, ConfigManager
+from pandasai.config import Config, ConfigManager, SkillsManager
 from pandasai.constants import DEFAULT_CHART_DIRECTORY
 from pandasai.data_loader.semantic_layer_schema import is_schema_source_same
 from pandasai.exceptions import InvalidConfigError
@@ -54,6 +54,7 @@ class AgentState:
         """Initialize the state with the given parameters."""
         self.dfs = dfs if isinstance(dfs, list) else [dfs]
         self.config = self._get_config(config)
+        self.skills = SkillsManager.get_skills()
         if config:
             self.config.llm = self._get_llm(self.config.llm)
         self.memory = Memory(memory_size, agent_description=description)

@@ -63,8 +63,27 @@ def load_from_cockroachdb(
         return pd.read_sql(query, conn, params=params)
 
 
+def load_from_sqlserver(
+    connection_info: SQLConnectionConfig, query: str, params: Optional[list] = None
+):
+    import pymssql
+
+    conn = pymssql.connect(
+        host=connection_info.host,
+        user=connection_info.user,
+        password=connection_info.password,
+        database=connection_info.database,
+        port=connection_info.port,
+    )
+    # Suppress warnings of SqlAlchemy
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=UserWarning)
+        return pd.read_sql(query, conn, params=params)
+
+
 __all__ = [
     "load_from_mysql",
     "load_from_postgres",
     "load_from_cockroachdb",
+    "load_from_sqlserver",
 ]
