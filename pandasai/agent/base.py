@@ -66,14 +66,10 @@ class Agent:
             )
 
         # Transition pd dataframe to pandasai dataframe
-        print("start: converting pd dataframe to pandasai dataframe")
         if isinstance(dfs, list):
             dfs = [DataFrame(df) if self.is_pd_dataframe(df) else df for df in dfs]
-            print("Done: converting pd dataframe to pandasai dataframe")
         elif self.is_pd_dataframe(dfs):
             dfs = DataFrame(dfs)
-
-        print("Done: converting pd dataframe to pandasai dataframe")
 
         if isinstance(dfs, list):
             sources = [df.schema.source or df._loader.source for df in dfs]
