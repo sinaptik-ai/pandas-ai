@@ -67,9 +67,7 @@ class Agent:
 
         # Transition pd dataframe to pandasai dataframe
         if isinstance(dfs, list):
-            for df in dfs:
-                if isinstance(df, pd.DataFrame):
-                    df = DataFrame(df)
+            dfs = [DataFrame(df) if isinstance(df, pd.DataFrame) else df for df in dfs]
         elif isinstance(dfs, pd.DataFrame):
             dfs = DataFrame(dfs)
 
