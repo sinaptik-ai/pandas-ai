@@ -65,6 +65,14 @@ class Agent:
                 stacklevel=2,
             )
 
+        # Transition pd dataframe to pandasai dataframe
+        if isinstance(dfs, list):
+            for df in dfs:
+                if isinstance(df, pd.DataFrame):
+                    df = DataFrame(df)
+        elif isinstance(dfs, pd.DataFrame):
+            dfs = DataFrame(dfs)
+
         if isinstance(dfs, list):
             sources = [df.schema.source or df._loader.source for df in dfs]
             if not BaseQueryBuilder.check_compatible_sources(sources):

@@ -7,8 +7,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from pandasai.agent.state import AgentState
-from pandasai.config import SkillsManager
-from pandasai.skills import Skill, skill
+from pandasai.ee.skills import SkillType, skill
+from pandasai.ee.skills.manager import SkillsManager
+
+# Alias for backward compatibility in tests
+Skill = SkillType
 
 
 class TestSkillsIntegration:
@@ -32,7 +35,7 @@ class TestSkillsIntegration:
         assert SkillsManager.skill_exists("test_function")
 
         # Check that the function is now a Skill object
-        assert isinstance(test_function, Skill)
+        assert isinstance(test_function, SkillType)
         assert test_function.name == "test_function"
 
     def test_agent_state_includes_skills(self):

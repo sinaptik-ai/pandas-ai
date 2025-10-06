@@ -6,8 +6,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from pandasai.config import SkillsManager
-from pandasai.skills import Skill, skill
+from pandasai.ee.skills import SkillType, skill
+from pandasai.ee.skills.manager import SkillsManager
+
+# Alias for backward compatibility in tests
+Skill = SkillType
 
 
 class TestSkillDecorator:
