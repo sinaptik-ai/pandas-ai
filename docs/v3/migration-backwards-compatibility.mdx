@@ -1,0 +1,146 @@
+---
+title: "Backwards Compatibility"
+description: "Using v2 classes in PandasAI v3"
+---
+
+<Note>
+  PandasAI v3 maintains backward compatibility for `SmartDataframe`, `SmartDatalake`, and `Agent`. However, we recommend migrating to the new `pai.DataFrame()` and `pai.chat()` methods for better performance and features.
+</Note>
+
+## SmartDataframe
+
+`SmartDataframe` continues to work in v3 with the same API. However, you must configure the LLM globally.
+
+### Using SmartDataframe in v3 (Legacy)
+
+```python
+from pandasai import SmartDataframe
+import pandasai as pai
+import pandas as pd
+from pandasai_litellm.litellm import LiteLLM
+
+# Configure LLM globally (required)
+llm = LiteLLM(model="gpt-4o-mini", api_key="your-api-key")
+pai.config.set({"llm": llm})
+
+# v2 style still works
+df = pd.DataFrame({
+    "country": ["US", "UK", "France"],
+    "sales": [5000, 3200, 2900]
+})
+
+smart_df = SmartDataframe(df)
+response = smart_df.chat("What are the top countries by sales?")
+```
+
+### Recommended v3 Approach
+
+While `SmartDataframe` works, we recommend using `pai.DataFrame()` for better integration with v3 features:
+
+```python
+import pandasai as pai
+import pandas as pd
+
+# Configure LLM globally
+pai.config.set({"llm": llm})
+
+# Simple approach
+df = pd.DataFrame({
+    "country": ["US", "UK", "France"],
+    "sales": [5000, 3200, 2900]
+})
+df = pai.DataFrame(df)
+response = df.chat("What are the top countries by sales?")
+```
+
+**Benefits of pai.DataFrame():**
+- Better integration with semantic layer
+- Improved context management
+- Enhanced performance
+- Access to v3-specific features
+- Cleaner API
+
+## SmartDatalake
+
+`SmartDatalake` still works but is no longer necessary. You can query multiple dataframes directly with `pai.chat()`.
+
+### Using SmartDatalake in v3 (Legacy)
+
+```python
+from pandasai import SmartDatalake
+import pandasai as pai
+import pandas as pd
+from pandasai_litellm.litellm import LiteLLM
+
+# Configure LLM globally (required)
+llm = LiteLLM(model="gpt-4o-mini", api_key="your-api-key")
+pai.config.set({"llm": llm})
+
+# v2 style still works
+employees_df = pd.DataFrame({
+    "name": ["John", "Jane", "Bob"],
+    "department": ["Sales", "Engineering", "Sales"]
+})
+
+salaries_df = pd.DataFrame({
+    "name": ["John", "Jane", "Bob"],
+    "salary": [60000, 80000, 55000]
+})
+
+lake = SmartDatalake([
+    employees_df,
+    salaries_df
+])
+
+response = lake.chat("Who gets paid the most?")
+```
+
+### Recommended v3 Approach
+
+Query multiple dataframes directly without `SmartDatalake`:
+
+```python
+import pandasai as pai
+
+# Configure LLM globally
+pai.config.set({"llm": llm})
+
+# Create dataframes
+employees = pai.DataFrame(employees_df)
+salaries = pai.DataFrame(salaries_df)
+
+# Query across multiple dataframes directly
+response = pai.chat("Who gets paid the most?", employees, salaries)
+```
+
+**Benefits of pai.chat():**
+- No need to instantiate `SmartDatalake`
+- Cleaner, more intuitive API
+- Better performance
+- Semantic layer support
+- Easier to add/remove dataframes dynamically
+
+## Agent
+
+The `Agent` class works the same way in v3 as it did in v2. The only requirement is to configure the LLM globally.
+
+```python
+from pandasai import Agent
+import pandasai as pai
+from pandasai_litellm.litellm import LiteLLM
+
+# Configure LLM globally (required in v3)
+llm = LiteLLM(model="gpt-4o-mini", api_key="your-api-key")
+pai.config.set({"llm": llm})
+
+# Agent works as before
+df1 = pai.DataFrame(sales_data)
+df2 = pai.DataFrame(costs_data)
+
+agent = Agent([df1, df2])
+response = agent.chat("Analyze the data and provide insights")
+```
+
+**Key Change:** Configure LLM globally with `pai.config.set()` instead of passing it per-agent.
+
+For detailed information about Agent usage, see the [Agent documentation](/v3/agent). For information about using Skills with Agent, see the [Skills documentation](/v3/skills).

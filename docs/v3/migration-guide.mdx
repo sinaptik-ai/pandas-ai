@@ -1,0 +1,445 @@
+---
+title: "Migration Guide: PandasAI v2 to v3"
+description: "Step-by-step guide to migrate from PandasAI v2 to v3"
+---
+
+<Note title="Migration Notice">
+  PandasAI 3.0 introduces significant architectural changes. This guide covers
+  breaking changes and migration steps. See [Backwards
+  Compatibility](/v3/migration-backwards-compatibility) for v2 classes that
+  still work.
+</Note>
+
+## Breaking Changes
+
+### Configuration
+
+Configuration is now global using `pai.config.set()` instead of per-dataframe. Several options have been removed:
+
+**Removed:** `save_charts`, `enable_cache`, `security`, `custom_whitelisted_dependencies`, `save_charts_path`, `custom_head`
+
+**v2:**
+
+```python
+from pandasai import SmartDataframe
+
+config = {
+    "llm": llm,
+    "save_charts": True,
+    "enable_cache": True,
+    "security": "standard"
+}
+df = SmartDataframe(data, config=config)
+```
+
+**v3:**
+
+```python
+import pandasai as pai
+
+pai.config.set({
+    "llm": llm,
+    "save_logs": True,
+    "verbose": False,
+    "max_retries": 3
+})
+df = pai.DataFrame(data)
+```
+
+**Key Changes:**
+
+- Global configuration applies to all dataframes
+- Charts returned as `ChartResponse` objects for manual handling
+- Security handled through sandbox environment
+- Caching removed for simplicity
+
+**More details:** See [config docs](/v3/overview-nl#configure-the-nl-layer) for configuration examples and more details.
+
+### LLM
+
+LLMs are now extension-based. Install `pandasai-litellm` separately for unified access to 100+ models.
+
+**v2:**
+
+```python
+from pandasai.llm import OpenAI
+from pandasai import SmartDataframe
+
+llm = OpenAI(api_token="your-api-key")
+df = SmartDataframe(data, config={"llm": llm})
+```
+
+**v3:**
+
+```bash
+pip install pandasai-litellm
+```
+
+```python
+import pandasai as pai
+from pandasai_litellm.litellm import LiteLLM
+
+llm = LiteLLM(model="gpt-4o-mini", api_key="your-api-key")
+pai.config.set({"llm": llm})
+df = pai.DataFrame(data)
+```
+
+**Key Changes:**
+
+- LLMs are now extension-based, not built-in
+- Install `pandasai-litellm` for unified LLM interface
+- LiteLLM supports 100+ models (GPT-4, Claude, Gemini, etc.)
+- Configure LLM globally instead of per-dataframe
+- You need to install both `pandasai` and `pandasai-litellm`
+
+**More details:** See [Large Language Models](/v3/large-language-models) for supported models and configuration.
+
+### Data Connectors
+
+Connectors are now separate extensions. Install only what you need. Cloud connectors require [enterprise license](/v3/enterprise-features).
+
+**v2:**
+
+```python
+from pandasai.connectors import PostgreSQLConnector
+from pandasai import SmartDataframe
+
+connector = PostgreSQLConnector(config={
+    "host": "localhost",
+    "database": "mydb",
+    "table": "sales"
+})
+df = SmartDataframe(connector)
+```
+
+**v3:**
+
+```bash
+pip install pandasai-sql[postgres]
+```
+
+```python
+import pandasai as pai
+
+df = pai.create(
+    path="company/sales",
+    description="Sales data from PostgreSQL",
+    source={
+        "type": "postgres",
+        "connection": {
+            "host": "localhost",
+            "database": "mydb",
+            "user": "${DB_USER}",
+            "password": "${DB_PASSWORD}"
+        },
+        "table": "sales"
+    }
+)
+```
+
+**Key Changes:**
+
+- Install specific extensions: `pandasai-sql[postgres]`, `pandasai-sql[mysql]`
+- Use `pai.create()` with semantic layer
+- Environment variables supported: `${DB_USER}`
+
+**More details:** See [Data Ingestion](/v3/semantic-layer/data-ingestion) for connector setup and configuration.
+
+### Skills
+
+<Note title="Enterprise Feature">
+  Skills require a valid enterprise license for production use. See [Enterprise
+  Features](/v3/enterprise-features) for more details.
+</Note>
+
+Skills use `@pai.skill` decorator and are automatically registered globally.
+
+**v2:**
+
+```python
+from pandasai.skills import skill
+from pandasai import Agent
+
+@skill
+def calculate_bonus(salary: float, performance: float) -> float:
+    """Calculate employee bonus."""
+    if performance >= 90:
+        return salary * 0.15
+    return salary * 0.10
+
+agent = Agent([df])
+agent.add_skills(calculate_bonus)
+```
+
+**v3:**
+
+```python
+import pandasai as pai
+from pandasai import Agent
+
+@pai.skill
+def calculate_bonus(salary: float, performance: float) -> float:
+    """Calculate employee bonus."""
+    if performance >= 90:
+        return salary * 0.15
+    return salary * 0.10
+
+# Skills automatically available - no need to add them
+agent = Agent([df])
+```
+
+**Key Changes:**
+
+- Use `@pai.skill` instead of `@skill`
+- Automatic global registration
+- No need for `agent.add_skills()`
+- Works with `pai.chat()`, `SmartDataframe`, and `Agent`
+
+**More details:** See [Skills](/v3/skills) for detailed usage and examples.
+
+### Training
+
+<Note title="Enterprise Feature">
+  Training with vector stores requires a valid enterprise license for production
+  use. See [Enterprise Features](/v3/enterprise-features) for more details.
+</Note>
+
+Training is now available through local vector stores (ChromaDB, Qdrant, Pinecone, LanceDB) for few-shot learning. The `train()` method is still available but requires a vector store.
+
+**v2:**
+
+```python
+from pandasai import Agent
+
+agent = Agent(df)
+agent.train(queries=["query"], codes=["code"])
+```
+
+**v3:**
+
+```python
+from pandasai import Agent
+from pandasai.ee.vectorstores import ChromaDB
+
+# Instantiate with vector store
+vector_store = ChromaDB()
+agent = Agent(df, vectorstore=vector_store)
+
+# Train with vector store
+agent.train(queries=["query"], codes=["code"])
+```
+
+**Key Changes:**
+
+- Training requires a vector store (ChromaDB, Qdrant, Pinecone, LanceDB)
+- Vector stores enable few-shot learning
+- Better scalability and performance
+
+**More details:** See [Training the Agent](/v3/agent#training-the-agent-with-local-vector-stores) for setup and examples.
+
+## Migration Steps
+
+### Step 1: Update Installation
+
+```bash
+# Using pip
+pip install pandasai pandasai-litellm
+
+# Using poetry
+poetry add pandasai pandasai-litellm
+
+# For SQL connectors
+pip install pandasai-sql[postgres]  # or mysql, sqlite, etc.
+```
+
+### Step 2: Update Imports
+
+```python
+# v2 imports
+from pandasai import SmartDataframe, SmartDatalake, Agent
+from pandasai.llm import OpenAI
+from pandasai.skills import skill
+from pandasai.connectors import PostgreSQLConnector
+
+# v3 imports
+import pandasai as pai
+from pandasai import Agent
+from pandasai_litellm.litellm import LiteLLM
+```
+
+### Step 3: Configure LLM Globally
+
+```python
+from pandasai_litellm.litellm import LiteLLM
+import pandasai as pai
+
+llm = LiteLLM(model="gpt-4o-mini", api_key="your-api-key")
+pai.config.set({
+    "llm": llm,
+    "verbose": False,
+    "save_logs": True,
+    "max_retries": 3
+})
+```
+
+### Step 4: Migrate DataFrames (optional)
+
+Check the [Backwards Compatibility](/v3/migration-backwards-compatibility) section for details on the difference between SmartDataframe, SmartDatalakes, and the new Semantic DataFrames (pai dataframes).
+In this way you can decide if migrating or not.
+
+**Option A: Keep SmartDataframe (backward compatible)**
+
+```python
+from pandasai import SmartDataframe
+
+df = SmartDataframe(your_data)
+response = df.chat("Your question")
+```
+
+**Option B: Use pai.DataFrame (recommended)**
+
+```python
+import pandasai as pai
+
+# Simple approach
+df = pai.DataFrame(your_data)
+response = df.chat("Your question")
+
+# With semantic layer (best for production)
+df = pai.create(
+    path="company/sales-data",
+    df=your_data,
+    description="Sales data by country and region",
+    columns={
+        "country": {"type": "string", "description": "Country name"},
+        "sales": {"type": "float", "description": "Sales amount in USD"}
+    }
+)
+response = df.chat("Your question")
+```
+
+**Multiple DataFrames:**
+
+```python
+# v2 style (still works)
+from pandasai import SmartDatalake
+lake = SmartDatalake([df1, df2])
+
+# v3 recommended
+import pandasai as pai
+df1 = pai.DataFrame(data1)
+df2 = pai.DataFrame(data2)
+response = pai.chat("Your question", df1, df2)
+```
+
+### Step 5: Migrate Data Connectors
+
+```python
+# v2
+from pandasai.connectors import PostgreSQLConnector
+connector = PostgreSQLConnector(config={...})
+df = SmartDataframe(connector)
+
+# v3
+import pandasai as pai
+df = pai.create(
+    path="company/database-table",
+    description="Description of your data",
+    source={
+        "type": "postgres",
+        "connection": {
+            "host": "localhost",
+            "database": "mydb",
+            "user": "${DB_USER}",
+            "password": "${DB_PASSWORD}"
+        },
+        "table": "your_table"
+    }
+)
+```
+
+### Step 6: Update Skills (if applicable)
+
+<Note title="Enterprise Feature">
+  Skills require a valid enterprise license for production use. See [Enterprise
+  Features](/v3/enterprise-features) for more details.
+</Note>
+
+```python
+# v2
+from pandasai.skills import skill
+@skill
+def calculate_metric(value: float) -> float:
+    """Calculate custom metric."""
+    return value * 1.5
+agent.add_skills(calculate_metric)
+
+# v3
+import pandasai as pai
+@pai.skill
+def calculate_metric(value: float) -> float:
+    """Calculate custom metric."""
+    return value * 1.5
+# Skills automatically available
+```
+
+### Step 7: Remove Deprecated Configuration
+
+```python
+# Remove: save_charts, enable_cache, security,
+# custom_whitelisted_dependencies, save_charts_path
+
+# v3 (keep only these)
+pai.config.set({
+    "llm": llm,
+    "save_logs": True,
+    "verbose": False,
+    "max_retries": 3
+})
+```
+
+## Migration Tests
+
+Test your migration with these examples:
+
+### Basic Chat Test
+
+```python
+import pandasai as pai
+import pandas as pd
+
+df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
+df = pai.DataFrame(df)
+response = df.chat("What is the sum of x?")
+print(response)
+```
+
+### Multi-DataFrame Test
+
+```python
+df1 = pai.DataFrame({"sales": [100, 200, 300]})
+df2 = pai.DataFrame({"costs": [50, 100, 150]})
+response = pai.chat("What is the total profit?", df1, df2)
+print(response)
+```
+
+### Skills Test
+
+```python
+@pai.skill
+def test_skill(x: int) -> int:
+    """Double the value."""
+    return x * 2
+
+df = pai.DataFrame({"values": [1, 2, 3]})
+response = df.chat("Double the first value")
+print(response)
+```
+
+---
+
+<Note>
+  **Next Steps:** - Review [Backwards
+  Compatibility](/v3/migration-backwards-compatibility) for v2 classes - Check
+  [Migration Troubleshooting](/v3/migration-troubleshooting) for common issues
+</Note>

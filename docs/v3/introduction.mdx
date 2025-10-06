@@ -1,63 +1,68 @@
 ---
-title: "Introduction"
-description: "PandasAI: the Open-Source framework for natural language data processing and analysis"
+title: "Introduction to PandasAI"
+description: "PandasAI is a Python library that makes it easy to ask questions to your data in natural language."
 ---
 
-<Note title="Beta Notice">
-  PandasAI 3.0 is currently in beta. This documentation reflects the latest
-  features and functionality, which may evolve before the final release.
-</Note>
+# ![PandasAI](https://github.com/Sinaptik-AI/pandas-ai/blob/main/assets/logo.png?raw=true)
 
-## What is PandasAI?
+Beyond querying, PandasAI offers functionalities to visualize data through graphs, cleanse datasets by addressing missing values, and enhance data quality through feature generation, making it a comprehensive tool for data scientists and analysts.
 
-PandasAI is an open-source framework that brings together intelligent data processing and natural language analysis. Whether you're working with complex datasets or just starting your data journey, PandasAI provides the tools to define, process, and analyze your data efficiently. Through its powerful data preparation layer and intuitive natural language interface, you can transform raw data into actionable insights without writing complex code.
+## Features
 
-For users of previous versions, PandasAI 3.0 marks a significant evolution, expanding beyond conversational analysis to introduce a comprehensive data preparation framework that revolutionizes how you structure and interact with your data.
+- **Natural language querying**: Ask questions to your data in natural language.
+- **Data visualization**: Generate graphs and charts to visualize your data.
+- **Data cleansing**: Cleanse datasets by addressing missing values.
+- **Feature generation**: Enhance data quality through feature generation.
+- **Data connectors**: Connect to various data sources like CSV, XLSX, PostgreSQL, MySQL, BigQuery, Databricks, Snowflake, etc.
 
-## Core Components
+## How does PandasAI work?
 
-### Data preparation layer
+PandasAI uses generative AI models to understand and interpret natural language queries and translate them into python code and SQL queries. It then uses the code to interact with the data and return the results to the user.
 
-The foundation of PandasAI 3.0 is its robust data preparation layer, which allows you to:
+## Who should use PandasAI?
 
-- Define semantic data schemas with rich metadata
-- Establish data relationships across different tables
-- Create integrated views combining multiple data sources
-- Handle various data formats including Parquet, CSV, and more
+PandasAI is designed for business analysts, data scientists, and engineers who want to interact with their data in a more natural way. It is particularly useful for those who are not familiar with SQL or Python or who want to save time and effort when working with data. It is also useful for those who are familiar with SQL and Python, as it allows them to ask questions to their data without having to write any complex code.
 
-### Natural language interface
+## How to get started with PandasAI?
 
-Building on our established strengths, PandasAI continues to offer powerful natural language capabilities:
+PandasAI is available as a Python library. You can install the library using pip or poetry and use it in your Python code. 
 
-- Translate plain English queries into executable code
-- Generate dynamic visualizations and charts
-- Perform complex data analysis through simple conversations
-- Create automated data insights
+### 📚 Using the library
 
-## Why choose PandasAI?
+The PandasAI library provides a Python interface for interacting with your data in natural language. You can use it to ask questions to your data, generate graphs and charts, cleanse datasets, and enhance data quality through feature generation. It uses LLMs to understand and interpret natural language queries and translate them into python code and SQL queries.
 
-PandasAI 3.0 is designed for:
+Once you have installed pandasai, simply import it and use it to ask questions to your data.
 
-- Data Scientists seeking efficient ways to process and analyze data
-- Data Engineers who need a flexible data preparation framework
-- Analysts who want to combine the power of code with natural language interfaces
-- Teams looking to standardize their data processing workflows
+```python
+import pandasai as pai
+from pandasai_litellm.litellm import LiteLLM
 
-## Getting started
+# Initialize LiteLLM with your OpenAI model
+llm = LiteLLM(model="gpt-4.1-mini", api_key="YOUR_OPENAI_API_KEY")
 
-PandasAI offers two ways to leverage its capabilities:
+# Configure PandasAI to use this LLM
+pai.config.set({
+    "llm": llm
+})
 
-### Open source library
+# Load your data
+df = pai.read_csv("data/companies.csv")
 
-The core PandasAI library is completely open source, giving you full control over your data processing and analysis workflows. Start with our [Semantic Layer Guide](/v3/semantic-layer) to learn about defining data schemas and creating integrated views.
+response = df.chat("What is the average revenue by region?")
+print(response)
+```
 
-## Next steps
 
-- [Quick Start Guide](/v3/getting-started)
-- [Semantic Layer Documentation](/v3/semantic-layer)
-- [Natural Language Features](/v3/overview-nl)
-  {/* - [Example Projects](/v3/examples) */}
+## Support
 
-## Get in touch
+If you have any questions or need help, please join our **[discord server](https://discord.gg/KYKj9F2FRH)**.
 
-If you can’t find the information you’re looking for in the documentation, or if you need help, get in touch with our Support Team at pm@sinaptik.ai, or join our [Discord](https://discord.gg/KYKj9F2FRH), where our team and community can help you.
+## License
+
+PandasAI is available under the MIT expat license, except for the `pandasai/ee` directory, which has its [license here](https://github.com/Sinaptik-AI/pandas-ai/blob/master/pandasai/ee/LICENSE) if applicable.
+
+If you are interested in the Enterprise License, see [Enterprise Features](/v3/enterprise-features) or visit [pandas-ai.com](https://pandas-ai.com/).
+
+## Analytics
+
+We've partnered with [Scarf](https://scarf.sh) to collect anonymized user statistics to understand which features our community is using and how to prioritize product decision-making in the future. To opt out of this data collection, you can set the environment variable `SCARF_NO_ANALYTICS=true`.

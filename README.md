@@ -8,7 +8,7 @@
 [![Downloads](https://static.pepy.tech/badge/pandasai)](https://pepy.tech/project/pandasai) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1ZnO-njhL7TBOYPZaqvMvGtsjckZKrv2E?usp=sharing)
 
-PandasAI is a Python platform that makes it easy to ask questions to your data in natural language. It helps non-technical users to interact with their data in a more natural way, and it helps technical users to save time, and effort when working with data.
+PandasAI is a Python library that makes it easy to ask questions to your data in natural language. It helps non-technical users to interact with their data in a more natural way, and it helps technical users to save time, and effort when working with data.
 
 # 🔧 Getting started
 
@@ -28,13 +28,15 @@ You can install the PandasAI library using pip or poetry.
 With pip:
 
 ```bash
-pip install "pandasai>=3.0.0b2"
+pip install pandasai
+pip install pandasai-litellm
 ```
 
 With poetry:
 
 ```bash
-poetry add "pandasai>=3.0.0b2"
+poetry add pandasai
+poetry add pandasai-litellm
 ```
 
 ### 💻 Usage
@@ -186,9 +188,6 @@ PandasAI is available under the MIT expat license, except for the `pandasai/ee` 
 If you are interested in managed PandasAI Cloud or self-hosted Enterprise Offering, [contact us](https://pandas-ai.com).
 
 ## Resources
-
-> **Beta Notice**  
-> Release v3 is currently in beta. The following documentation and examples reflect the features and functionality in progress and may change before the final release.
 
 - [Docs](https://docs.pandas-ai.com/) for comprehensive documentation
 - [Examples](examples) for example notebooks

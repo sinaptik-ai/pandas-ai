@@ -1,65 +1,79 @@
 ---
 title: "Agent"
-description: "Add few-shot learning to your PandasAI agent"
+description: "Build multi-turn PandasAI agents with clarifications, explanations, query rephrasing, optional sandboxed execution, and enterprise training via local vector stores."
 ---
 
-<Note title="Beta Notice">
-  Release v3 is currently in beta. This documentation reflects the features and
-  functionality in progress and may change before the final release.
-</Note>
+## PandasAI Agent Overview
 
-It is possible also to use PandasAI with a few-shot learning agent, thanks to the "train with local vector store" enterprise feature (requiring an enterprise license). The agent can also be used in a sandbox. This guide shows you both how to train the agent and how to use it in a sandbox.
+While the `pai.chat()` method is meant to be used in a single session and for exploratory data analysis, an agent can be used for multi-turn conversations.
 
-## Training the Agent with local Vector stores
-
-If you want to train the agent with a local vector store, you can use the local `ChromaDB`, `Qdrant` or `Pinecone` vector stores. Here's how to do it:
-An enterprise license is required for using the vector stores locally, ([check it out](https://github.com/Sinaptik-AI/pandas-ai/blob/master/pandasai/ee/LICENSE)).
-If you plan to use it in production, [contact us](https://pandas-ai.com/pricing).
+To instantiate an agent, you can use the following code:
 
 ```python
+import os
 from pandasai import Agent
-from pandasai.ee.vectorstores import ChromaDB
-from pandasai.ee.vectorstores import Qdrant
-from pandasai.ee.vectorstores import Pinecone
-from pandasai.ee.vector_stores import LanceDB
+import pandas as pd
 
-# Instantiate the vector store
-vector_store = ChromaDB()
-# or with Qdrant
-# vector_store = Qdrant()
-# or with LanceDB
-vector_store = LanceDB()
-# or with Pinecone
-# vector_store = Pinecone(
-#     api_key="*****",
-#     embedding_function=embedding_function,
-#     dimensions=384, # dimension of your embedding model
-# )
+# Sample DataFrames
+sales_by_country = pd.DataFrame({
+    "country": ["United States", "United Kingdom", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "Japan", "China"],
+    "sales": [5000, 3200, 2900, 4100, 2300, 2100, 2500, 2600, 4500, 7000],
+    "deals_opened": [142, 80, 70, 90, 60, 50, 40, 30, 110, 120],
+    "deals_closed": [120, 70, 60, 80, 50, 40, 30, 20, 100, 110]
+})
 
-# Instantiate the agent with the custom vector store
-agent = Agent("data.csv", vectorstore=vector_store)
+agent = Agent(sales_by_country)
+agent.chat('Which are the top 5 countries by sales?')
+# Output: China, United States, Japan, Germany, Australia
+```
 
-# Train the model
-query = "What is the total sales for the current fiscal year?"
-# The following code is passed as a string to the response variable
-response = '\n'.join([
-    'import pandas as pd',
-    '',
-    'df = dfs[0]',
-    '',
-    '# Calculate the total sales for the current fiscal year',
-    'total_sales = df[df[\'date\'] >= pd.to_datetime(\'today\').replace(month=4, day=1)][\'sales\'].sum()',
-    'result = { "type": "number", "value": total_sales }'
-])
+Contrary to the `pai.chat()` method, an agent will keep track of the state of the conversation and will be able to answer multi-turn conversations. For example:
 
-agent.train(queries=[query], codes=[response])
+```python
+agent.chat('And which one has the most deals?')
+# Output: United States has the most deals
+```
 
-response = agent.chat("What is the total sales for the last fiscal year?")
-print(response)
-# The model will use the information provided in the training to generate a response
+### Clarification questions
+
+An agent will also be able to ask clarification questions if it does not have enough information to answer the query. For example:
+
+```python
+agent.clarification_questions('What is the GDP of the United States?')
+```
+
+This will return up to 3 clarification questions that the agent can ask the user to get more information to answer the query.
+
+### Explanation
+
+An agent will also be able to explain the answer given to the user. For example:
+
+```python
+response = agent.chat('What is the GDP of the United States?')
+explanation = agent.explain()
+
+print("The answer is", response)
+print("The explanation is", explanation)
+```
+
+### Rephrase Question
+
+Rephrase question to get accurate and comprehensive response from the model. For example:
+
+```python
+rephrased_query = agent.rephrase_query('What is the GDP of the United States?')
+
+print("The rephrased query is", rephrased_query)
+
 ```
 
 ## Using the Agent in a Sandbox Environment
+
+<Note>
+  The sandbox works offline and provides an additional layer of security for
+  code execution. It's particularly useful when working with untrusted data or
+  when you need to ensure that code execution is isolated from your main system.
+</Note>
 
 To enhance security and protect against malicious code through prompt injection, PandasAI provides a sandbox environment for code execution. The sandbox runs your code in an isolated Docker container, ensuring that potentially harmful operations are contained.
 
@@ -107,45 +121,57 @@ sandbox = DockerSandbox(
 )
 ```
 
+## Training the Agent with local Vector stores
+
 <Note>
-  The sandbox works offline and provides an additional layer of security for
-  code execution. It's particularly useful when working with untrusted data or
-  when you need to ensure that code execution is isolated from your main system.
+  Training agents with local vector stores requires a PandasAI Enterprise license. See [Enterprise Features](/v3/enterprise-features) for more details or [contact us](https://pandas-ai.com/) for production use.
 </Note>
 
+It is possible also to use PandasAI with a few-shot learning agent, thanks to the "train with local vector store" enterprise feature (requiring an enterprise license). 
 
-## Custom Head
-
-In some cases, you might want to provide custom data samples to the conversational agent to improve its understanding and responses. For example, you might want to:
-
-- Provide better examples that represent your data patterns
-- Avoid sharing sensitive information
-- Guide the agent with specific data scenarios
-
-You can do this by passing a custom head to the agent:
+If you want to train the agent with a local vector store, you can use the local `ChromaDB`, `Qdrant` or `Pinecone` vector stores. Here's how to do it:
+An enterprise license is required for using the vector stores locally. See [Enterprise Features](/v3/enterprise-features) for licensing information.
+If you plan to use it in production, [contact us](https://pandas-ai.com).
 
 ```python
-import pandas as pd
-import pandasai as pai
+from pandasai import Agent
+from pandasai.ee.vectorstores import ChromaDB
+from pandasai.ee.vectorstores import Qdrant
+from pandasai.ee.vectorstores import Pinecone
+from pandasai.ee.vector_stores import LanceDB
 
-# Your original dataframe
-df = pd.DataFrame({
-    'sensitive_id': [1001, 1002, 1003, 1004, 1005],
-    'amount': [150, 200, 300, 400, 500],
-    'category': ['A', 'B', 'A', 'C', 'B']
-})
+# Instantiate the vector store
+vector_store = ChromaDB()
+# or with Qdrant
+# vector_store = Qdrant()
+# or with LanceDB
+vector_store = LanceDB()
+# or with Pinecone
+# vector_store = Pinecone(
+#     api_key="*****",
+#     embedding_function=embedding_function,
+#     dimensions=384, # dimension of your embedding model
+# )
 
-# Create a custom head with anonymized data
-head_df = pd.DataFrame({
-    'sensitive_id': [1, 2, 3, 4, 5],
-    'amount': [100, 200, 300, 400, 500],
-    'category': ['A', 'B', 'C', 'A', 'B']
-})
+# Instantiate the agent with the custom vector store
+agent = Agent("data.csv", vectorstore=vector_store)
 
-# Use the custom head
-smart_df = pai.SmartDataframe(df, config={
-    "custom_head": head_df
-})
+# Train the model
+query = "What is the total sales for the current fiscal year?"
+# The following code is passed as a string to the response variable
+response = '\n'.join([
+    'import pandas as pd',
+    '',
+    'df = dfs[0]',
+    '',
+    '# Calculate the total sales for the current fiscal year',
+    'total_sales = df[df[\'date\'] >= pd.to_datetime(\'today\').replace(month=4, day=1)][\'sales\'].sum()',
+    'result = { "type": "number", "value": total_sales }'
+])
+
+agent.train(queries=[query], codes=[response])
+
+response = agent.chat("What is the total sales for the last fiscal year?")
+print(response)
+# The model will use the information provided in the training to generate a response
 ```
-
-The agent will use your custom head instead of the default first 5 rows of the dataframe when analyzing and responding to queries.

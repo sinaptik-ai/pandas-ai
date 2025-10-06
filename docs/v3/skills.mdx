@@ -3,53 +3,43 @@ title: "Skills"
 description: "Learn how to create and use custom skills to extend PandasAI's capabilities"
 ---
 
-Skills allow you to add custom functions that the agent can use, expanding its capabilities beyond standard data analysis. These custom functions are automatically registered and available to the agent, enabling a wide range of user-defined operations.
+<Note title="Enterprise Feature">
+Skills require a PandasAI Enterprise license. See [Enterprise Features](/v3/enterprise-features) for more details or [contact us](https://pandas-ai.com/) for production use.
+</Note>
 
-:::info Enterprise Feature
-Skills are part of PandasAI Enterprise and require a valid enterprise license for production use. For development and testing purposes, you can use skills without a subscription. See the [Enterprise License](https://github.com/gventuri/pandas-ai/blob/main/pandasai/ee/LICENSE) for full terms and conditions.
-:::
+Skills allow you to add custom functions on a **global level** that extend PandasAI's capabilities beyond standard data analysis. Once a skill is defined using the `@pai.skill()` decorator, it becomes automatically available across your entire application - whether you're using `pai.chat()`, `SmartDataframe`, or `Agent`. These custom functions are registered globally and can be used by any PandasAI interface without additional configuration.
 
-## Key Features
+## Creating a Skill
 
-- **Automatic Registration**: Skills are automatically registered when decorated with `@skill`
-- **Global Access**: Skills are available globally via `pai.skill()`
-- **SQL Integration**: Skills are automatically included in SQL prompts and error correction
-- **Type Safety**: Full support for type hints and parameter validation
-- **Documentation**: Skills use function docstrings to provide context to the LLM
+Skills are created by decorating a Python function with `@pai.skill()`. The function should include clear documentation with type hints and a descriptive docstring, as the AI uses this information to understand when and how to use the skill.
 
-## Quick Start
-
-Here's a complete example showing how to use skills with the Agent:
+### Basic Skill Definition
 
 ```python
-import pandas as pd
 import pandasai as pai
-from pandasai import Agent
-from pandasai_litellm.litellm import LiteLLM
 
-# Add your model
-llm = LiteLLM(model="ollama/llama3", api_base="http://localhost:11434/api/generate")
+@pai.skill()
+def my_custom_function(param1: str, param2: int) -> str:
+    """
+    A custom function that demonstrates skill creation.
 
-pai.config.set({"llm": llm})
+    Args:
+        param1 (str): First parameter description
+        param2 (int): Second parameter description
 
-# Sample employee data
-employees_data = {
-    "EmployeeID": [1, 2, 3, 4, 5],
-    "Name": ["John", "Emma", "Liam", "Olivia", "William"],
-    "Department": ["HR", "Sales", "IT", "Marketing", "Finance"],
-    "Salary": [50000, 60000, 70000, 55000, 65000],
-    "Performance": [85, 92, 78, 88, 95]
-}
+    Returns:
+        str: Result description
+    """
+    return f"Processed {param1} with value {param2}"
+```
 
-salaries_data = {
-    "EmployeeID": [1, 2, 3, 4, 5],
-    "Bonus": [7500, 9000, 7000, 5500, 9750]
-}
+### Example Skills
 
-employees_df = pai.DataFrame(employees_data)
-salaries_df = pai.DataFrame(salaries_data)
+Here are some practical examples of skills you can create:
 
-# Define custom skills
+```python
+import pandasai as pai
+
 @pai.skill()
 def calculate_bonus(salary: float, performance: float) -> float:
     """
@@ -101,32 +91,17 @@ def format_currency(amount: float) -> str:
         str: Formatted currency string
     """
     return f"${amount:,.2f}"
-
-# Create an agent with the dataframes
-agent = Agent([employees_df, salaries_df], memory_size=10)
-
-# Chat with the agent - skills are automatically available
-response1 = agent.chat("Calculate bonuses for all employees and show the results")
-print("Response 1:", response1)
-
-response2 = agent.chat("Show me the total bonus amount formatted as currency")
-print("Response 2:", response2)
-
-# The agent can use multiple skills in one conversation
-response3 = agent.chat("Calculate bonuses, format them as currency, and create a chart")
-print("Response 3:", response3)
 ```
 
-### Key Benefits of Using Skills with Agent
+## Skills in Action
 
-1. **Automatic Registration**: Skills are automatically available to the agent - no need to manually add them
-2. **Global Access**: Skills defined anywhere in your code are available to all agents
-3. **Memory Integration**: The agent can remember and reuse skills across conversations
-4. **Multi-Skill Operations**: The agent can combine multiple skills in a single request
+Once skills are defined, they are automatically available to all PandasAI interfaces. Here's how to use them with different components:
 
-### Example: Skills in Action
+### Skills with pai.chat
 
 ```python
+import pandasai as pai
+
 # Skills are automatically registered when defined
 @pai.skill()
 def get_employee_stats(employee_id: int) -> dict:
@@ -147,32 +122,53 @@ def get_employee_stats(employee_id: int) -> dict:
         "performance": 92
     }
 
-# Create agent
-agent = Agent([employees_df], memory_size=10)
-
-# The agent can now use this skill automatically
-response = agent.chat("Get statistics for employee ID 1 and calculate their total compensation")
-# The agent will use both get_employee_stats() and calculate_bonus() skills
+# Use pai.chat with the skill automatically available
+response = pai.chat("Get statistics for employee ID 1 and calculate their total compensation")
+# The AI will use both get_employee_stats() and calculate_bonus() skills
+print(response)
 ```
 
-## Creating Skills
-
-### Basic Skill Definition
+### Skills with Agent
 
 ```python
+import pandas as pd
 import pandasai as pai
+from pandasai import Agent
+from pandasai_litellm.litellm import LiteLLM
 
-@pai.skill()
-def my_custom_function(param1: str, param2: int) -> str:
-    """
-    A custom function that demonstrates skill creation.
+# Add your model
+llm = LiteLLM(model="ollama/llama3", api_base="http://localhost:11434/api/generate")
 
-    Args:
-        param1 (str): First parameter description
-        param2 (int): Second parameter description
+pai.config.set({"llm": llm})
 
-    Returns:
-        str: Result description
-    """
-    return f"Processed {param1} with value {param2}"
+# Sample employee data
+employees_data = {
+    "EmployeeID": [1, 2, 3, 4, 5],
+    "Name": ["John", "Emma", "Liam", "Olivia", "William"],
+    "Department": ["HR", "Sales", "IT", "Marketing", "Finance"],
+    "Salary": [50000, 60000, 70000, 55000, 65000],
+    "Performance": [85, 92, 78, 88, 95]
+}
+
+salaries_data = {
+    "EmployeeID": [1, 2, 3, 4, 5],
+    "Bonus": [7500, 9000, 7000, 5500, 9750]
+}
+
+employees_df = pai.DataFrame(employees_data)
+salaries_df = pai.DataFrame(salaries_data)
+
+# Create an agent with the dataframes
+agent = Agent([employees_df, salaries_df], memory_size=10)
+
+# Chat with the agent - skills are automatically available
+response1 = agent.chat("Calculate bonuses for all employees and show the results")
+print("Response 1:", response1)
+
+response2 = agent.chat("Show me the total bonus amount formatted as currency")
+print("Response 2:", response2)
+
+# The agent can use multiple skills in one conversation
+response3 = agent.chat("Calculate bonuses, format them as currency, and create a chart")
+print("Response 3:", response3)
 ```
