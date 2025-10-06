@@ -21,7 +21,7 @@ class TestGeneratePythonCodeWithSQLPrompt:
         [
             (
                 "",
-                """type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }""",
+                """type (possible values "string", "number", "dataframe", "plot", "iplot"). No other type available. "plot" is when "matplotlib" is used; "iplot" when "plotly" is used. Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" } or { "type": "iplot", "value": "temp_chart.json" }""",
             ),
             (
                 "number",
@@ -34,6 +34,10 @@ class TestGeneratePythonCodeWithSQLPrompt:
             (
                 "plot",
                 """type (must be "plot"), value must be string. Example: { "type": "plot", "value": "temp_chart.png" }""",
+            ),
+            (
+                "iplot",
+                """type (must be "iplot"), value must be string. Example: { "type": "iplot", "value": "temp_chart.json" }""",
             ),
             (
                 "string",
@@ -103,5 +107,5 @@ At the end, declare "result" variable as a dictionary of type and value in the f
 
 Generate python code and return full updated code:
 
-### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query'''  # noqa: E501
+### Note: Use only relevant table for query and do aggregation, sorting, joins and group by through sql query'''  # noqa: E501
         )

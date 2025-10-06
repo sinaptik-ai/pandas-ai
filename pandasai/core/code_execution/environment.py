@@ -29,6 +29,8 @@ def get_environment() -> dict:
         "pd": import_dependency("pandas"),
         "plt": import_dependency("matplotlib.pyplot"),
         "np": import_dependency("numpy"),
+        "px": import_dependency("plotly.express"),
+        "go": import_dependency("plotly.graph_objects"),
     }
 
     return env
