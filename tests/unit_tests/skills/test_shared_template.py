@@ -8,8 +8,8 @@ from pathlib import Path
 import pytest
 from jinja2 import Environment, FileSystemLoader
 
-from pandasai.config import SkillsManager
-from pandasai.skills import Skill, skill
+from pandasai.ee.skills import skill
+from pandasai.ee.skills.manager import SkillsManager
 
 
 class TestSharedTemplate:

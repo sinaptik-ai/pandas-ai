@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from pandasai.config import SkillsManager
-from pandasai.skills import Skill
+from pandasai.ee.skills import SkillType, skill
+from pandasai.ee.skills.manager import SkillsManager
 
 
 class TestSkillsManager:
@@ -30,7 +30,7 @@ class TestSkillsManager:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
         SkillsManager.add_skills(skill)
 
         assert len(SkillsManager.get_skills()) == 1
@@ -48,8 +48,8 @@ class TestSkillsManager:
             """Second function."""
             return "World"
 
-        skill1 = Skill(function1)
-        skill2 = Skill(function2)
+        skill1 = SkillType(function1)
+        skill2 = SkillType(function2)
         SkillsManager.add_skills(skill1, skill2)
 
         assert len(SkillsManager.get_skills()) == 2
@@ -66,8 +66,8 @@ class TestSkillsManager:
             """A test function."""
             return "Hello, world!"
 
-        skill1 = Skill(test_function)
-        skill2 = Skill(test_function, name="test_function")  # Same name
+        skill1 = SkillType(test_function)
+        skill2 = SkillType(test_function, name="test_function")  # Same name
 
         SkillsManager.add_skills(skill1)
 
@@ -83,7 +83,7 @@ class TestSkillsManager:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
         SkillsManager.add_skills(skill)
 
         assert SkillsManager.skill_exists("test_function")
@@ -96,7 +96,7 @@ class TestSkillsManager:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
         SkillsManager.add_skills(skill)
 
         retrieved_skill = SkillsManager.get_skill_by_func_name("test_function")
@@ -115,7 +115,7 @@ class TestSkillsManager:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
         SkillsManager.add_skills(skill)
 
         skills_copy = SkillsManager.get_skills()
@@ -123,7 +123,7 @@ class TestSkillsManager:
 
         original_skills = SkillsManager.get_skills()
         assert len(original_skills) == 1
-        assert isinstance(original_skills[0], Skill)
+        assert isinstance(original_skills[0], SkillType)
 
     def test_clear_skills(self):
         """Test clearing all skills."""
@@ -136,8 +136,8 @@ class TestSkillsManager:
             """Second function."""
             return "World"
 
-        skill1 = Skill(function1)
-        skill2 = Skill(function2)
+        skill1 = SkillType(function1)
+        skill2 = SkillType(function2)
         SkillsManager.add_skills(skill1, skill2)
 
         assert len(SkillsManager.get_skills()) == 2
@@ -158,8 +158,8 @@ class TestSkillsManager:
             """Second function."""
             return "World"
 
-        skill1 = Skill(function1)
-        skill2 = Skill(function2)
+        skill1 = SkillType(function1)
+        skill2 = SkillType(function2)
         SkillsManager.add_skills(skill1, skill2)
 
         skills_str = SkillsManager.__str__()
@@ -177,11 +177,11 @@ class TestSkillsManager:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
         SkillsManager.add_skills(skill)
 
         # Create a new instance (simulating different parts of the application)
-        from pandasai.config import SkillsManager as NewSkillsManager
+        from pandasai.ee.skills.manager import SkillsManager as NewSkillsManager
 
         # The new instance should see the same skills
         assert len(NewSkillsManager.get_skills()) == 1

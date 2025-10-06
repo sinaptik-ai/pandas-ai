@@ -34,7 +34,11 @@ class SmartDatalake:
         load_dfs = []
         for df in dfs:
             if isinstance(df, pd.DataFrame):
-                load_dfs.append(DataFrame(df))
+                load_dfs.append(
+                    DataFrame(df)
+                    if not isinstance(df, DataFrame) and isinstance(df, pd.DataFrame)
+                    else df
+                )
             else:
                 raise ValueError(
                     "Invalid input data. We cannot convert it to a dataframe."

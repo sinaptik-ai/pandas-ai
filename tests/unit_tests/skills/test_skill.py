@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from pandasai.skills import Skill
+from pandasai.ee.skills import SkillType
 
 
 class TestSkill:
@@ -16,7 +16,7 @@ class TestSkill:
     def setup_method(self):
         """Set up test fixtures before each test method."""
         # Clear any existing skills
-        from pandasai.config import SkillsManager
+        from pandasai.ee.skills.manager import SkillsManager
 
         SkillsManager.clear_skills()
 
@@ -27,7 +27,7 @@ class TestSkill:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
 
         assert skill.name == "test_function"
         assert skill.description == "A test function."
@@ -41,7 +41,7 @@ class TestSkill:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function, name="custom_name")
+        skill = SkillType(test_function, name="custom_name")
 
         assert skill.name == "custom_name"
         assert skill.description == "A test function."
@@ -54,7 +54,7 @@ class TestSkill:
             """Original docstring."""
             return "Hello, world!"
 
-        skill = Skill(test_function, description="Custom description")
+        skill = SkillType(test_function, description="Custom description")
 
         assert skill.name == "test_function"
         assert skill.description == "Custom description"
@@ -67,7 +67,7 @@ class TestSkill:
             return "Hello, world!"
 
         with pytest.raises(ValueError, match="Function must have a docstring"):
-            Skill(test_function)
+            SkillType(test_function)
 
     def test_skill_creation_with_empty_docstring_raises_error(self):
         """Test that creating a skill with empty docstring raises an error."""
@@ -76,20 +76,20 @@ class TestSkill:
             return "Hello, world!"
 
         with pytest.raises(ValueError, match="Function must have a docstring"):
-            Skill(test_function)
+            SkillType(test_function)
 
     def test_skill_creation_with_lambda_requires_name(self):
         """Test that creating a skill with a lambda requires a name."""
         lambda_func = lambda x: x * 2
 
         with pytest.raises(ValueError, match="Function must have a docstring"):
-            Skill(lambda_func)
+            SkillType(lambda_func)
 
     def test_skill_creation_with_lambda_and_name(self):
         """Test creating a skill with a lambda and providing a name."""
         lambda_func = lambda x: x * 2
 
-        skill = Skill(lambda_func, name="double", description="Doubles a number")
+        skill = SkillType(lambda_func, name="double", description="Doubles a number")
 
         assert skill.name == "double"
         assert skill.description == "Doubles a number"
@@ -102,7 +102,7 @@ class TestSkill:
             """A test function with parameters."""
             return x + y
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
 
         result = skill(5)
         assert result == 15
@@ -117,7 +117,7 @@ class TestSkill:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
         skill_str = str(skill)
 
         expected = (
@@ -132,7 +132,7 @@ class TestSkill:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
         source = skill.stringify()
 
         assert "def test_function():" in source
@@ -145,7 +145,7 @@ class TestSkill:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill.from_function(test_function)
+        skill = SkillType.from_function(test_function)
 
         assert skill.name == "test_function"
         assert skill.description == "A test function."
@@ -158,7 +158,7 @@ class TestSkill:
             """A test function with parameters."""
             return x + y
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
 
         assert skill.name == "test_function"
         assert skill.description == "A test function with parameters."
@@ -171,7 +171,7 @@ class TestSkill:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
 
         # Check that it has Pydantic BaseModel attributes
         assert hasattr(skill, "model_dump")
@@ -184,7 +184,7 @@ class TestSkill:
             """A test function."""
             return "Hello, world!"
 
-        skill = Skill(test_function)
+        skill = SkillType(test_function)
 
         # Check that _signature is properly set
         assert hasattr(skill, "_signature")

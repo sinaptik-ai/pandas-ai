@@ -4,7 +4,7 @@ from typing import Any, Callable, Optional, Union
 from pydantic import BaseModel, PrivateAttr
 
 
-class Skill(BaseModel):
+class SkillType(BaseModel):
     """Skill that takes a function usable by pandasai"""
 
     func: Callable[..., Any]
@@ -41,7 +41,7 @@ class Skill(BaseModel):
             )
         signature = f"def {name}{inspect.signature(func)}:"
 
-        super(Skill, self).__init__(
+        super(SkillType, self).__init__(
             func=func, description=description, name=name, **kwargs
         )
         self._signature = signature
@@ -51,7 +51,7 @@ class Skill(BaseModel):
         return self.func(*args, **kwargs)
 
     @classmethod
-    def from_function(cls, func: Callable, **kwargs: Any) -> "Skill":
+    def from_function(cls, func: Callable, **kwargs: Any) -> "SkillType":
         """
         Creates a skill object from a function
 
@@ -95,8 +95,8 @@ def skill(*args: Union[str, Callable]) -> Callable:
     """
 
     def _make_skill_with_name(skill_name: str) -> Callable:
-        def _make_skill(skill_fn: Callable) -> Skill:
-            skill_obj = Skill(
+        def _make_skill(skill_fn: Callable) -> SkillType:
+            skill_obj = SkillType(
                 name=skill_name,  # func.__name__ if None
                 # when this decorator is used, the function MUST have a docstring
                 description=skill_fn.__doc__,
@@ -105,7 +105,7 @@ def skill(*args: Union[str, Callable]) -> Callable:
 
             # Automatically add the skill to the global skills manager
             try:
-                from pandasai.config import SkillsManager
+                from pandasai.ee.skills.manager import SkillsManager
 
                 SkillsManager.add_skills(skill_obj)
             except ImportError:
@@ -125,7 +125,7 @@ def skill(*args: Union[str, Callable]) -> Callable:
     elif not args:
         # Covers the case in which a function is decorated with "@skill()"
         # with the intended behavior of "@skill"
-        def _func_wrapper(fn: Callable) -> Skill:
+        def _func_wrapper(fn: Callable) -> SkillType:
             return _make_skill_with_name(fn.__name__)(fn)
 
         return _func_wrapper
@@ -133,3 +133,6 @@ def skill(*args: Union[str, Callable]) -> Callable:
         raise ValueError(
             f"Too many arguments for skill decorator. Received: {len(args)}"
         )
+
+
+__all__ = ["skill", "SkillType"]

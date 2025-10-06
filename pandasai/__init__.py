@@ -2,6 +2,7 @@
 """
 PandasAI is a wrapper around a LLM to make dataframes conversational
 """
+from __future__ import annotations
 
 import os
 from io import BytesIO
@@ -9,7 +10,7 @@ from typing import Hashable, List, Optional, Union
 
 import pandas as pd
 
-from pandasai.config import APIKeyManager, ConfigManager, SkillsManager
+from pandasai.config import APIKeyManager, ConfigManager
 from pandasai.data_loader.semantic_layer_schema import (
     Column,
     Relation,
@@ -17,6 +18,8 @@ from pandasai.data_loader.semantic_layer_schema import (
     Source,
     Transformation,
 )
+from pandasai.ee.skills import skill
+from pandasai.ee.skills.manager import SkillsManager
 from pandasai.exceptions import DatasetNotFound, InvalidConfigError
 from pandasai.helpers.path import (
     find_project_root,
@@ -24,7 +27,6 @@ from pandasai.helpers.path import (
     transform_dash_to_underscore,
 )
 from pandasai.sandbox.sandbox import Sandbox
-from pandasai.skills import skill
 
 from .agent import Agent
 from .data_loader.loader import DatasetLoader
