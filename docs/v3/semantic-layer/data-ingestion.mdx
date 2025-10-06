@@ -1,11 +1,7 @@
 ---
-title: 'Add Data Sources'
+title: 'DB Data Extensions'
 description: 'Learn how to ingest data from various sources in PandasAI'
 ---
-
-<Note title="Beta Notice">
-Release v3 is currently in beta. This documentation reflects the features and functionality in progress and may change before the final release.
-</Note>
 
 
 ## What type of data does PandasAI support?
@@ -13,7 +9,7 @@ PandasAI mission is to make data analysis and manipulation more efficient and ac
 
 - **CSV and Excel Files**: Load data directly from files using simple Python functions
 - **SQL Databases**: Connect to various SQL databases using our extensions
-- **Cloud Data**: Work with enterprise-scale data using our specialized extensions (requires Enterprise License)
+- **Cloud Data**: Work with enterprise-scale data using our specialized extensions (requires [Enterprise License](/v3/enterprise-features))
 
 Let's start with the basics of loading CSV files, and then we'll explore the different extensions available.
 
@@ -123,7 +119,7 @@ sql_server_table = pai.create(
 
 ## How to work with Enterprise Cloud Data in PandasAI?
 
-PandasAI provides Enterprise Edition extensions for connecting to cloud data. These extensions require an Enterprise License.
+PandasAI provides Enterprise Edition extensions for connecting to cloud data. These extensions require an [Enterprise License](/v3/enterprise-features).
 Once you have installed a enterprise cloud data extension, you can use it to connect to your cloud data.
 
 ### Snowflake extension (ee)

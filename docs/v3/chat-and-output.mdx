@@ -1,11 +1,7 @@
 ---
-title: "Chat and output formats"
+title: "Chat and Output Formats"
 description: "Learn how to use PandasAI's powerful chat functionality and the output formats for natural language data analysis"
 ---
-
-<Note title="Beta Notice">
-Release v3 is currently in beta. This documentation reflects the features and functionality in progress and may change before the final release.
-</Note>
 
 ## Chat
 
@@ -19,7 +15,7 @@ The `.chat()` method is PandasAI's core feature that enables natural language in
 ```python
 import pandasai as pai
 
-df_customers = pai.load("company/customers")
+df_customers = pai.read_csv("customers.csv")
 
 response = df_customers.chat("Which are our top 5 customers?")
 ```
@@ -29,9 +25,9 @@ response = df_customers.chat("Which are our top 5 customers?")
 ```python
 import pandasai as pai
 
-df_customers = pai.load("company/customers")
-df_orders = pai.load("company/orders")
-df_products = pai.load("company/products")
+df_customers = pai.read_csv("customers.csv")
+df_orders = pai.read_csv("orders.csv")
+df_products = pai.read_csv("products.csv")
 
 response = pai.chat('Who are our top 5 customers and what products do they buy most frequently?', df_customers, df_orders, df_products)
 ```
@@ -64,7 +60,7 @@ Example:
 ```python
 import pandasai as pai
 
-df = pai.load("my-org/users")
+df = pai.read_csv("users.csv")
 
 response = df.chat("Who is the user with the highest age?") # Returns a String response
 response = df.chat("How many users in total?") # Returns a Number response

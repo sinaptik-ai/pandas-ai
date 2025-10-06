@@ -1,12 +1,7 @@
 ---
-title: "Quickstart"
+title: "Installation & Quickstart"
 description: "Start building your data preparation layer with PandasAI and chat with your data"
 ---
-
-<Note title="Beta Notice">
-  PandasAI 3.0 is currently in beta. This documentation reflects the latest
-  features and functionality, which may evolve before the final release.
-</Note>
 
 ## Installation
 
@@ -14,10 +9,10 @@ PandasAI requires Python `3.8+ <=3.11`. We recommend using Poetry for dependency
 
 ```bash
 # Using poetry (recommended)
-poetry add "pandasai>=3.0.0b2"
+poetry add pandasai
 
 # Alternative: using pip
-pip install "pandasai>=3.0.0b2"
+pip install pandasai
 ```
 
 ## Quick setup
@@ -76,79 +71,7 @@ Depending on your question, it can return different kind of responses:
 
 Find it more about output data formats [here](/v3/chat-and-output#available-output-formats).
 
-## Creating your first data layer
-
-### 1. Define a data source
-
-Start by creating a data schema that describes your dataset:
-
-```python
-import pandasai as pai
-
-# Load your data
-df = pai.read_csv("data/companies.csv")
-
-# Create the data layer
-companies = pai.create(
-  path="my-org/companies",
-  df=df,
-  description="Customer companies dataset"
-)
-
-```
-
-This dataset will be saved in the `datasets/my-org/companies` folder of your project.
-
-### 2. Define the structure of your dataset
-
-By default, the column will be inferred from the data. For more control, though, you can define explicit column schemas:
-
-```python
-# Define a companies dataset with explicit schema
-companies = pai.create(
-  path="my-org/companies",
-  df=df,
-  description="Customer companies dataset",
-  columns=[
-    {
-      "name": "company_name",
-      "type": "string",
-      "description": "The name of the company"
-    },
-    {
-      "name": "revenue",
-      "type": "float",
-      "description": "The revenue of the company"
-    },
-    {
-      "name": "region",
-      "type": "string",
-      "description": "The region of the company"
-    }
-  ]
-)
-```
-
-### 3. Load and query data
-
-Once defined, you can easily load and query your datasets:
-
-```python
-# Load existing datasets
-stocks = pai.load("organization/coca_cola_stock")
-companies = pai.load("organization/companies")
-
-# Query using natural language
-response = stocks.chat("What is the volatility of the Coca Cola stock?")
-response = companies.chat("What is the average revenue by region?")
-
-# Query using multiple datasets
-result = pai.chat("Compare the revenue between Coca Cola and Apple", stocks, companies)
-```
-
 ## Next Steps
 
-- Learn more about [Semantic Layer](/v3/semantic-layer)
-- Join our [Discord Community](https://discord.gg/KYKj9F2FRH) for support
-  {/* - Explore [Advanced Views and Joins](/v3/views) */}
-  {/* - Check out our [Example Projects](/v3/examples) */}
+- [Config NL Layer](/v3/overview-nl)
+- [Set up LLM](/v3/large-language-models)
