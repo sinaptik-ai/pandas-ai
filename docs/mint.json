@@ -74,7 +74,7 @@
       },
       {
         "group": "Backwards Compatibility",
-        "pages": ["v3/smart-dataframes", "v3/smart-datalakes"],
+        "pages": ["v3/migration-v2-to-v3", "v3/smart-dataframes", "v3/smart-datalakes"],
         "version": "v3"
       },
       {

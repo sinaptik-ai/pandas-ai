@@ -1,0 +1,643 @@
+---
+title: "Migration Guide: PandasAI v2 to v3"
+description: "Complete guide to migrate from PandasAI v2 to v3"
+---
+
+<Note title="Migration Notice">
+  PandasAI 3.0 introduces significant architectural changes while maintaining
+  backward compatibility for most use cases. This guide will help you migrate
+  your existing v2 code to take advantage of v3's new features.
+</Note>
+
+## Overview of Changes
+
+PandasAI 3.0 represents a major evolution from v2, introducing:
+
+- **Semantic Layer**: New data preparation and schema management system
+- **Modular Architecture**: Extensions-based approach for LLMs and data sources
+- **Enhanced Configuration**: Global configuration system with `pai.config.set()`
+- **Improved Data Handling**: Better support for multiple data sources and transformations
+- **Enterprise Features**: Skills and advanced features moved to enterprise extensions
+
+## Quick Migration Checklist
+
+- [ ] Update installation to use v3 beta
+- [ ] Replace `SmartDataframe`/`SmartDatalake` with new semantic dataframes
+- [ ] Update LLM configuration to use extensions
+- [ ] Migrate from `Agent` class to new agent system
+- [ ] Update skills implementation (if using enterprise features)
+- [ ] Test data connectors and update to new extension system
+
+## Installation Changes
+
+### v2 Installation
+
+```bash
+# v2 installation
+pip install pandasai
+# or with extras
+pip install pandasai[google-ai,excel,modin]
+```
+
+### v3 Installation
+
+```bash
+# v3 installation (beta)
+pip install "pandasai>=3.0.0b2"
+
+# Install specific extensions as needed
+pip install pandasai-litellm  # For LLM support
+pip install pandasai-sql[postgres]  # For SQL databases
+pip install pandasai-yfinance  # For Yahoo Finance
+```
+
+## Core Class Migration
+
+### SmartDataframe → Semantic DataFrames
+
+#### v2 Approach
+
+```python
+from pandasai import SmartDataframe
+import pandas as pd
+
+# Create SmartDataframe
+df = pd.DataFrame({
+    "country": ["US", "UK", "France"],
+    "sales": [5000, 3200, 2900]
+})
+
+smart_df = SmartDataframe(df, config={
+    "llm": llm,
+    "verbose": True
+})
+
+response = smart_df.chat("What are the top countries by sales?")
+```
+
+#### v3 Approach
+
+```python
+import pandasai as pai
+import pandas as pd
+
+# Configure LLM globally
+pai.config.set({"llm": llm})
+
+# Create semantic dataframe
+df = pd.DataFrame({
+    "country": ["US", "UK", "France"],
+    "sales": [5000, 3200, 2900]
+})
+
+# Option 1: Direct usage
+df = pai.DataFrame(df)
+response = df.chat("What are the top countries by sales?")
+
+# Option 2: With semantic layer (recommended)
+df = pai.create(
+    path="company/sales-data",
+    df=df,
+    description="Sales data by country",
+    columns={
+        "country": {"type": "string", "description": "Country name"},
+        "sales": {"type": "float", "description": "Sales amount"}
+    }
+)
+response = df.chat("What are the top countries by sales?")
+```
+
+### SmartDatalake → Multiple DataFrames
+
+#### v2 Approach
+
+```python
+from pandasai import SmartDatalake, SmartDataframe
+
+employees_df = pd.DataFrame(employees_data)
+salaries_df = pd.DataFrame(salaries_data)
+
+lake = SmartDatalake([
+    SmartDataframe(employees_df),
+    SmartDataframe(salaries_df)
+])
+
+response = lake.chat("Who gets paid the most?")
+```
+
+#### v3 Approach
+
+```python
+import pandasai as pai
+
+# Create semantic dataframes
+employees = pai.DataFrame(employees_data)
+salaries = pai.DataFrame(salaries_data)
+
+# Query across multiple dataframes
+response = pai.chat("Who gets paid the most?", employees, salaries)
+
+# Or with semantic layer
+employees = pai.create("company/employees", employees_df, "Employee data")
+salaries = pai.create("company/salaries", salaries_df, "Salary data")
+response = pai.chat("Who gets paid the most?", employees, salaries)
+```
+
+## LLM Configuration Migration
+
+### v2 LLM Setup
+
+```python
+from pandasai.llm import OpenAI
+from pandasai import SmartDataframe
+
+llm = OpenAI(api_token="your-api-key")
+df = SmartDataframe(data, config={"llm": llm})
+```
+
+### v3 LLM Setup
+
+```python
+import pandasai as pai
+from pandasai_litellm.litellm import LiteLLM
+
+# Global configuration (recommended)
+llm = LiteLLM(model="gpt-4o-mini", api_key="your-api-key")
+pai.config.set({"llm": llm})
+
+# Now all dataframes use this LLM
+df = pai.DataFrame(data)
+```
+
+### Extension-Based LLMs
+
+#### v2: Built-in LLMs
+
+```python
+from pandasai.llm import OpenAI, GooglePalm, AzureOpenAI
+```
+
+#### v3: Extension-based LLMs
+
+```bash
+# Install specific LLM extensions
+pip install pandasai-litellm      # Unified LLM interface
+pip install pandasai-openai       # OpenAI models
+pip install pandasai-azure        # Azure OpenAI
+```
+
+```python
+# v3: Using extensions
+from pandasai_litellm.litellm import LiteLLM
+from pandasai_openai import OpenAI
+
+# LiteLLM supports 100+ models
+llm = LiteLLM(model="gpt-4o-mini", api_key="your-key")
+# or
+llm = LiteLLM(model="claude-3-opus", api_key="your-key")
+# or
+llm = LiteLLM(model="gemini-pro", api_key="your-key")
+```
+
+## Agent Migration
+
+### v2 Agent Usage
+
+```python
+from pandasai import Agent
+
+agent = Agent([df1, df2], memory_size=10)
+response = agent.chat("What is the average sales?")
+explanation = agent.explain()
+```
+
+### v3 Agent Usage
+
+```python
+import pandasai as pai
+from pandasai import Agent
+
+# Create agent with semantic dataframes
+df1 = pai.DataFrame(data1)
+df2 = pai.DataFrame(data2)
+
+agent = Agent([df1, df2], memory_size=10)
+response = agent.chat("What is the average sales?")
+explanation = agent.explain()
+```
+
+## Skills Migration
+
+### v2 Skills
+
+```python
+from pandasai.skills import skill
+from pandasai import Agent
+
+@skill
+def calculate_bonus(salary: float, performance: float) -> float:
+    """Calculate employee bonus based on salary and performance."""
+    if performance >= 90:
+        return salary * 0.15
+    return salary * 0.10
+
+agent = Agent([df])
+agent.add_skills(calculate_bonus)
+```
+
+### v3 Skills
+
+```python
+import pandasai as pai
+from pandasai import Agent
+
+@pai.skill
+def calculate_bonus(salary: float, performance: float) -> float:
+    """Calculate employee bonus based on salary and performance."""
+    if performance >= 90:
+        return salary * 0.15
+    return salary * 0.10
+
+# Skills are automatically registered globally
+agent = Agent([df])
+# No need to manually add skills - they're available automatically
+```
+
+<Note title="Enterprise Feature">
+  Skills are part of PandasAI Enterprise and require a valid enterprise license
+  for production use.
+</Note>
+
+## Data Connectors Migration
+
+### v2 Connectors
+
+```python
+from pandasai.connectors import PostgreSQLConnector
+from pandasai import SmartDataframe
+
+connector = PostgreSQLConnector(config={
+    "host": "localhost",
+    "database": "mydb",
+    "table": "sales"
+})
+
+df = SmartDataframe(connector)
+```
+
+### v3 Data Sources
+
+```python
+import pandasai as pai
+
+# Install SQL extension first
+# pip install pandasai-sql[postgres]
+
+# Using semantic layer with SQL
+df = pai.create(
+    path="company/sales",
+    description="Sales data from PostgreSQL",
+    source={
+        "type": "postgres",
+        "connection": {
+            "host": "localhost",
+            "database": "mydb",
+            "user": "${DB_USER}",
+            "password": "${DB_PASSWORD}"
+        },
+        "table": "sales"
+    }
+)
+```
+
+## Configuration Migration
+
+PandasAI v3 has simplified the configuration system and removed several v2 configuration options that are now handled differently:
+
+### Removed Configuration Options
+
+- **`save_charts`**: Replaced with `ChartResponse` objects that give users full control over chart handling
+- **`enable_cache`**: Caching functionality has been completely removed from the core library
+- **`security`**: Security features are now handled through the sandbox environment for code execution
+- **`custom_whitelisted_dependencies`**: Replaced with sandbox-based security model
+- **`save_charts_path`**: No longer needed with the new chart response system
+
+### v2 Configuration
+
+```python
+config = {
+    "llm": llm,
+    "save_logs": True,
+    "verbose": False,
+    "max_retries": 3,
+    "save_charts": True,
+    "enable_cache": True,
+    "security": "standard"
+}
+
+df = SmartDataframe(data, config=config)
+```
+
+### v3 Configuration
+
+```python
+import pandasai as pai
+
+# Global configuration - only essential options remain
+pai.config.set({
+    "llm": llm,
+    "save_logs": True,
+    "verbose": False,
+    "max_retries": 3
+})
+
+# All dataframes now use this configuration
+df = pai.DataFrame(data)
+```
+
+### New Configuration Approach
+
+In v3, configuration is handled more elegantly:
+
+- **Global Configuration**: Set once with `pai.config.set()` and applies to all dataframes
+- **Chart Handling**: Charts are returned as `ChartResponse` objects that you can save, display, or process as needed
+- **Security**: Use the sandbox environment for secure code execution instead of configuration-based security
+- **Caching**: Removed to simplify the library and reduce complexity
+
+## New Features in v3
+
+### Semantic Layer
+
+```python
+import pandasai as pai
+
+# Create semantic data layer
+companies = pai.create(
+    path="my-org/companies",
+    df=df,
+    description="Customer companies dataset",
+    columns={
+        "company_name": {"type": "string", "description": "Company name"},
+        "revenue": {"type": "float", "description": "Annual revenue"},
+        "region": {"type": "string", "description": "Geographic region"}
+    }
+)
+
+# Load existing semantic data
+companies = pai.load("my-org/companies")
+```
+
+### Data Transformations
+
+```python
+# Define transformations in schema
+transformations = [
+    {"type": "to_lowercase", "params": {"column": "company_name"}},
+    {"type": "round_numbers", "params": {"column": "revenue", "decimals": 2}},
+    {"type": "validate_email", "params": {"column": "email"}}
+]
+
+# Apply transformations
+df = pai.create(
+    path="company/processed-data",
+    df=raw_df,
+    transformations=transformations
+)
+```
+
+### Enhanced Data Ingestion
+
+```python
+# CSV files
+df = pai.read_csv("data.csv")
+
+# SQL databases (with extensions)
+df = pai.create(
+    path="company/sql-data",
+    source={
+        "type": "mysql",
+        "connection": {"host": "db.example.com", "database": "sales"},
+        "table": "transactions"
+    }
+)
+
+# Enterprise cloud data (requires license)
+df = pai.create(
+    path="company/snowflake-data",
+    source={
+        "type": "snowflake",
+        "connection": {"account": "your-account", "warehouse": "COMPUTE_WH"},
+        "table": "sales_data"
+    }
+)
+```
+
+## Breaking Changes
+
+### 1. Import Changes
+
+```python
+# v2
+from pandasai import SmartDataframe, SmartDatalake, Agent
+from pandasai.llm import OpenAI
+
+# v3
+import pandasai as pai
+from pandasai import Agent
+from pandasai_litellm.litellm import LiteLLM
+```
+
+### 2. Class Instantiation
+
+```python
+# v2
+smart_df = SmartDataframe(df, config=config)
+
+# v3
+pai.config.set(config)
+df = pai.DataFrame(df)
+```
+
+### 3. Skills Registration
+
+```python
+# v2
+agent.add_skills(my_skill)
+
+# v3
+@pai.skill
+def my_skill():
+    "doc string"
+    pass
+# Skills are automatically registered
+```
+
+### 4. LLM Extensions
+
+```python
+# v2: Built-in LLMs
+from pandasai.llm import OpenAI
+
+# v3: Extension-based
+pip install pandasai-litellm
+from pandasai_litellm.litellm import LiteLLM
+```
+
+## Migration Steps
+
+### Step 1: Update Installation
+
+```bash
+pip install "pandasai>=3.0.0b2"
+pip install pandasai-litellm  # For LLM support
+```
+
+### Step 2: Update Imports
+
+```python
+# Replace v2 imports
+import pandasai as pai
+from pandasai_litellm.litellm import LiteLLM
+```
+
+### Step 3: Configure LLM Globally
+
+```python
+llm = LiteLLM(model="gpt-4o-mini", api_key="your-key")
+pai.config.set({"llm": llm})
+```
+
+### Step 4: Migrate DataFrames
+
+```python
+# Replace SmartDataframe/SmartDatalake
+df = pai.DataFrame(your_data)
+# or use semantic layer
+df = pai.create("path/to/data", your_data, "Description")
+```
+
+### Step 5: Update Skills (if applicable)
+
+```python
+# Replace @skill with @pai.skill
+@pai.skill
+def your_function():
+    "doc string"
+    pass
+```
+
+### Step 6: Test and Validate
+
+- Test all existing functionality
+- Verify LLM responses
+- Check data loading and processing
+- Validate skills and custom functions
+
+## Common Issues and Solutions
+
+### Issue: LLM Not Found
+
+**Problem**: `ModuleNotFoundError: No module named 'pandasai.llm'`
+
+**Solution**: Install the appropriate LLM extension
+
+```bash
+pip install pandasai-litellm
+```
+
+### Issue: Skills Not Working
+
+**Problem**: Skills not being recognized
+
+**Solution**: Use the new `@pai.skill()` decorator
+
+```python
+# v2
+from pandasai.skills import skill
+@skill
+def my_skill():
+    pass
+
+# v3
+import pandasai as pai
+@pai.skill()
+def my_skill():
+    "doc string"
+    pass
+```
+
+### Issue: Configuration Not Applied
+
+**Problem**: Configuration settings not taking effect
+
+**Solution**: Use global configuration
+
+```python
+# v2
+df = SmartDataframe(data, config=config)
+
+# v3
+pai.config.set(config)
+df = pai.DataFrame(data)
+```
+
+## Testing Your Migration
+
+### 1. Basic Functionality Test
+
+```python
+import pandasai as pai
+import pandas as pd
+
+# Test basic chat functionality
+df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
+df = pai.DataFrame(df)
+response = df.chat("What is the sum of x?")
+print(response)
+```
+
+### 2. LLM Configuration Test
+
+```python
+# Test LLM configuration
+pai.config.set({"llm": llm, "verbose": True})
+df = pai.DataFrame(test_data)
+response = df.chat("Test query")
+```
+
+### 3. Skills Test
+
+```python
+@pai.skill
+def test_skill(x: int) -> int:
+    "doc string"
+    return x * 2
+
+df = pai.DataFrame({"values": [1, 2, 3]})
+response = df.chat("Double the first value")
+```
+
+## Getting Help
+
+If you encounter issues during migration:
+
+1. **Check the Beta Notice**: Remember that v3 is in beta and some features may change
+2. **Review Extension Documentation**: Each extension has its own documentation
+3. **Join the Community**: Get help on [Discord](https://discord.gg/KYKj9F2FRH)
+4. **Contact Support**: Reach out to pm@sinaptik.ai for enterprise support
+
+## Next Steps
+
+After successful migration:
+
+1. **Explore Semantic Layer**: Take advantage of the new data preparation features
+2. **Try Data Transformations**: Use the built-in transformation capabilities
+3. **Consider Enterprise Features**: Evaluate skills and advanced features for your use case
+4. **Stay Updated**: Follow the beta releases for new features and improvements
+
+---
+
+<Note title="Beta Disclaimer">
+  PandasAI 3.0 is currently in beta. Features and APIs may change before the
+  final release. This migration guide will be updated as the beta progresses.
+</Note>
