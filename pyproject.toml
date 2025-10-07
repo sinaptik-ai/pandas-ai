@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pandasai"
-version = "3.0.0-beta.20"
+version = "3.0.0"
 description = "Chat with your database (SQL, CSV, pandas, mongodb, noSQL, etc). PandasAI makes data analysis conversational using LLMs (GPT 3.5 / 4, Anthropic, VertexAI) and RAG."
 authors = ["Gabriele Venturi"]
 license = "MIT"

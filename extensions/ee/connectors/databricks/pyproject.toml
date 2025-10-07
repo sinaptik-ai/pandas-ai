@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pandasai-databricks"
-version = "0.1.4"
+version = "0.1.5"
 description = "Databricks connector integration for PandasAI"
 authors = ["Gabriele Venturi"]
 readme = "README.md"
